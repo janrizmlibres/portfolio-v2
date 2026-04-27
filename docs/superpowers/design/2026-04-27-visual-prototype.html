@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>portfolio-v2 — visual prototype</title>
+
+<!-- Real fonts (CDN) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500..700&family=JetBrains+Mono:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet" />
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     ============================================================ */
+  :root {
+    /* Surface — warm dark */
+    --ink-bg:        #0e0d10;
+    --ink-surface-1: #161518;
+    --ink-surface-2: #1f1d22;
+    --ink-line:      #2a2730;
+    --ink-line-soft: #1c1a20;
+
+    /* Text — warm off-white */
+    --ink-fg:       #f4f1eb;
+    --ink-fg-muted: #a8a4a0;
+    --ink-fg-dim:   #6b6760;
+    --ink-fg-fade:  #4a4742;
+
+    /* Saffron */
+    --saffron-300: #f0c878;
+    --saffron-500: #e8b75a;
+    --saffron-700: #b78a3d;
+
+    /* Phosphor cyan */
+    --phosphor-300: #8df5ec;
+    --phosphor-500: #5ee5d9;
+    --phosphor-700: #3aa89f;
+
+    /* Type */
+    --font-display: 'JetBrains Mono', ui-monospace, monospace;
+    --font-body:    'General Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-italic:  'Fraunces', ui-serif, Georgia, serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+    /* Scale */
+    --display-xl: clamp(4.5rem, 10vw, 8rem);
+    --display-lg: clamp(3rem, 7vw, 5.5rem);
+    --display-md: clamp(2rem, 4.5vw, 3.5rem);
+    --display-sm: clamp(1.5rem, 3vw, 2.25rem);
+
+    /* Radii */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+  }
+
+  /* ============================================================
+     BASE
+     ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: var(--ink-bg); color-scheme: dark; }
+  body {
+    font-family: var(--font-body);
+    background: var(--ink-bg);
+    color: var(--ink-fg);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+    font-feature-settings: 'ss01';
+  }
+
+  /* Subtle SVG grain — atmospheric */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.94  0 0 0 0 0.92  0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.6;
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+
+  /* Bloom — drifting ambient gradient */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 55% at 25% 18%, rgba(232,183,90,0.10), transparent 60%),
+      radial-gradient(ellipse 45% 35% at 75% 75%, rgba(94,229,217,0.06), transparent 60%);
+    z-index: 0;
+    will-change: transform;
+  }
+
+  main { position: relative; z-index: 2; }
+
+  /* ============================================================
+     UTILS
+     ============================================================ */
+  .container { max-width: 78rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem); }
+  .reading   { max-width: 42rem; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-fg-dim);
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+    display: flex; align-items: baseline; gap: 0.75rem;
+    margin: 0 0 1.25rem;
+    font-weight: 400;
+  }
+  .eyebrow::after {
+    content: '';
+    flex: 0 0 56px;
+    border-top: 1px solid var(--ink-line);
+    align-self: center;
+  }
+  .eyebrow .num { color: var(--saffron-500); }
+
+  .italic-accent {
+    font-family: var(--font-italic);
+    font-style: italic;
+    font-weight: 600;
+    color: var(--saffron-500);
+    font-feature-settings: 'ss01';
+  }
+
+  .hairline { height: 1px; background: var(--ink-line); border: 0; margin: 0; }
+  .mono { font-family: var(--font-mono); font-feature-settings: 'cv02','ss03'; }
+
+  /* ============================================================
+     STATE 1 — chat-first landing
+     ============================================================ */
+  #state-1 {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 1.5rem clamp(1rem, 4vw, 3rem) 2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Quiet nav */
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-fg-dim);
+    letter-spacing: 0.06em;
+  }
+  .nav-brand { color: var(--ink-fg); font-weight: 500; }
+  .nav-brand-dot { color: var(--saffron-500); margin-right: 6px; }
+  .nav-status { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-fg-muted); }
+  .nav-status .dot { width: 6px; height: 6px; border-radius: 99px; background: var(--phosphor-500); box-shadow: 0 0 10px var(--phosphor-500); animation: pulse 1.6s ease-in-out infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+  }
+
+  /* Hero centered prompt */
+  .s1-hero {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .s1-avatar {
+    width: 88px; height: 88px;
+    border-radius: 99px;
+    overflow: hidden;
+    margin: 0 auto 1.25rem;
+    border: 1px solid var(--ink-line);
+    box-shadow: 0 0 0 4px rgba(232,183,90,0.06), 0 0 30px rgba(232,183,90,0.10);
+    transition: transform 320ms ease, box-shadow 320ms ease;
+  }
+  .s1-avatar:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 4px rgba(232,183,90,0.12), 0 0 40px rgba(232,183,90,0.18);
+  }
+  .s1-avatar img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: contrast(1.02) saturate(0.92);
+  }
+
+  /* Typewriter caret */
+  .caret {
+    display: inline-block;
+    width: 0.08em;
+    height: 0.85em;
+    background: var(--saffron-500);
+    margin-left: 0.05em;
+    margin-right: 0.05em;
+    vertical-align: -0.06em;
+    animation: blink 1.05s steps(2) infinite;
+    box-shadow: 0 0 6px rgba(232,183,90,0.5);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .s1-greet {
+    font-family: var(--font-display);
+    font-size: var(--display-md);
+    font-weight: 500;
+    color: var(--ink-fg-muted);
+    letter-spacing: -0.01em;
+    margin: 0 0 0.5rem;
+  }
+  .s1-greet .name { color: var(--ink-fg); }
+
+  .s1-headline {
+    font-family: var(--font-display);
+    font-size: var(--display-xl);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin: 0.5rem 0 1.5rem;
+    color: var(--ink-fg);
+    font-feature-settings: 'ss03','ss05','cv02';
+  }
+  .s1-headline .accent {
+    font-family: var(--font-italic);
+    font-style: italic;
+    font-weight: 600;
+    color: var(--saffron-500);
+    letter-spacing: -0.015em;
+  }
+
+  .s1-tagline {
+    font-size: 1.0625rem;
+    color: var(--ink-fg-muted);
+    max-width: 38rem;
+    margin: 0 auto 2.75rem;
+    line-height: 1.55;
+  }
+  .s1-tagline em { font-family: var(--font-italic); font-style: italic; color: var(--ink-fg); font-weight: 600; }
+
+  /* Prompt input */
+  .prompt-wrap { width: min(640px, 100%); margin: 0 auto; }
+  .prompt {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: var(--ink-surface-1);
+    border: 1px solid var(--ink-line);
+    border-radius: 14px;
+    padding: 0.875rem 1rem 0.875rem 1.25rem;
+    transition: border-color 180ms, box-shadow 180ms;
+  }
+  .prompt:focus-within {
+    border-color: var(--saffron-500);
+    box-shadow: 0 0 0 3px rgba(232,183,90,0.12);
+  }
+  .prompt-arrow {
+    color: var(--saffron-500); font-family: var(--font-mono); font-size: 1rem; line-height: 1;
+  }
+  .prompt input {
+    flex: 1; background: transparent; border: 0; outline: 0;
+    color: var(--ink-fg);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-feature-settings: 'ss01';
+  }
+  .prompt input::placeholder { color: var(--ink-fg-dim); font-style: italic; }
+  .prompt-send {
+    display: inline-grid; place-items: center;
+    background: var(--saffron-500);
+    color: #1a1408;
+    border: 0;
+    width: 36px; height: 36px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: transform 180ms, background 180ms;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+  }
+  .prompt-send:hover { background: var(--saffron-300); transform: translateX(2px); }
+
+  .chips {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    background: transparent;
+    border: 1px solid var(--ink-line);
+    color: var(--ink-fg-muted);
+    padding: 0.5rem 0.875rem;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: border-color 180ms, color 180ms, background 180ms, transform 180ms;
+    line-height: 1;
+  }
+  .chip:hover {
+    border-color: var(--saffron-500);
+    color: var(--ink-fg);
+    background: rgba(232,183,90,0.06);
+    transform: translateY(-1px);
+  }
+  .chip:active { transform: translateY(0); }
+
+  .s1-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ink-fg-fade);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 1rem;
+  }
+  .s1-foot .right { display: flex; gap: 1rem; }
+
+  /* ============================================================
+     STATE 2 — portfolio + side chat
+     ============================================================ */
+  #state-2 { display: none; min-height: 100vh; position: relative; z-index: 2; }
+  #state-2.visible { display: block; }
+
+  .s2-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: 1.5rem clamp(1rem, 4vw, 3rem) 4rem;
+    align-items: start;
+  }
+
+  .s2-main { min-width: 0; max-width: 78rem; }
+
+  /* Compact hero */
+  .s2-hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 2rem;
+    padding: 4rem 0 2.5rem;
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .s2-headline {
+    font-family: var(--font-display);
+    font-size: var(--display-lg);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin: 0;
+    font-weight: 500;
+    color: var(--ink-fg);
+    font-feature-settings: 'ss03','ss05','cv02';
+  }
+  .s2-headline .accent {
+    font-family: var(--font-italic);
+    font-style: italic;
+    color: var(--saffron-500);
+    font-weight: 600;
+  }
+  .s2-tagline {
+    font-size: 1rem;
+    color: var(--ink-fg-muted);
+    max-width: 26rem;
+    margin: 0;
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  /* Currently strip */
+  .currently {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.25rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-fg-muted);
+  }
+  .currently-row { display: grid; grid-template-columns: 80px 1fr; gap: 1rem; align-items: baseline; }
+  .currently-label {
+    color: var(--ink-fg-dim);
+    letter-spacing: 0.04em;
+    position: relative;
+  }
+  .currently-label::after { content: '──'; color: var(--ink-line); margin-left: 8px; }
+  .currently-row .pill { color: var(--ink-fg); }
+  .currently-row .sep { color: var(--ink-fg-dim); margin: 0 0.4em; }
+
+  /* Section blocks */
+  .section { padding: 4rem 0; border-bottom: 1px solid var(--ink-line); }
+  .section:last-child { border-bottom: 0; }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 2.5rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--display-md);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0;
+    font-weight: 500;
+    color: var(--ink-fg);
+  }
+  .section-title em {
+    font-family: var(--font-italic);
+    font-style: italic;
+    color: var(--saffron-500);
+    font-weight: 600;
+  }
+  .section-lede {
+    font-size: 1.0625rem;
+    color: var(--ink-fg-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .section-lede em { font-family: var(--font-italic); font-style: italic; color: var(--ink-fg); font-weight: 600; }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 3rem;
+    align-items: start;
+  }
+  .about-body { font-size: 1.0625rem; line-height: 1.7; color: var(--ink-fg); max-width: 42rem; }
+  .about-body p + p { margin-top: 1.25rem; }
+  .about-body em { font-family: var(--font-italic); font-style: italic; color: var(--saffron-500); font-weight: 600; }
+
+  .about-portrait {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--ink-line);
+    background: var(--ink-surface-1);
+    position: relative;
+  }
+  .about-portrait::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(14,13,16,0.55));
+    pointer-events: none;
+  }
+  .about-portrait img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: contrast(1.02) saturate(0.9);
+    transition: transform 600ms ease, filter 600ms ease;
+  }
+  .about-portrait:hover img {
+    transform: scale(1.04);
+    filter: contrast(1.05) saturate(1);
+  }
+
+  /* Work timeline */
+  .work-timeline {
+    border-top: 1px solid var(--ink-line);
+    border-bottom: 1px solid var(--ink-line);
+    margin-bottom: 2.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+  .wt-row {
+    display: grid;
+    grid-template-columns: 88px 60px 1.4fr 1.6fr 1.4fr;
+    gap: 1.25rem;
+    padding: 0.875rem 0.25rem;
+    border-bottom: 1px solid var(--ink-line-soft);
+    align-items: baseline;
+    transition: padding 240ms ease, background 240ms ease;
+  }
+  .wt-row:last-of-type { border-bottom: 0; }
+  .wt-row:hover {
+    background: rgba(232,183,90,0.025);
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+  .wt-years { color: var(--saffron-500); letter-spacing: 0.02em; }
+  .wt-dur   { color: var(--ink-fg-dim); }
+  .wt-co    { color: var(--ink-fg); font-family: var(--font-body); font-size: 0.9375rem; font-weight: 500; }
+  .wt-role  { color: var(--ink-fg-muted); font-family: var(--font-body); font-size: 0.9375rem; }
+  .wt-tech  { color: var(--ink-fg-dim); text-align: right; }
+
+  .wt-meta {
+    display: flex; justify-content: space-between;
+    padding: 0.625rem 0.25rem;
+    border-top: 1px solid var(--ink-line);
+    color: var(--ink-fg-fade);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .wt-meta-value { color: var(--ink-fg-muted); }
+
+  .work-projects-heading {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ink-fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 1rem;
+    font-weight: 400;
+  }
+
+  /* Work — tabbed */
+  .work-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; }
+  .work-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .work-tab {
+    text-align: left;
+    background: transparent;
+    border: 1px solid var(--ink-line);
+    color: var(--ink-fg-muted);
+    padding: 0.875rem 1.125rem;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 180ms;
+  }
+  .work-tab:hover { color: var(--ink-fg); border-color: var(--ink-fg-dim); }
+  .work-tab.active { background: var(--ink-fg); color: var(--ink-bg); border-color: var(--ink-fg); }
+
+  .work-detail {
+    background: var(--ink-surface-1);
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 2rem;
+  }
+  .work-detail h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem;
+    color: var(--ink-fg);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .work-stack {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-fg-muted);
+    margin-bottom: 1.25rem;
+  }
+  .work-stack .label { color: var(--saffron-500); }
+  .work-detail p { color: var(--ink-fg-muted); line-height: 1.6; margin: 0 0 1.25rem; }
+  .work-bullets { list-style: none; padding: 0; margin: 0; }
+  .work-bullets li {
+    color: var(--ink-fg);
+    line-height: 1.55;
+    padding-left: 1.25rem;
+    position: relative;
+    margin-bottom: 0.625rem;
+  }
+  .work-bullets li::before {
+    content: '›';
+    color: var(--saffron-500);
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .nda-tooltip {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--ink-line);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ink-fg-fade);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Projects — public */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .project-card {
+    background: var(--ink-surface-1);
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: border-color 240ms, transform 240ms;
+  }
+  .project-card:hover { border-color: var(--ink-fg-dim); transform: translateY(-2px); }
+  .project-card.highlight {
+    border-color: var(--saffron-500);
+    box-shadow: 0 0 0 1px var(--saffron-500), 0 0 32px rgba(232,183,90,0.18);
+  }
+  .project-thumb {
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, var(--ink-surface-2), var(--ink-line));
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    position: relative; overflow: hidden;
+  }
+  .project-thumb::after {
+    content: 'screenshot'; position: absolute; inset: 0;
+    display: grid; place-items: center;
+    color: var(--ink-fg-fade); font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .project-card h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem;
+    color: var(--ink-fg);
+  }
+  .project-stack {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-fg-dim);
+    margin-bottom: 0.875rem;
+  }
+  .project-card p { font-size: 0.9375rem; line-height: 1.55; color: var(--ink-fg-muted); margin: 0 0 1rem; }
+  .project-links { display: flex; gap: 1rem; font-family: var(--font-mono); font-size: 0.8125rem; }
+  .project-links a {
+    color: var(--saffron-500);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 180ms;
+  }
+  .project-links a:hover { border-bottom-color: var(--saffron-500); }
+
+  /* Contact */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+  .contact-card {
+    border: 1px solid var(--ink-line);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    text-decoration: none; color: var(--ink-fg);
+    transition: border-color 180ms, background 180ms;
+  }
+  .contact-card:hover { border-color: var(--saffron-500); background: rgba(232,183,90,0.04); }
+  .contact-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-fg-dim);
+    margin-bottom: 0.375rem;
+  }
+  .contact-value { font-size: 1rem; line-height: 1.3; }
+
+  /* ============================================================
+     CHAT PANEL (desktop)
+     ============================================================ */
+  .chat-panel {
+    position: sticky;
+    top: 1.5rem;
+    height: calc(100vh - 3rem);
+    background: var(--ink-surface-2);
+    border: 1px solid var(--ink-line);
+    border-left: 2px solid var(--phosphor-700);
+    border-radius: var(--radius-lg);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: -8px 0 40px rgba(94,229,217,0.05);
+  }
+
+  .chat-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--ink-line);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-fg-dim);
+    letter-spacing: 0.06em;
+  }
+  .chat-head-left { display: flex; align-items: center; gap: 0.5rem; }
+  .chat-head-left .live-dot {
+    width: 6px; height: 6px; border-radius: 99px;
+    background: var(--phosphor-500);
+    box-shadow: 0 0 8px var(--phosphor-500);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .chat-head .clear {
+    background: transparent; border: 0;
+    color: var(--ink-fg-fade);
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: color 180ms;
+  }
+  .chat-head .clear:hover { color: var(--ink-fg); }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .msg {
+    max-width: 92%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 12px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--ink-fg);
+    color: var(--ink-bg);
+    font-weight: 500;
+  }
+  .msg.assistant {
+    align-self: flex-start;
+    background: transparent;
+    color: var(--ink-fg);
+    padding: 0.5rem 0;
+  }
+  .msg.assistant em {
+    font-family: var(--font-italic); font-style: italic; color: var(--saffron-500); font-weight: 600;
+  }
+  .msg.assistant a {
+    color: var(--saffron-500);
+    border-bottom: 1px solid var(--saffron-700);
+    text-decoration: none;
+    transition: border-color 180ms;
+  }
+  .msg.assistant a:hover { border-bottom-color: var(--saffron-500); }
+
+  .tool-call {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-style: italic;
+    font-size: 0.75rem;
+    color: var(--phosphor-500);
+    padding: 0.125rem 0;
+    letter-spacing: 0.02em;
+  }
+  .tool-call .arrow { opacity: 0.7; margin-right: 4px; }
+  .tool-call .arg { color: var(--ink-fg-dim); margin: 0 4px 0 8px; }
+  .tool-call .arg-val { color: var(--phosphor-300); }
+
+  .chat-input-wrap {
+    padding: 0.75rem 0.75rem 0.875rem;
+    border-top: 1px solid var(--ink-line);
+  }
+  .chat-input {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: var(--ink-surface-1);
+    border: 1px solid var(--ink-line);
+    border-radius: 12px;
+    padding: 0.625rem 0.875rem;
+  }
+  .chat-input:focus-within {
+    border-color: var(--phosphor-700);
+    box-shadow: 0 0 0 2px rgba(94,229,217,0.12);
+  }
+  .chat-input input {
+    flex: 1; background: transparent; border: 0; outline: 0;
+    font-family: var(--font-body); font-size: 0.9375rem; color: var(--ink-fg);
+  }
+  .chat-input input::placeholder { color: var(--ink-fg-dim); }
+  .chat-input .send-key {
+    font-family: var(--font-mono); font-size: 0.6875rem; color: var(--ink-fg-fade);
+    border: 1px solid var(--ink-line); padding: 2px 6px; border-radius: 4px;
+  }
+
+  /* Section autoscrolled indicator */
+  .section.scrolled-to { position: relative; }
+  .section.scrolled-to::before {
+    content: '';
+    position: absolute; left: -16px; top: 4rem; bottom: 4rem;
+    width: 2px;
+    background: var(--phosphor-500);
+    box-shadow: 0 0 12px var(--phosphor-500);
+    animation: scrolled-fade 2.4s ease-out forwards;
+  }
+  @keyframes scrolled-fade {
+    0%, 60% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ============================================================
+     MOBILE — bottom sheet
+     ============================================================ */
+  @media (max-width: 900px) {
+    #state-2 .s2-layout {
+      grid-template-columns: 1fr;
+      padding-bottom: 30vh;
+    }
+    #state-2 .chat-panel {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      top: auto;
+      height: 32vh;
+      border-radius: 18px 18px 0 0;
+      border-left: 1px solid var(--ink-line);
+      border-top: 2px solid var(--phosphor-700);
+      box-shadow: 0 -12px 48px rgba(0,0,0,0.5), 0 -2px 0 var(--phosphor-700);
+      z-index: 50;
+      transition: height 360ms cubic-bezier(0.7, 0, 0.2, 1);
+    }
+    #state-2 .chat-panel.expanded { height: 92vh; }
+    .sheet-handle {
+      display: flex; justify-content: center; padding: 8px 0 4px; cursor: grab;
+    }
+    .sheet-handle::before {
+      content: ''; width: 36px; height: 4px; border-radius: 99px; background: var(--ink-line);
+    }
+    .s2-hero { grid-template-columns: 1fr; padding: 3rem 0 2rem; }
+    .s2-tagline { text-align: left; }
+    .section-head { grid-template-columns: 1fr; }
+    .work-grid { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .about-portrait { max-width: 280px; }
+    .wt-row {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+      padding: 1rem 0.25rem;
+    }
+    .wt-tech { text-align: left; }
+    .wt-years { font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .wt-dur::before { content: '· '; }
+  }
+  @media (min-width: 901px) {
+    .sheet-handle { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    .nav-status .dot, .chat-head-left .live-dot { animation: none; opacity: 1; }
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--saffron-500);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--ink-line); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-fg-dim); }
+</style>
+</head>
+
+<body>
+<main>
+
+<!-- ============================================================
+     STATE 1 — chat-first landing (initial)
+     ============================================================ -->
+<section id="state-1" aria-label="State 1 landing">
+
+  <nav class="nav">
+    <div class="nav-brand"><span class="nav-brand-dot">●</span>jrz·dev</div>
+    <div class="nav-status"><span class="dot"></span>agent · live</div>
+  </nav>
+
+  <div class="s1-hero">
+    <div>
+      <div class="s1-avatar"><img src="../../../public/profile.jpg" alt="Janriz Libres" /></div>
+      <p class="s1-greet">Hi, I'm <span class="name">Janriz.</span></p>
+      <h1 class="s1-headline"><span class="prefix" data-typewriter></span><span class="caret"></span> <span class="accent">engineer</span></h1>
+      <p class="s1-tagline">I build production systems — full-stack platforms, AI agents, and RAG pipelines. Instead of scrolling, just <em>ask</em> — the chat has read everything I've written.</p>
+
+      <div class="prompt-wrap">
+        <div class="prompt">
+          <span class="prompt-arrow">→</span>
+          <input type="text" id="prompt-input" placeholder="Ask anything…" aria-label="Ask anything" />
+          <button class="prompt-send" id="prompt-send" aria-label="Send">↗</button>
+        </div>
+        <div class="chips" id="chips">
+          <button class="chip" data-prompt="Show me your projects">Show me your projects</button>
+          <button class="chip" data-prompt="What's your stack?">What's your stack?</button>
+          <button class="chip" data-prompt="Tell me about Athena">Tell me about Athena</button>
+          <button class="chip" data-prompt="Are you available?">Are you available?</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s1-foot">
+    <div>jrz·dev / 2026</div>
+    <div class="right">
+      <span>cebu, ph</span>
+      <span>open to ai eng roles</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     STATE 2 — portfolio + side chat
+     ============================================================ -->
+<section id="state-2" aria-label="State 2 portfolio with chat">
+  <div class="s2-layout">
+
+    <div class="s2-main">
+
+      <!-- Compact hero -->
+      <div class="s2-hero">
+        <div>
+          <p class="eyebrow"><span class="num">/00</span> landing</p>
+          <h1 class="s2-headline"><span class="prefix" data-typewriter></span><span class="caret"></span> <span class="accent">engineer</span></h1>
+        </div>
+        <p class="s2-tagline">Building production systems across full-stack and AI. Based in <em>Cebu</em>, working remotely.</p>
+      </div>
+
+      <div class="currently">
+        <div class="currently-row">
+          <span class="currently-label">stack</span>
+          <span><span class="pill">Next.js</span><span class="sep">·</span><span class="pill">Vercel AI SDK</span><span class="sep">·</span><span class="pill">OpenAI</span><span class="sep">·</span><span class="pill">pgvector</span><span class="sep">·</span><span class="pill">MCP</span></span>
+        </div>
+        <div class="currently-row">
+          <span class="currently-label">open to</span>
+          <span><span class="pill">AI eng roles</span><span class="sep">·</span><span class="pill">remote</span></span>
+        </div>
+      </div>
+
+      <!-- About -->
+      <section class="section" id="sec-about">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow"><span class="num">/01</span> about</p>
+            <h2 class="section-title">About <em>me</em></h2>
+          </div>
+          <p class="section-lede">A Filipino full-stack &amp; AI developer. <em>Summa Cum Laude</em> Bachelor of Science in Computer Science from Xavier University.</p>
+        </div>
+        <div class="about-grid">
+          <div class="about-body">
+            <p>I'm Janriz. Full-stack and AI developer based in <em>Cebu</em>, Philippines.</p>
+            <p>Most recently at <em>LogoLife</em> as a Full-Stack / AI Engineer — where I shipped Athena, a context-aware admissions assistant with Mem0-backed memory and a scoped MCP server, alongside production crawlers, dashboards, and load-testing harnesses.</p>
+            <p>Game dev hobbyist on the side. Believer in <em>YAGNI</em> and shipping the boring parts first.</p>
+          </div>
+          <div class="about-portrait">
+            <img src="../../../public/profile.jpg" alt="Janriz Libres" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Work -->
+      <section class="section" id="sec-work">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow"><span class="num">/02</span> work</p>
+            <h2 class="section-title">Professional <em>work</em></h2>
+          </div>
+          <p class="section-lede">Where I've worked, and what I shipped there. <em>Implementation patterns</em> only — proprietary specifics omitted under NDA.</p>
+        </div>
+
+        <div class="work-timeline">
+          <div class="wt-row">
+            <span class="wt-years">2025–26</span>
+            <span class="wt-dur">5 mo</span>
+            <span class="wt-co">LogoLife</span>
+            <span class="wt-role">Full-stack / AI Engineer</span>
+            <span class="wt-tech">TypeScript · MCP · Mem0</span>
+          </div>
+          <div class="wt-row">
+            <span class="wt-years">2025</span>
+            <span class="wt-dur">3 mo</span>
+            <span class="wt-co">Tolstoy</span>
+            <span class="wt-role">Full-stack / AI Engineer</span>
+            <span class="wt-tech">TanStack · AWS</span>
+          </div>
+          <div class="wt-row">
+            <span class="wt-years">2024</span>
+            <span class="wt-dur">4 mo</span>
+            <span class="wt-co">Elinnov Technologies</span>
+            <span class="wt-role">Software Engineer Intern</span>
+            <span class="wt-tech">ASP.NET · React</span>
+          </div>
+          <div class="wt-row">
+            <span class="wt-years">2023–24</span>
+            <span class="wt-dur">10 mo</span>
+            <span class="wt-co">The Crusader Yearbook</span>
+            <span class="wt-role">Software Developer</span>
+            <span class="wt-tech">Laravel · WordPress · Python</span>
+          </div>
+          <div class="wt-meta">
+            <span class="wt-meta-label">total</span>
+            <span class="wt-meta-value">~22 months across 4 roles</span>
+          </div>
+        </div>
+
+        <h3 class="work-projects-heading">Selected projects</h3>
+
+        <div class="work-grid">
+          <div class="work-list" id="work-list">
+            <button class="work-tab active" data-i="0">Athena — AI Chat Assistant</button>
+            <button class="work-tab" data-i="1">Counselor Dashboard</button>
+            <button class="work-tab" data-i="2">Crawler Dashboard</button>
+            <button class="work-tab" data-i="3">AI-Assisted Crawler</button>
+            <button class="work-tab" data-i="4">Data Maintenance Pipeline</button>
+            <button class="work-tab" data-i="5">E2E Testing Suite</button>
+          </div>
+
+          <div class="work-detail" id="work-detail">
+            <h3 id="wd-title">Athena — AI Chat Assistant</h3>
+            <div class="work-stack"><span class="label">stack:</span> <span id="wd-stack">React · Express · Vercel AI SDK · Mem0 · MCP</span></div>
+            <p id="wd-desc">A context-aware AI assistant embedded in the admissions platform — proactive coach + reactive knowledge base for students.</p>
+            <ul class="work-bullets" id="wd-bullets">
+              <li>Implemented Mem0 for cross-session long-term memory.</li>
+              <li>Built a secure MCP server for controlled access to live student data.</li>
+              <li>Designed a "Nudge" system to proactively re-engage users.</li>
+            </ul>
+            <div class="nda-tooltip">⊘ NDA — screenshots &amp; specifics omitted</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects (public) -->
+      <section class="section" id="sec-projects">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow"><span class="num">/03</span> projects</p>
+            <h2 class="section-title">Personal <em>projects</em></h2>
+          </div>
+          <p class="section-lede">Public projects — code, demos, and screenshots all open. The <em>tangible</em> complement to NDA-blocked work.</p>
+        </div>
+
+        <div class="projects-grid">
+          <article class="project-card" data-slug="flowstack">
+            <div class="project-thumb"></div>
+            <h3>FlowStack</h3>
+            <div class="project-stack">TypeScript · Next.js · MongoDB · Tailwind</div>
+            <p>StackOverflow clone with NextAuth — posting, search, comments, and analytics.</p>
+            <div class="project-links"><a href="#">repo →</a><a href="#">demo →</a></div>
+          </article>
+
+          <article class="project-card" data-slug="pulsevr">
+            <div class="project-thumb"></div>
+            <h3>PulseVR</h3>
+            <div class="project-stack">TypeScript · React · Tailwind</div>
+            <p>Responsive landing page for a fictional VR startup — mobile-first, motion-rich.</p>
+            <div class="project-links"><a href="#">repo →</a><a href="#">demo →</a></div>
+          </article>
+
+          <article class="project-card" data-slug="mercado">
+            <div class="project-thumb"></div>
+            <h3>Mercado</h3>
+            <div class="project-stack">TS · TanStack · Nest.js · Postgres · Docker</div>
+            <p>Type-safe e-commerce frontend with GraphQL, cart, checkout, and admin dashboard.</p>
+            <div class="project-links"><a href="#">repo →</a><a href="#">demo →</a></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section class="section" id="sec-contact">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow"><span class="num">/04</span> contact</p>
+            <h2 class="section-title">Get in <em>touch</em></h2>
+          </div>
+          <p class="section-lede">Best ways to reach me. The agent above can also send you a thread of context if it'd help.</p>
+        </div>
+
+        <div class="contact-grid">
+          <a class="contact-card" href="mailto:libres.janriz@gmail.com">
+            <div class="contact-label">email</div>
+            <div class="contact-value">libres.janriz@gmail.com</div>
+          </a>
+          <a class="contact-card" href="https://github.com/janrizmlibres">
+            <div class="contact-label">github</div>
+            <div class="contact-value">@janrizmlibres</div>
+          </a>
+          <a class="contact-card" href="https://linkedin.com/in/janrizlibres">
+            <div class="contact-label">linkedin</div>
+            <div class="contact-value">in/janrizlibres</div>
+          </a>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Chat panel (sticky) -->
+    <aside class="chat-panel" id="chat-panel">
+      <div class="sheet-handle" id="sheet-handle"></div>
+      <div class="chat-head">
+        <div class="chat-head-left">
+          <span class="live-dot"></span>
+          <span>chat · agent</span>
+        </div>
+        <button class="clear" id="clear-chat">clear</button>
+      </div>
+
+      <div class="chat-body" id="chat-body" aria-live="polite">
+        <!-- messages appended via DOM API -->
+      </div>
+
+      <div class="chat-input-wrap">
+        <div class="chat-input">
+          <input type="text" placeholder="Ask anything…" aria-label="Ask anything" />
+          <span class="send-key">⏎</span>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+</main>
+
+<script>
+  // ============================================================
+  // Safe DOM construction helpers
+  // ============================================================
+  function el(tag, opts = {}, ...children) {
+    const node = document.createElement(tag);
+    if (opts.className) node.className = opts.className;
+    if (opts.text != null) node.textContent = opts.text;
+    if (opts.href) node.href = opts.href;
+    if (opts.attrs) for (const [k, v] of Object.entries(opts.attrs)) node.setAttribute(k, v);
+    for (const c of children) {
+      if (c == null) continue;
+      node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+    }
+    return node;
+  }
+
+  // Render an "assistant" reply that supports plain text, italic accents, and links — safely.
+  // Replies are authored as a list of segments: { kind: 'text'|'em'|'link', value, href? }
+  function renderAssistant(parent, segments) {
+    for (const s of segments) {
+      if (s.kind === 'text')      parent.appendChild(document.createTextNode(s.value));
+      else if (s.kind === 'em')   parent.appendChild(el('em', { text: s.value }));
+      else if (s.kind === 'link') parent.appendChild(el('a', { href: s.href, text: s.value }));
+    }
+  }
+
+  // ============================================================
+  // Headline typewriter — cycles between "Full-stack" and "AI"
+  // ============================================================
+  const typewriterTargets = document.querySelectorAll('[data-typewriter]');
+  const TYPE_WORDS = ['AI', 'Full-stack'];
+  const TYPE_SPEED  = 90;   // ms per char (typing)
+  const ERASE_SPEED = 60;   // ms per char (erasing)
+  const HOLD_MS     = 2400; // pause when fully typed
+
+  function setTypewriter(text) {
+    typewriterTargets.forEach(t => { t.textContent = text; });
+  }
+
+  async function typewriterCycle() {
+    let idx = 0;
+    // Initial state — set first word so the headline is never blank
+    setTypewriter(TYPE_WORDS[0]);
+    while (true) {
+      await delay(HOLD_MS);
+      // Erase
+      const current = TYPE_WORDS[idx];
+      for (let i = current.length - 1; i >= 0; i--) {
+        setTypewriter(current.slice(0, i));
+        await delay(ERASE_SPEED);
+      }
+      await delay(220);
+      // Type next
+      idx = (idx + 1) % TYPE_WORDS.length;
+      const next = TYPE_WORDS[idx];
+      for (let i = 1; i <= next.length; i++) {
+        setTypewriter(next.slice(0, i));
+        await delay(TYPE_SPEED);
+      }
+    }
+  }
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // Respect reduced-motion: just show "AI"
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setTypewriter('AI');
+  } else {
+    typewriterCycle();
+  }
+
+  // ============================================================
+  // State 1 → State 2 transition
+  // ============================================================
+  const promptInput = document.getElementById('prompt-input');
+  const promptSend  = document.getElementById('prompt-send');
+  const chatBody    = document.getElementById('chat-body');
+
+  function typeIntoInput(text, callback) {
+    promptInput.value = '';
+    promptInput.focus();
+    let i = 0;
+    const tick = () => {
+      promptInput.value = text.slice(0, ++i);
+      if (i < text.length) setTimeout(tick, 18);
+      else callback();
+    };
+    tick();
+  }
+
+  function transitionToState2(message) {
+    const pending = composePending(message);
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'power3.inOut' },
+      onComplete: () => playChatSequence(pending, message),
+    });
+
+    tl.to('#state-1', { opacity: 0, scale: 0.97, duration: 0.4 })
+      .set('#state-1', { display: 'none' })
+      .set('#state-2', { display: 'block', opacity: 0 })
+      .to('#state-2', { opacity: 1, duration: 0.4 })
+      .from('#state-2 .s2-hero, #state-2 .currently, #state-2 .section', {
+        opacity: 0,
+        y: 16,
+        duration: 0.6,
+        stagger: 0.08,
+      }, '-=0.1')
+      .from('#state-2 .chat-panel', {
+        opacity: 0,
+        x: 32,
+        duration: 0.5,
+      }, '-=0.5');
+  }
+
+  // Build the canned conversation deterministically from a message
+  function composePending(message) {
+    const lc = message.toLowerCase();
+
+    let toolQuery = message;
+    let toolType  = 'project';
+    let reply;
+
+    if (lc.includes('project')) {
+      toolQuery = 'public projects portfolio';
+      toolType  = 'project';
+      reply = [
+        { kind: 'text', value: 'My public projects are ' },
+        { kind: 'em',   value: 'FlowStack' },
+        { kind: 'text', value: ', ' },
+        { kind: 'em',   value: 'PulseVR' },
+        { kind: 'text', value: ', and ' },
+        { kind: 'em',   value: 'Mercado' },
+        { kind: 'text', value: ' — scrolling you to the section now. Each has source code and a live demo.' },
+      ];
+    } else if (lc.includes('athena')) {
+      toolQuery = 'Athena MCP memory architecture';
+      toolType  = 'project';
+      reply = [
+        { kind: 'em',   value: 'Athena' },
+        { kind: 'text', value: " is a context-aware assistant I built for an admissions platform. Mem0-backed memory across sessions, custom MCP server for scoped data access, and a 'Nudge' system for proactive re-engagement. " },
+        { kind: 'link', value: 'More in /02 work →', href: '#sec-work' },
+      ];
+    } else if (lc.includes('stack')) {
+      toolQuery = 'current tech stack';
+      toolType  = 'profile';
+      reply = [
+        { kind: 'text', value: 'Right now: Next.js, Vercel AI SDK, OpenAI, pgvector, MCP, plus the Drizzle ORM. The chat you’re using ' },
+        { kind: 'em',   value: 'is' },
+        { kind: 'text', value: ' that stack.' },
+      ];
+    } else if (lc.includes('available') || lc.includes('hire') || lc.includes('open to')) {
+      toolQuery = 'availability open roles';
+      toolType  = 'profile';
+      reply = [
+        { kind: 'text', value: 'Yes — open to AI eng roles and agent eval consults. Quickest reach: ' },
+        { kind: 'link', value: 'email', href: 'mailto:libres.janriz@gmail.com' },
+        { kind: 'text', value: '.' },
+      ];
+    } else {
+      reply = [{ kind: 'text', value: 'Happy to dig in — let me look that up.' }];
+    }
+
+    return [
+      { role: 'user', text: message },
+      { role: 'tool', name: 'search_wiki', args: { query: toolQuery, type: toolType } },
+      { role: 'assistant', segments: reply },
+    ];
+  }
+
+  function playChatSequence(messages, originalMessage) {
+    let delay = 0;
+    messages.forEach((m) => {
+      setTimeout(() => appendMessage(m), delay);
+      delay += m.role === 'tool' ? 700 : (m.role === 'user' ? 100 : 1100);
+    });
+
+    setTimeout(() => {
+      const lc = originalMessage.toLowerCase();
+      let target = null;
+      if (lc.includes('project')) target = '#sec-projects';
+      else if (lc.includes('athena') || lc.includes('work')) target = '#sec-work';
+      else if (lc.includes('stack') || lc.includes('about')) target = '#sec-about';
+      else if (lc.includes('available') || lc.includes('hire')) target = '#sec-contact';
+
+      if (target) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('scrolled-to'));
+        document.querySelector(target).classList.add('scrolled-to');
+        gsap.to(window, {
+          duration: 0.9,
+          scrollTo: { y: target, offsetY: 24 },
+          ease: 'power3.inOut',
+        });
+      }
+    }, delay - 600);
+  }
+
+  function appendMessage(m) {
+    let node;
+    if (m.role === 'tool') {
+      node = el('div', { className: 'tool-call' },
+        el('span', { className: 'arrow', text: '↻ ' }),
+        m.name,
+        el('span', { className: 'arg', text: 'query:' }),
+        el('span', { className: 'arg-val', text: '"' + m.args.query + '"' }),
+        el('span', { className: 'arg', text: 'type:' }),
+        el('span', { className: 'arg-val', text: '"' + m.args.type + '"' }),
+      );
+    } else if (m.role === 'user') {
+      node = el('div', { className: 'msg user', text: m.text });
+    } else {
+      node = el('div', { className: 'msg assistant' });
+      renderAssistant(node, m.segments);
+    }
+    chatBody.appendChild(node);
+    gsap.from(node, { opacity: 0, y: 6, duration: 0.3, ease: 'power2.out' });
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  // Wire up chips and input
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const text = chip.dataset.prompt;
+      typeIntoInput(text, () => {
+        setTimeout(() => transitionToState2(text), 150);
+      });
+    });
+  });
+
+  promptSend.addEventListener('click', () => {
+    if (!promptInput.value.trim()) return;
+    transitionToState2(promptInput.value.trim());
+  });
+  promptInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && promptInput.value.trim()) {
+      transitionToState2(promptInput.value.trim());
+    }
+  });
+
+  // Clear chat → return to State 1
+  document.getElementById('clear-chat').addEventListener('click', () => {
+    while (chatBody.firstChild) chatBody.removeChild(chatBody.firstChild);
+    const tl = gsap.timeline({ defaults: { ease: 'power3.inOut' } });
+    tl.to('#state-2', { opacity: 0, duration: 0.3 })
+      .set('#state-2', { display: 'none' })
+      .set('#state-1', { display: 'grid', opacity: 0, scale: 1 })
+      .to('#state-1', { opacity: 1, duration: 0.4 });
+    promptInput.value = '';
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('scrolled-to'));
+  });
+
+  // ============================================================
+  // Work tab switching (DOM-safe)
+  // ============================================================
+  const workData = [
+    { title: 'Athena — AI Chat Assistant', stack: 'React · Express · Vercel AI SDK · Mem0 · MCP',
+      description: 'A context-aware AI assistant embedded in the admissions platform — proactive coach + reactive knowledge base for students.',
+      bullets: ['Implemented Mem0 for cross-session long-term memory.', 'Built a secure MCP server for controlled access to live student data.', 'Designed a "Nudge" system to proactively re-engage users.'] },
+    { title: 'Counselor Dashboard', stack: 'React · Node.js · MongoDB · OpenAI (GPT-4o) · Tailwind',
+      description: 'Unified dashboard streamlining pre-session workflows for counselors with embedded AI assistant.',
+      bullets: ['Created snapshot of student metrics for instant context.', 'LLM-powered summarization of past sessions.', 'Embedded Athena AI directly into the workflow.'] },
+    { title: 'Crawler Dashboard', stack: 'React · TypeScript · MongoDB · Recharts · Tailwind',
+      description: 'Comprehensive dashboard for managing multi-stage web crawling operations with real-time visibility.',
+      bullets: ['Real-time pipeline KPIs, success rates, error counts.', 'Interactive controls for crawls across data categories.', 'Saturation monitoring to detect duplicate spikes.'] },
+    { title: 'AI-Assisted Crawler', stack: 'TypeScript · Firecrawl · OpenAI · Grok · Google Places',
+      description: 'Configurable, multi-stage crawling pipeline for opportunities data extraction and enrichment.',
+      bullets: ['5-stage fault-tolerant pipeline.', 'Two-layer vector dedup — 62% cost reduction.', 'Token-budget aware orchestration with Slack alerts.'] },
+    { title: 'Data Maintenance Pipeline', stack: 'LLMs (Grok, OpenAI) · Mapbox · Slack',
+      description: 'Autonomous background system validating, standardizing, and enriching dataset records.',
+      bullets: ['AI-driven structured-output updates.', 'Automated link validation and geocoding.', 'Lifecycle management for obsolete records.'] },
+    { title: 'E2E Testing Suite', stack: 'Playwright · TypeScript · Node.js · Allure',
+      description: 'Comprehensive automated E2E suite ensuring platform reliability across user roles and workflows.',
+      bullets: ['Role-based test architecture for 8 personas.', 'Optimized auth via session reuse.', 'Stealth mode to bypass bot detection.'] },
+  ];
+
+  document.querySelectorAll('.work-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.work-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const i = parseInt(tab.dataset.i);
+      const d = workData[i];
+
+      document.getElementById('wd-title').textContent = d.title;
+      document.getElementById('wd-stack').textContent = d.stack;
+      document.getElementById('wd-desc').textContent = d.description;
+
+      const ul = document.getElementById('wd-bullets');
+      while (ul.firstChild) ul.removeChild(ul.firstChild);
+      for (const b of d.bullets) ul.appendChild(el('li', { text: b }));
+
+      gsap.from(document.getElementById('work-detail'), { opacity: 0, y: 10, duration: 0.35, ease: 'power2.out' });
+    });
+  });
+
+  // ============================================================
+  // Mobile sheet toggle
+  // ============================================================
+  const sheetHandle = document.getElementById('sheet-handle');
+  const chatPanel   = document.getElementById('chat-panel');
+  if (sheetHandle) {
+    sheetHandle.addEventListener('click', () => chatPanel.classList.toggle('expanded'));
+  }
+</script>
+</body>
+</html>
