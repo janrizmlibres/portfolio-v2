@@ -42,6 +42,23 @@
 }
 
 @layer base {
+  .scrolled-to { position: relative; }
+  .scrolled-to::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 4rem;
+    bottom: 4rem;
+    width: 2px;
+    background: var(--color-phosphor-500);
+    box-shadow: 0 0 12px var(--color-phosphor-500);
+    animation: scrolled-fade 2.4s ease-out forwards;
+  }
+  @keyframes scrolled-fade {
+    0%, 60% { opacity: 1; }
+    100%    { opacity: 0; }
+  }
+
   html { background: var(--color-ink-bg); color-scheme: dark; }
   body {
     font-family: var(--font-body);
