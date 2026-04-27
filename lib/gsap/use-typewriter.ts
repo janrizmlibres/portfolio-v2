@@ -31,12 +31,14 @@ export function useTypewriter(
   const typeMsRef = useRef(typeMs);
   const gapMsRef = useRef(gapMs);
 
-  // Keep refs in sync with latest values
-  wordsRef.current = words;
-  holdMsRef.current = holdMs;
-  eraseMsRef.current = eraseMs;
-  typeMsRef.current = typeMs;
-  gapMsRef.current = gapMs;
+  // Sync refs to latest values on every render (lint-clean, no deps)
+  useEffect(() => {
+    wordsRef.current = words;
+    holdMsRef.current = holdMs;
+    eraseMsRef.current = eraseMs;
+    typeMsRef.current = typeMs;
+    gapMsRef.current = gapMs;
+  });
 
   useEffect(() => {
     cancelledRef.current = false;
@@ -81,7 +83,6 @@ export function useTypewriter(
     return () => {
       cancelledRef.current = true;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // run once on mount only; reads latest values via refs
 
   return text;

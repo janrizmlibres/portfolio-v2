@@ -1,9 +1,13 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI();
+let _client: OpenAI | null = null;
+function client() {
+  if (!_client) _client = new OpenAI();
+  return _client;
+}
 
 export async function embedQuery(text: string): Promise<number[]> {
-  const r = await openai.embeddings.create({
+  const r = await client().embeddings.create({
     model: "text-embedding-3-small",
     input: text,
   });
