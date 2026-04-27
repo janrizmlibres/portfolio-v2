@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# portfolio-v2
 
-## Getting Started
+A chat-first AI engineer portfolio. The landing page IS a chat with an agent that has read everything I've written.
 
-First, run the development server:
+[Live](https://janrizlibres.vercel.app) · [Spec](docs/superpowers/specs/2026-04-27-portfolio-v2-design.md) · [Visual prototype](docs/superpowers/design/2026-04-27-visual-prototype.html)
+
+## What this is
+
+This site has two states:
+
+1. **State 1 — chat-first landing.** A centered prompt, suggested chips, no traditional portfolio sections.
+2. **State 2 — activated.** After the visitor's first message, a GSAP timeline reveals the portfolio (Hero, About, Work, Personal Projects, Contact) alongside a persistent chat panel. Returning visitors land here directly.
+
+The chat is powered by OpenAI GPT-4o via the Vercel AI SDK v6, retrieving from a shared **Supabase + pgvector** index that's populated by the [adjacent personal wiki](https://github.com/janrizmlibres/llm-wiki). The portfolio is one consumer of that index.
+
+## Stack
+
+- Next.js 16 (App Router) + React 19 + TypeScript 5
+- Tailwind CSS v4
+- GSAP 3.15+ (motion), `@gsap/react` (`useGSAP`), ScrollTrigger, ScrollToPlugin, Draggable
+- Vercel AI SDK v6 (`ai` + `@ai-sdk/openai` + `@ai-sdk/react`)
+- Drizzle ORM + `postgres-js` driver against Supabase Postgres + pgvector
+- Upstash Redis + `@upstash/ratelimit`
+- Vitest + React Testing Library, Playwright
+
+## Local development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local   # then fill in real values
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Var | Purpose |
+|---|---|
+| `OPENAI_API_KEY` | Chat completion + embeddings (`text-embedding-3-small`) |
+| `SUPABASE_DB_URL` | Postgres connection. Use the **transaction-pooler** endpoint (`port 6543`) with a read-only role. |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Rate limiting + monthly cost-cap counter |
+| `MONTHLY_COST_CAP_USD` | Soft cap on monthly OpenAI spend. Default `50`. |
 
-## Learn More
+### Database setup
 
-To learn more about Next.js, take a look at the following resources:
+The `wiki_chunks` table is shared with the [adjacent wiki publisher](https://github.com/janrizmlibres/llm-wiki). One repo owns the migration; both consume the same Supabase project.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Generate migration (only when schema changes)
+pnpm db:generate
+# Apply migration to your Supabase project
+pnpm db:migrate
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The chat won't return useful answers until the wiki has run its `pnpm publish` script and populated the table.
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Script | What |
+|---|---|
+| `pnpm dev` | Run Next.js dev server |
+| `pnpm build` | Production build |
+| `pnpm test` | Vitest unit/integration tests |
+| `pnpm test:watch` | Vitest in watch mode |
+| `pnpm test:e2e` | Playwright happy path |
+| `pnpm db:generate` | Drizzle Kit — generate a migration from schema |
+| `pnpm db:migrate` | Drizzle Kit — apply migrations |
+| `pnpm lint` | ESLint |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Architecture in 60 seconds
+
+```
+┌─────────────┐    state transition (GSAP)
+│  State 1    │ ─────────────────────────────► ┌─────────────┐
+│  landing    │                                 │  State 2    │
+└─────────────┘                                 │  portfolio  │
+                                                └──────┬──────┘
+                                                       │
+                                       ┌───────────────┴───────────────┐
+                                       │                               │
+                              ┌────────▼─────────┐          ┌──────────▼──────────┐
+                              │  display content │          │     chat panel       │
+                              │  (lib/content/*) │          │  (components/chat)   │
+                              │  hand-authored   │          │                      │
+                              └──────────────────┘          └──────────┬───────────┘
+                                                                       │ POST /api/chat
+                                                                       ▼
+                                                               ┌──────────────┐
+                                                               │ Vercel AI SDK│
+                                                               │   GPT-4o     │
+                                                               └──┬───────────┘
+                                                                  │ tool calls
+                                       ┌──────────────────────────┼────────────────────────┐
+                                       ▼                          ▼                        ▼
+                              ┌─────────────────┐       ┌──────────────────┐    ┌──────────────────┐
+                              │  search_wiki    │       │   scroll_to      │    │ highlight_project│
+                              │  pgvector       │       │   GSAP scroll    │    │  GSAP pulse      │
+                              │  (Supabase)     │       │   to section     │    │  on card         │
+                              └─────────────────┘       └──────────────────┘    └──────────────────┘
+```
+
+- Display content (Hero / About / Work / Projects / Contact) is hand-authored. The agent doesn't render these.
+- RAG content is sourced separately from the wiki. The agent can answer deeper questions than what's on the page — that's a feature.
+- localStorage `jrz-chat-v1` persists chat history per-browser. No accounts.
+
+## Adjacent wiki
+
+- Repo: <https://github.com/janrizmlibres/llm-wiki>
+- The wiki owns chunking + embedding + DB upsert via `pnpm publish`. It's a hard prerequisite for the chat to work.
+
+## Deferred / out of scope
+
+The spec captures these as future v2.x work, deliberately not built:
+
+- Writing / Notes section
+- Live AI demos ("show me how RAG works" with citation visualization)
+- `send_contact_message` tool, Cal.com booking, GitHub activity tool
+- CAPTCHA / Turnstile
+- Server-side chat history persistence
+- Multi-provider model picker
+
+## License
+
+[MIT](LICENSE) (when added).
