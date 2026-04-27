@@ -75,6 +75,18 @@ function HomeInner() {
     registerGsapPlugins();
   }, []);
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "/" && !["INPUT", "TEXTAREA"].includes((document.activeElement as HTMLElement)?.tagName ?? "")) {
+        e.preventDefault();
+        const input = document.querySelector<HTMLInputElement>('input[aria-label="Ask the agent anything"]');
+        input?.focus();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   const showState2 = state.activated;
 
   async function handleSubmit(text: string) {
