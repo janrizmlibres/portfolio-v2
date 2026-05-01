@@ -2,12 +2,12 @@ import { profile } from "@/lib/content/profile";
 
 function Row({ label, items }: { label: string; items: string[] }) {
   return (
-    <div className="grid grid-cols-[7rem_1fr] items-baseline gap-4">
+    <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-baseline gap-4">
       <span className="whitespace-nowrap tracking-[0.04em] text-ink-fg-dim">
         {label}
         <span aria-hidden className="ml-2 text-ink-line">──</span>
       </span>
-      <span>
+      <span className="[overflow-wrap:anywhere]">
         {items.map((item, i) => (
           <span key={item}>
             <span className="text-ink-fg">{item}</span>

@@ -155,11 +155,9 @@ function HomeInner() {
   }
 
   async function handleClear() {
-    // Reset our local store
-    clear();
-    // Reset AI SDK v6 message state
-    setMessages([]);
-
+    // Run the visual transition first so React state (showState2) stays true
+    // during the animation — this prevents the state-1 typewriter from
+    // unpausing while state 2 is still visible, which caused flickering.
     if (state1Ref.current && state2Ref.current) {
       await runStateTransition({
         state1: state1Ref.current,
@@ -169,10 +167,13 @@ function HomeInner() {
         reduced: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       });
     }
+    // Update store and SDK only after the transition completes.
+    clear();
+    setMessages([]);
   }
 
   const desktopChatPanel = (
-    <div ref={chatPanelRef} className="max-md:hidden">
+    <div ref={chatPanelRef} className="max-lg:hidden">
       <ChatPanel
         onSubmit={handleSubmit}
         onClear={handleClear}

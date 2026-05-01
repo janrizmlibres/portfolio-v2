@@ -48,7 +48,7 @@ export function MobileBottomSheet({ children, collapsedVh = 32, expandedVh = 92 
   return (
     <div
       ref={sheetRef}
-      className="fixed inset-x-0 bottom-0 z-50 md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 lg:hidden"
       style={{ height: `${collapsedVh}vh` }}
     >
       <div className="flex h-full flex-col">

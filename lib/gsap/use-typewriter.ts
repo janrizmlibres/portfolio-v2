@@ -26,7 +26,6 @@ export function useTypewriter(
   const [text, setText] = useState<string>(words[0] ?? "");
 
   // Keep mutable refs so the effect doesn't need to re-run when these change
-  const cancelledRef = useRef(false);
   const wordsRef = useRef(words);
   const holdMsRef = useRef(holdMs);
   const eraseMsRef = useRef(eraseMs);
@@ -45,48 +44,56 @@ export function useTypewriter(
   });
 
   useEffect(() => {
-    cancelledRef.current = false;
+    // Local per-effect-run flag — a shared ref would let a previous run's
+    // un-cancellation race with a new run, leaving multiple loops running.
+    let cancelled = false;
 
     if (typeof window !== "undefined") {
       if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
         setText(wordsRef.current[0] ?? "");
-        return;
+        return () => {
+          cancelled = true;
+        };
       }
     }
 
-    if (paused) return;
+    if (paused) {
+      // Reset to full word so there's no stale partial word on next unpause.
+      setText(wordsRef.current[idxRef.current] ?? "");
+      return () => {
+        cancelled = true;
+      };
+    }
 
     const sleep = (ms: number) =>
-      new Promise<void>((resolve) => {
-        setTimeout(() => {
-          if (!cancelledRef.current) resolve();
-        }, ms);
-      });
+      new Promise<void>((resolve) => setTimeout(resolve, ms));
 
     setText(wordsRef.current[idxRef.current] ?? "");
 
     (async () => {
-      while (!cancelledRef.current) {
+      while (!cancelled) {
         await sleep(holdMsRef.current);
+        if (cancelled) return;
         const current = wordsRef.current[idxRef.current] ?? "";
         for (let i = current.length - 1; i >= 0; i--) {
           await sleep(eraseMsRef.current);
-          if (cancelledRef.current) return;
+          if (cancelled) return;
           setText(current.slice(0, i));
         }
         await sleep(gapMsRef.current);
+        if (cancelled) return;
         idxRef.current = (idxRef.current + 1) % wordsRef.current.length;
         const next = wordsRef.current[idxRef.current] ?? "";
         for (let i = 1; i <= next.length; i++) {
           await sleep(typeMsRef.current);
-          if (cancelledRef.current) return;
+          if (cancelled) return;
           setText(next.slice(0, i));
         }
       }
     })();
 
     return () => {
-      cancelledRef.current = true;
+      cancelled = true;
     };
   }, [paused]);
 

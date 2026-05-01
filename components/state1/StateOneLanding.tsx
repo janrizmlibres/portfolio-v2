@@ -77,7 +77,7 @@ export const StateOneLanding = forwardRef<StateOneLandingHandle, Props>(function
             Hi, I&apos;m <span className="text-ink-fg">{profile.greetingName}.</span>
           </p>
 
-          <h1 className="text-display mx-auto mb-6 mt-2 text-[clamp(4.5rem,10vw,8rem)] font-medium leading-[0.95] text-ink-fg">
+          <h1 className="text-display mx-auto mb-6 mt-2 text-[clamp(2rem,10vw,8rem)] font-medium leading-[0.95] text-ink-fg">
             <span className="block">
               <span data-typewriter>{word}</span>
               <span
