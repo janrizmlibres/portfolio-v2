@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 import type { ChatMessage } from "@/lib/chat/types";
 import { ToolCallLine } from "./ToolCallLine";
 
@@ -57,12 +59,61 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
   );
 }
 
-export function MessageList({ messages }: { messages: ChatMessage[] }) {
+function TypingBubble() {
   const ref = useRef<HTMLDivElement | null>(null);
+
+  useGSAP(
+    () => {
+      const dots = ref.current?.querySelectorAll<HTMLSpanElement>("[data-dot]");
+      if (!dots || dots.length === 0) return;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduced) {
+        gsap.set(dots, { opacity: 0.7 });
+        return;
+      }
+      gsap.to(dots, {
+        opacity: 1,
+        y: -3,
+        duration: 0.45,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        stagger: { each: 0.15, from: "start" },
+      });
+    },
+    { scope: ref }
+  );
+
+  return (
+    <div
+      ref={ref}
+      role="status"
+      aria-label="Assistant is thinking"
+      className="flex max-w-[92%] items-center gap-1.5 self-start py-2"
+    >
+      <span data-dot className="block h-1.5 w-1.5 rounded-full bg-phosphor-500 opacity-40" />
+      <span data-dot className="block h-1.5 w-1.5 rounded-full bg-phosphor-500 opacity-40" />
+      <span data-dot className="block h-1.5 w-1.5 rounded-full bg-phosphor-500 opacity-40" />
+    </div>
+  );
+}
+
+interface MessageListProps {
+  messages: ChatMessage[];
+  isStreaming?: boolean;
+}
+
+export function MessageList({ messages, isStreaming }: MessageListProps) {
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  const last = messages[messages.length - 1];
+  const showTyping =
+    !!isStreaming &&
+    (!last || last.role === "user" || (last.role === "assistant" && !last.content));
 
   useEffect(() => {
     if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
-  }, [messages]);
+  }, [messages, showTyping]);
 
   return (
     <div ref={ref} aria-live="polite" className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
@@ -72,6 +123,7 @@ export function MessageList({ messages }: { messages: ChatMessage[] }) {
           {m.content ? <MessageBubble msg={m} /> : null}
         </div>
       ))}
+      {showTyping ? <TypingBubble /> : null}
     </div>
   );
 }

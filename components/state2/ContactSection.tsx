@@ -8,7 +8,7 @@ export function ContactSection() {
         num="/04"
         eyebrow="contact"
         title="Get in *touch*"
-        lede={`Best ways to reach me. The agent above can also send you a thread of context if it'd help.`}
+        lede={`Best ways to reach me. The chat agent can also send you a thread of context if it'd help.`}
       />
       <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
         {contactLinks.map((c) => (
