@@ -1,21 +1,11 @@
 import { NextRequest } from "next/server";
-import { streamText, stepCountIs } from "ai";
-import type { ModelMessage } from "ai";
+import { streamText, stepCountIs, convertToModelMessages } from "ai";
+import type { UIMessage } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { SYSTEM_PROMPT } from "@/lib/ai/system-prompt";
 import { tools } from "@/lib/ai/tools";
 import { checkRateLimit } from "@/lib/limits/rate-limit";
 import { hasBudget, recordUsage } from "@/lib/limits/cost-cap";
-
-// AI SDK v6 adaptations vs v3 reference template:
-//   - messages: client sends { role, content } objects. UserModelMessage.content and
-//     AssistantModelMessage.content both accept plain strings, so the { role, content }
-//     shape is directly assignable to ModelMessage[] — no convertToModelMessages() needed
-//     (that helper takes UIMessage[] with a required `parts` field, not this shape).
-//   - maxSteps replaced by stopWhen: stepCountIs(N).
-//   - toDataStreamResponse() renamed to toUIMessageStreamResponse().
-//   - usage fields renamed: inputTokens / outputTokens (not promptTokens / completionTokens).
-//   - totalUsage on the onFinish event aggregates across all steps (preferred over per-step usage).
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -62,23 +52,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const body = (await req.json()) as {
-    messages?: { role: "user" | "assistant"; content: string }[];
-  };
-
-  // { role, content } with string content is assignable to ModelMessage[]
-  // (UserModelMessage and AssistantModelMessage both accept content: string).
-  const messages = (body.messages ?? []) as ModelMessage[];
+  const body = (await req.json()) as { messages?: UIMessage[] };
+  const messages = await convertToModelMessages(body.messages ?? []);
 
   const result = streamText({
     model: openai("gpt-4o"),
     system: SYSTEM_PROMPT,
     messages,
     tools,
-    // v6: maxSteps replaced by stopWhen + stepCountIs helper.
     stopWhen: stepCountIs(4),
     onFinish: async ({ totalUsage }) => {
-      // v6 usage fields: inputTokens / outputTokens (not promptTokens / completionTokens).
       await recordUsage({
         totalTokens: totalUsage.totalTokens ?? 0,
         promptTokens: totalUsage.inputTokens ?? undefined,
@@ -88,6 +71,5 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // v6: toDataStreamResponse() renamed to toUIMessageStreamResponse().
   return result.toUIMessageStreamResponse();
 }

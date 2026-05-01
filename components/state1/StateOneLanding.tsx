@@ -4,6 +4,8 @@ import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import Image from "next/image";
 import { profile } from "@/lib/content/profile";
 import { useTypewriter } from "@/lib/gsap/use-typewriter";
+import { useChatStore } from "@/components/chat/ChatStateProvider";
+import { useChatState } from "@/lib/chat/hook";
 import { PromptInput } from "./PromptInput";
 import { ChipRow } from "./ChipRow";
 
@@ -22,7 +24,9 @@ export const StateOneLanding = forwardRef<StateOneLandingHandle, Props>(function
 ) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [value, setValue] = useState("");
-  const word = useTypewriter(profile.headlineTypewriter);
+  // Pause when State 2 is active so only the visible hero ticks a timeline.
+  const { state } = useChatState(useChatStore());
+  const word = useTypewriter(profile.headlineTypewriter, { paused: state.activated });
 
   useImperativeHandle(ref, () => ({
     async dispatchChip(text: string) {
@@ -74,13 +78,14 @@ export const StateOneLanding = forwardRef<StateOneLandingHandle, Props>(function
           </p>
 
           <h1 className="text-display mx-auto mb-6 mt-2 text-[clamp(4.5rem,10vw,8rem)] font-medium leading-[0.95] text-ink-fg">
-            <span data-typewriter>{word}</span>
-            <span
-              aria-hidden
-              className="inline-block h-[0.85em] w-[0.08em] mx-[0.05em] -translate-y-[0.06em] bg-saffron-500 shadow-[0_0_6px_rgba(232,183,90,0.5)] animate-blink"
-            />
-            {" "}
-            <span className="text-italic-accent leading-[0.95]">
+            <span className="block">
+              <span data-typewriter>{word}</span>
+              <span
+                aria-hidden
+                className="inline-block h-[0.85em] w-[0.08em] mx-[0.05em] -translate-y-[0.06em] bg-saffron-500 shadow-[0_0_6px_rgba(232,183,90,0.5)] animate-blink"
+              />
+            </span>
+            <span className="block text-italic-accent">
               {profile.headlineSuffix}
             </span>
           </h1>

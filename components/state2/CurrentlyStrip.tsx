@@ -2,8 +2,8 @@ import { profile } from "@/lib/content/profile";
 
 function Row({ label, items }: { label: string; items: string[] }) {
   return (
-    <div className="grid grid-cols-[80px_1fr] items-baseline gap-4">
-      <span className="relative tracking-[0.04em] text-ink-fg-dim">
+    <div className="grid grid-cols-[7rem_1fr] items-baseline gap-4">
+      <span className="whitespace-nowrap tracking-[0.04em] text-ink-fg-dim">
         {label}
         <span aria-hidden className="ml-2 text-ink-line">──</span>
       </span>

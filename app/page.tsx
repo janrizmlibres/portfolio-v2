@@ -15,6 +15,7 @@ import { HighlightEffectHandler } from "@/components/effects/HighlightEffectHand
 import { registerGsapPlugins } from "@/lib/gsap/register";
 import { runStateTransition } from "@/lib/gsap/use-state-transition";
 import { emit } from "@/lib/tool-effects/event-bus";
+import type { ToolCall } from "@/lib/chat/types";
 
 function HomeInner() {
   const store = useChatStore();
@@ -24,6 +25,12 @@ function HomeInner() {
   const state2Ref = useRef<HTMLDivElement | null>(null);
   const chatPanelRef = useRef<HTMLDivElement | null>(null);
   const [transitioning, setTransitioning] = useState(false);
+  const [chatCollapsed, setChatCollapsed] = useState(false);
+
+  // Buffer tool calls observed during a single assistant turn. Drained in
+  // onFinish and attached to the persisted ChatMessage so the breadcrumb
+  // ("↻ search_wiki(...)") survives reload alongside the prose.
+  const pendingToolCallsRef = useRef<ToolCall[]>([]);
 
   // AI SDK v6: useChat from @ai-sdk/react
   // - sendMessage({ text }) to submit user messages
@@ -40,6 +47,12 @@ function HomeInner() {
       const input = (toolCall as { input?: Record<string, unknown> }).input;
       if (!input) return;
       const toolName = (toolCall as { toolName: string }).toolName;
+      if (toolName === "scroll_to" || toolName === "highlight_project" || toolName === "search_wiki") {
+        pendingToolCallsRef.current.push({
+          name: toolName,
+          args: input,
+        });
+      }
       if (toolName === "scroll_to") {
         emit("scrollTo", { section: input.section as never });
       } else if (toolName === "highlight_project") {
@@ -58,11 +71,14 @@ function HomeInner() {
       // Also fall back to content if parts are empty
       const content =
         text || (message as { content?: string }).content || "";
-      if (content) {
+      const toolCalls = pendingToolCallsRef.current;
+      pendingToolCallsRef.current = [];
+      if (content || toolCalls.length > 0) {
         appendMessage({
           id: message.id ?? crypto.randomUUID(),
           role: "assistant",
           content,
+          toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
           createdAt: new Date().toISOString(),
         });
       }
@@ -74,6 +90,27 @@ function HomeInner() {
   useEffect(() => {
     registerGsapPlugins();
   }, []);
+
+  // Rehydrate the AI SDK's internal message state from the persisted store on
+  // mount, so a returning visitor's next /api/chat request includes their prior
+  // turns. The store is already the source of truth for what the user sees;
+  // this only seeds the SDK so the server gets full conversation context.
+  const rehydratedRef = useRef(false);
+  useEffect(() => {
+    if (rehydratedRef.current) return;
+    rehydratedRef.current = true;
+    const seed = store.getState().messages.flatMap((m) => {
+      if ((m.role !== "user" && m.role !== "assistant") || !m.content) return [];
+      return [
+        {
+          id: m.id,
+          role: m.role,
+          parts: [{ type: "text" as const, text: m.content }],
+        },
+      ];
+    });
+    if (seed.length > 0) setMessages(seed);
+  }, [setMessages, store]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -141,6 +178,8 @@ function HomeInner() {
         onClear={handleClear}
         isStreaming={isStreaming}
         disabled={transitioning}
+        collapsed={chatCollapsed}
+        onToggleCollapsed={() => setChatCollapsed((c) => !c)}
       />
     </div>
   );
@@ -157,7 +196,7 @@ function HomeInner() {
         </div>
 
         <div ref={state2Ref} style={{ display: showState2 ? "block" : "none" }}>
-          <StateTwoView chatPanelSlot={desktopChatPanel} />
+          <StateTwoView chatPanelSlot={desktopChatPanel} chatCollapsed={chatCollapsed} />
         </div>
 
         {showState2 ? (

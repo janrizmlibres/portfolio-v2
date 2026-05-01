@@ -9,6 +9,8 @@ interface Options {
   typeMs?: number;
   /** Pause between erase-complete and type-start. Default 220ms. */
   gapMs?: number;
+  /** When true, the timeline is suspended; on resume it picks up at the current word. */
+  paused?: boolean;
 }
 
 /**
@@ -20,7 +22,7 @@ export function useTypewriter(
   words: readonly string[],
   options: Options = {}
 ): string {
-  const { holdMs = 2400, eraseMs = 60, typeMs = 90, gapMs = 220 } = options;
+  const { holdMs = 2400, eraseMs = 60, typeMs = 90, gapMs = 220, paused = false } = options;
   const [text, setText] = useState<string>(words[0] ?? "");
 
   // Keep mutable refs so the effect doesn't need to re-run when these change
@@ -30,6 +32,8 @@ export function useTypewriter(
   const eraseMsRef = useRef(eraseMs);
   const typeMsRef = useRef(typeMs);
   const gapMsRef = useRef(gapMs);
+  // Persisted across pause/resume so the loop picks up at the current word.
+  const idxRef = useRef(0);
 
   // Sync refs to latest values on every render (lint-clean, no deps)
   useEffect(() => {
@@ -50,6 +54,8 @@ export function useTypewriter(
       }
     }
 
+    if (paused) return;
+
     const sleep = (ms: number) =>
       new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -57,21 +63,20 @@ export function useTypewriter(
         }, ms);
       });
 
-    let idx = 0;
-    setText(wordsRef.current[idx] ?? "");
+    setText(wordsRef.current[idxRef.current] ?? "");
 
     (async () => {
       while (!cancelledRef.current) {
         await sleep(holdMsRef.current);
-        const current = wordsRef.current[idx] ?? "";
+        const current = wordsRef.current[idxRef.current] ?? "";
         for (let i = current.length - 1; i >= 0; i--) {
           await sleep(eraseMsRef.current);
           if (cancelledRef.current) return;
           setText(current.slice(0, i));
         }
         await sleep(gapMsRef.current);
-        idx = (idx + 1) % wordsRef.current.length;
-        const next = wordsRef.current[idx] ?? "";
+        idxRef.current = (idxRef.current + 1) % wordsRef.current.length;
+        const next = wordsRef.current[idxRef.current] ?? "";
         for (let i = 1; i <= next.length; i++) {
           await sleep(typeMsRef.current);
           if (cancelledRef.current) return;
@@ -83,7 +88,7 @@ export function useTypewriter(
     return () => {
       cancelledRef.current = true;
     };
-  }, []); // run once on mount only; reads latest values via refs
+  }, [paused]);
 
   return text;
 }

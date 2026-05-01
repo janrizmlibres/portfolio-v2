@@ -14,7 +14,7 @@ function monthKey(d = new Date()) {
 }
 
 function capMicroCents(): number {
-  const usd = Number(process.env.MONTHLY_COST_CAP_USD ?? "50");
+  const usd = Number(process.env.MONTHLY_COST_CAP_USD ?? "10");
   return usd * 100 * 1000;
 }
 

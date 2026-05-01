@@ -12,11 +12,50 @@ interface Props {
   disabled?: boolean;
   /** When true, renders without sticky-positioning (for the mobile bottom sheet). */
   flat?: boolean;
+  /** When true, renders the narrow tab variant; ignored when `flat`. */
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
 }
 
-export function ChatPanel({ onSubmit, onClear, isStreaming, disabled, flat }: Props) {
+export function ChatPanel({
+  onSubmit,
+  onClear,
+  isStreaming,
+  disabled,
+  flat,
+  collapsed,
+  onToggleCollapsed,
+}: Props) {
   const store = useChatStore();
   const { state } = useChatState(store);
+
+  if (collapsed && !flat) {
+    return (
+      <aside
+        aria-label="Chat panel (collapsed)"
+        className="sticky top-6 flex h-[calc(100vh-3rem)] w-14 flex-col items-center justify-between rounded-2xl border border-ink-line border-l-2 border-l-phosphor-700 bg-ink-surface-2 py-4 shadow-[-8px_0_40px_rgba(94,229,217,0.05)]"
+      >
+        <button
+          type="button"
+          onClick={onToggleCollapsed}
+          aria-label="Expand chat"
+          className="flex h-9 w-9 items-center justify-center bg-transparent font-mono text-base text-phosphor-500 transition-colors duration-200 hover:text-ink-fg"
+        >
+          ‹
+        </button>
+        <div
+          className="select-none [writing-mode:vertical-rl] rotate-180 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-fg-fade"
+          aria-hidden
+        >
+          chat · agent
+        </div>
+        <span
+          aria-hidden
+          className="inline-block h-1.5 w-1.5 rounded-full bg-phosphor-500 shadow-[0_0_8px_var(--color-phosphor-500)] animate-pulse-soft"
+        />
+      </aside>
+    );
+  }
 
   return (
     <aside
@@ -35,13 +74,25 @@ export function ChatPanel({ onSubmit, onClear, isStreaming, disabled, flat }: Pr
           />
           <span>{isStreaming ? "agent · thinking" : "chat · agent"}</span>
         </div>
-        <button
-          type="button"
-          onClick={onClear}
-          className="bg-transparent font-mono text-[11px] uppercase tracking-[0.06em] text-ink-fg-fade transition-colors duration-200 hover:text-ink-fg"
-        >
-          clear
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onClear}
+            className="bg-transparent font-mono text-[11px] uppercase tracking-[0.06em] text-ink-fg-fade transition-colors duration-200 hover:text-ink-fg"
+          >
+            clear
+          </button>
+          {onToggleCollapsed && !flat ? (
+            <button
+              type="button"
+              onClick={onToggleCollapsed}
+              aria-label="Collapse chat"
+              className="bg-transparent font-mono text-base leading-none text-ink-fg-fade transition-colors duration-200 hover:text-ink-fg"
+            >
+              ›
+            </button>
+          ) : null}
+        </div>
       </div>
 
       <MessageList messages={state.messages} />
