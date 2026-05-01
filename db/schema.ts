@@ -23,7 +23,6 @@ export const wikiChunks = pgTable("wiki_chunks", {
   embedding:      vector("embedding"),
   embeddingModel: text("embedding_model").notNull(),
   metadata:       jsonb("metadata").notNull().default({}),
-  sourceCommit:   text("source_commit"),
   updatedAt:      timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -1,5 +1,5 @@
 {
-  "id": "6a5a350b-ba02-4832-b3d2-f25fc38c4a27",
+  "id": "5dd81d08-5029-4ada-96d2-0f1b7cc123fd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -68,12 +68,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'{}'::jsonb"
-        },
-        "source_commit": {
-          "name": "source_commit",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         },
         "updated_at": {
           "name": "updated_at",

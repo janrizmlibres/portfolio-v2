@@ -82,7 +82,7 @@ export function ChatPanel({
           />
           <span>{isStreaming ? "agent · thinking" : "chat · agent"}</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={onClear}
@@ -91,15 +91,19 @@ export function ChatPanel({
             clear
           </button>
           {onToggleCollapsed && !flat ? (
-            <button
-              type="button"
-              onClick={onToggleCollapsed}
-              aria-label="Collapse chat"
-              tabIndex={collapsed ? -1 : 0}
-              className="bg-transparent font-mono text-base leading-none text-ink-fg-fade transition-colors duration-200 hover:text-ink-fg"
-            >
-              ›
-            </button>
+            <>
+              <span aria-hidden className="h-4 w-px bg-ink-line" />
+              <button
+                type="button"
+                onClick={onToggleCollapsed}
+                aria-label="Collapse chat"
+                title="Collapse chat"
+                tabIndex={collapsed ? -1 : 0}
+                className="flex h-7 w-7 items-center justify-center rounded-md border border-ink-line bg-transparent font-mono text-base leading-none text-ink-fg-fade transition-colors duration-200 hover:border-phosphor-700 hover:text-ink-fg"
+              >
+                ›
+              </button>
+            </>
           ) : null}
         </div>
       </div>

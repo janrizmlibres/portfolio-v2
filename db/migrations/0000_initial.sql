@@ -11,7 +11,6 @@ CREATE TABLE "wiki_chunks" (
 	"embedding" vector(1536),
 	"embedding_model" text NOT NULL,
 	"metadata" jsonb DEFAULT '{}'::jsonb NOT NULL,
-	"source_commit" text,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 

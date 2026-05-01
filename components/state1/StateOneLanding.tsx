@@ -92,7 +92,7 @@ export const StateOneLanding = forwardRef<StateOneLandingHandle, Props>(function
 
           <p className="mx-auto mb-11 max-w-[38rem] text-[1.0625rem] leading-relaxed text-ink-fg-muted">
             I build production systems — full-stack platforms, AI agents, and RAG pipelines. Instead of scrolling, just{" "}
-            <span className="text-italic-accent text-ink-fg">ask</span> — the chat has read everything I&apos;ve written.
+            <span className="text-italic-accent text-ink-fg">ask</span> — the chat is me, just faster.
           </p>
 
           <div className="mx-auto w-full max-w-[640px]">
