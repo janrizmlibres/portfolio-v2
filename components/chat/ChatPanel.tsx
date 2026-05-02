@@ -7,6 +7,7 @@ import { useChatState } from "@/lib/chat/hook";
 import { useChatStore } from "./ChatStateProvider";
 import { MessageList } from "./MessageList";
 import { ChatInput } from "./ChatInput";
+import type { ToolCall } from "@/lib/chat/types";
 
 interface Props {
   onSubmit: (text: string) => void;
@@ -18,6 +19,8 @@ interface Props {
   /** When true, renders the narrow tab variant; ignored when `flat`. */
   collapsed?: boolean;
   onToggleCollapsed?: () => void;
+  /** Tool calls observed mid-stream, before the assistant's onFinish fires. */
+  pendingToolCalls?: ToolCall[];
 }
 
 export function ChatPanel({
@@ -28,6 +31,7 @@ export function ChatPanel({
   flat,
   collapsed,
   onToggleCollapsed,
+  pendingToolCalls,
 }: Props) {
   const store = useChatStore();
   const { state } = useChatState(store);
@@ -108,7 +112,11 @@ export function ChatPanel({
         </div>
       </div>
 
-      <MessageList messages={state.messages} isStreaming={isStreaming} />
+      <MessageList
+        messages={state.messages}
+        isStreaming={isStreaming}
+        pendingToolCalls={pendingToolCalls}
+      />
 
       <ChatInput onSubmit={onSubmit} disabled={disabled} />
     </aside>

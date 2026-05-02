@@ -30,7 +30,10 @@ function HomeInner() {
   // Buffer tool calls observed during a single assistant turn. Drained in
   // onFinish and attached to the persisted ChatMessage so the breadcrumb
   // ("↻ search_wiki(...)") survives reload alongside the prose.
+  // The state mirror powers real-time rendering so each tool call shows up
+  // mid-stream, not only after the assistant finishes.
   const pendingToolCallsRef = useRef<ToolCall[]>([]);
+  const [pendingToolCalls, setPendingToolCalls] = useState<ToolCall[]>([]);
 
   // AI SDK v6: useChat from @ai-sdk/react
   // - sendMessage({ text }) to submit user messages
@@ -56,6 +59,7 @@ function HomeInner() {
       // Drop any pending tool-call breadcrumbs from the aborted turn so they
       // don't leak into the next assistant message.
       pendingToolCallsRef.current = [];
+      setPendingToolCalls([]);
       // The SDK serializes non-OK responses by stringifying the JSON body
       // into error.message — extract the human-readable `message` field.
       const raw = error?.message?.trim() ?? "";
@@ -86,10 +90,9 @@ function HomeInner() {
       if (!input) return;
       const toolName = (toolCall as { toolName: string }).toolName;
       if (toolName === "scroll_to" || toolName === "highlight_project" || toolName === "search_wiki") {
-        pendingToolCallsRef.current.push({
-          name: toolName,
-          args: input,
-        });
+        const call: ToolCall = { name: toolName, args: input };
+        pendingToolCallsRef.current.push(call);
+        setPendingToolCalls((prev) => [...prev, call]);
       }
       if (toolName === "scroll_to") {
         emit("scrollTo", { section: input.section as never });
@@ -111,6 +114,7 @@ function HomeInner() {
         text || (message as { content?: string }).content || "";
       const toolCalls = pendingToolCallsRef.current;
       pendingToolCallsRef.current = [];
+      setPendingToolCalls([]);
       if (content || toolCalls.length > 0) {
         appendMessage({
           id: message.id ?? crypto.randomUUID(),
@@ -208,6 +212,8 @@ function HomeInner() {
     // Update store and SDK only after the transition completes.
     clear();
     setMessages([]);
+    pendingToolCallsRef.current = [];
+    setPendingToolCalls([]);
   }
 
   const desktopChatPanel = (
@@ -219,6 +225,7 @@ function HomeInner() {
         disabled={transitioning}
         collapsed={chatCollapsed}
         onToggleCollapsed={() => setChatCollapsed((c) => !c)}
+        pendingToolCalls={pendingToolCalls}
       />
     </div>
   );
@@ -246,6 +253,7 @@ function HomeInner() {
               onClear={handleClear}
               isStreaming={isStreaming}
               disabled={transitioning}
+              pendingToolCalls={pendingToolCalls}
             />
           </MobileBottomSheet>
         ) : null}

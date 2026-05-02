@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import type { ChatMessage } from "@/lib/chat/types";
+import type { ChatMessage, ToolCall } from "@/lib/chat/types";
 import { ToolCallLine } from "./ToolCallLine";
 
 // Matches *italic* or [text](url). Used to walk assistant prose in one pass.
@@ -111,19 +111,24 @@ function TypingBubble() {
 interface MessageListProps {
   messages: ChatMessage[];
   isStreaming?: boolean;
+  /** Tool calls captured during the in-flight assistant turn — rendered live
+   * above the typing dots, then cleared once onFinish persists them onto the
+   * appended assistant message. */
+  pendingToolCalls?: ToolCall[];
 }
 
-export function MessageList({ messages, isStreaming }: MessageListProps) {
+export function MessageList({ messages, isStreaming, pendingToolCalls }: MessageListProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const last = messages[messages.length - 1];
   const showTyping =
     !!isStreaming &&
     (!last || last.role === "user" || (last.role === "assistant" && !last.content));
+  const showPending = !!isStreaming && !!pendingToolCalls && pendingToolCalls.length > 0;
 
   useEffect(() => {
     if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
-  }, [messages, showTyping]);
+  }, [messages, showTyping, pendingToolCalls?.length]);
 
   return (
     <div ref={ref} aria-live="polite" className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
@@ -133,6 +138,11 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
           {m.content ? <MessageBubble msg={m} /> : null}
         </div>
       ))}
+      {showPending ? (
+        <div className="flex flex-col gap-1.5">
+          {pendingToolCalls!.map((c, i) => <ToolCallLine key={`pending-${i}`} call={c} />)}
+        </div>
+      ) : null}
       {showTyping ? <TypingBubble /> : null}
     </div>
   );
