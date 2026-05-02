@@ -73,7 +73,7 @@ export function StateTwoView({ chatPanelSlot, chatCollapsed }: Props) {
     <section id="state-2" aria-label="Portfolio with side chat" className="relative z-[2] min-h-dvh">
       <div
         ref={gridRef}
-        className={`grid gap-4 px-4 pb-16 pt-6 sm:px-8 lg:gap-8 lg:px-12 max-lg:pb-[35vh] ${initialLgTrack}`}
+        className={`grid gap-4 px-4 pt-6 sm:px-8 lg:gap-8 lg:px-12 max-lg:pb-[35vh] lg:pb-6 ${initialLgTrack}`}
       >
         <div ref={contentRef} className={`min-w-0 ${initialMaxW}`}>
           <CompactHero />

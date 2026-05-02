@@ -36,7 +36,7 @@ export function AboutSection() {
             alt={profile.portraitAlt}
             fill
             sizes="(min-width: 768px) 280px, 100vw"
-            className="object-cover transition-[transform,filter] duration-500 [filter:contrast(1.02)_saturate(0.9)] group-hover:scale-[1.04] group-hover:[filter:contrast(1.05)_saturate(1)]"
+            className="object-cover transition-all duration-500 ease-out [filter:contrast(1.02)_saturate(0.9)] group-hover:scale-[1.04] group-hover:[filter:contrast(1.05)_saturate(1)]"
           />
           <div
             aria-hidden

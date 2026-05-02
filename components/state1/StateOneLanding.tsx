@@ -69,7 +69,7 @@ export const StateOneLanding = forwardRef<StateOneLandingHandle, Props>(function
               width={176}
               height={176}
               priority
-              className="h-full w-full object-cover [filter:contrast(1.02)_saturate(0.92)]"
+              className="h-full w-full object-cover object-[50%_22%] scale-[2.15] [filter:contrast(1.02)_saturate(0.92)]"
             />
           </div>
 
