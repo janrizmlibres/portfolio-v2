@@ -1,0 +1,53 @@
+# Janriz Libres
+
+> Full-stack and AI engineer based in Cebu, Philippines. Builds production
+> systems — full-stack platforms, AI agents, and RAG pipelines. Summa Cum Laude
+> Bachelor of Science in Computer Science from Xavier University.
+
+This site is an AI-native portfolio: the chat on the page has read everything
+listed below. The sections rendered on the page are hand-authored; the chat's
+deeper knowledge is retrieved from a personal knowledge wiki via pgvector.
+
+## About
+
+- Name: Janriz Libres
+- Location: Cebu, Philippines (remote)
+- Roles: Full-stack engineer, AI engineer
+- Open to: full-stack and AI engineering roles, remote
+- Email: libres.janriz@gmail.com
+- GitHub: https://github.com/janrizmlibres
+- LinkedIn: https://linkedin.com/in/janrizlibres
+
+## Current stack
+
+Next.js, Vercel AI SDK, OpenAI, pgvector, MCP, TypeScript, Postgres, Tailwind,
+GSAP, Drizzle ORM, Supabase, Upstash Redis.
+
+## Professional experience
+
+- 2025–26 — LogoLife — Full-stack / AI Engineer (TypeScript, MCP, Mem0).
+  Shipped Athena, a context-aware admissions assistant with Mem0-backed memory
+  and a scoped MCP server, plus production crawlers, dashboards, and
+  load-testing harnesses.
+- 2025 — Tolstoy — Full-stack / AI Engineer (TanStack, AWS).
+- 2024 — Elinnov Technologies — Software Engineer Intern (ASP.NET, React).
+- 2023–24 — The Crusader Yearbook — Software Developer (Laravel, WordPress, Python).
+
+## Personal projects
+
+- FlowStack — https://devflow-clone-app.vercel.app/ — TypeScript, Next.js,
+  MongoDB, Tailwind. StackOverflow clone with NextAuth — posting, search,
+  comments, and analytics. Repo: https://github.com/janrizmlibres/devflow-clone-app
+- PulseVR — https://pulse-vr.vercel.app/ — TypeScript, React, Tailwind.
+  Responsive landing page for a fictional VR startup — mobile-first,
+  motion-rich. Repo: https://github.com/janrizmlibres/pulse-vr
+- Mercado — https://mercado-front-production.up.railway.app/ — TS, TanStack,
+  Nest.js, Postgres, Docker. Type-safe e-commerce frontend with GraphQL,
+  cart, checkout, and admin dashboard.
+  Repo: https://github.com/janrizmlibres/mercado-front/
+
+## Contact
+
+- Email: libres.janriz@gmail.com
+- GitHub: https://github.com/janrizmlibres
+- LinkedIn: https://linkedin.com/in/janrizlibres

@@ -196,20 +196,8 @@ function HomeInner() {
     sendMessage({ text });
   }
 
-  async function handleClear() {
-    // Run the visual transition first so React state (showState2) stays true
-    // during the animation — this prevents the state-1 typewriter from
-    // unpausing while state 2 is still visible, which caused flickering.
-    if (state1Ref.current && state2Ref.current) {
-      await runStateTransition({
-        state1: state1Ref.current,
-        state2: state2Ref.current,
-        chatPanel: chatPanelRef.current,
-        direction: "2to1",
-        reduced: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-      });
-    }
-    // Update store and SDK only after the transition completes.
+  function handleClear() {
+    // Wipe messages and start a fresh thread, but stay in State 2.
     clear();
     setMessages([]);
     pendingToolCallsRef.current = [];

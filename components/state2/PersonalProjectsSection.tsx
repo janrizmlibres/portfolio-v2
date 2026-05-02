@@ -16,8 +16,9 @@ export function PersonalProjectsSection() {
         {personalProjects.map((p) => (
           <article
             key={p.slug}
+            id={`project-${p.slug}`}
             data-project-slug={p.slug}
-            className="rounded-2xl border border-ink-line bg-ink-surface-1 p-6 transition-[border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink-fg-dim"
+            className="scroll-mt-6 rounded-2xl border border-ink-line bg-ink-surface-1 p-6 transition-[border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-ink-fg-dim"
           >
             <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl bg-gradient-to-br from-ink-surface-2 to-ink-line">
               <Image

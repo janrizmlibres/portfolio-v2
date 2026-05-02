@@ -22,14 +22,14 @@ describe("chat store", () => {
     expect(stored.activated).toBe(true);
   });
 
-  it("clear resets to deactivated", () => {
+  it("clear wipes messages but preserves activation", () => {
     const s = createChatStore();
     s.appendMessage({ id: "m1", role: "user", content: "hi", createdAt: "2026-01-01T00:00:00Z" });
     s.clear();
-    expect(s.getState().activated).toBe(false);
+    expect(s.getState().activated).toBe(true);
     expect(s.getState().messages).toEqual([]);
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
-    expect(stored.activated).toBe(false);
+    expect(stored.activated).toBe(true);
   });
 
   it("rehydrates from existing storage", () => {

@@ -54,13 +54,6 @@ Transitions are GSAP timelines in `lib/gsap/use-state-transition.ts`.
 
 The wiki is unaware of consumers. Consumer-specific routing lives in `metadata.routes.<consumer>` — opaque JSONB on the chunk, populated by wiki frontmatter. If you add features that require new metadata, document the convention here, never hardcode portfolio-specific fields into the wiki publisher.
 
-## Env vars (see `.env.example`)
-
-- `OPENAI_API_KEY`
-- `SUPABASE_DB_URL` — read-only role, transaction-pooler endpoint (`:6543`)
-- `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
-- `MONTHLY_COST_CAP_USD` (default 50)
-
 ## Conventions
 
 - **Path alias:** `@/*` → repo root. Use it; relative `../../../` paths invite mistakes.
@@ -70,6 +63,38 @@ The wiki is unaware of consumers. Consumer-specific routing lives in `metadata.r
 - **Italic accents** in copy use `*word*` markers; renderers in `components/ui` and `components/state2/AboutSection` parse them. Do not hand-roll `<em>` tags inside content data.
 - **Don't add CAPTCHA, accounts, or server-side chat persistence** without checking the spec — those were explicitly deferred.
 - **NDA work** in `lib/content/professional-projects.ts` stays at implementation-pattern level. No screenshots, no proprietary specifics. The "⊘ NDA" footer is intentional and must remain.
+
+## SEO / GEO sync
+
+The site's discoverability surface (search engines + LLM ingesters like GPTBot, ClaudeBot, PerplexityBot) is driven by a small set of files. **When site content changes, keep these in sync** — drift here is silent and only surfaces weeks later in stale LLM citations or missing rich results.
+
+| If you change… | Also update |
+|---|---|
+| `lib/content/profile.ts` (bio, stack, location) | `public/llms.txt` — mirror new bio/stack lines. JSON-LD auto-syncs via `lib/seo/structured-data.ts`. |
+| `lib/content/personal-projects.ts` (add/remove/rename) | `public/llms.txt` — add/remove the project entry. JSON-LD `ItemList` auto-syncs. **Slug change?** Anchor URL `#project-{slug}` changes too — check inbound links. |
+| `lib/content/work-timeline.ts` (new role) | `public/llms.txt` — add the role. `personSchema.worksFor` reads `workTimeline[0]`, so most-recent role auto-syncs. |
+| `lib/content/contact.ts` (new link) | `public/llms.txt`. JSON-LD `sameAs` auto-syncs. New external link? It needs `rel="me"` (already wired in `ContactSection.tsx`). |
+| Site copy in `app/layout.tsx` `metadata.title`/`description` | `app/opengraph-image.tsx` (the rendered headline), `public/llms.txt` lede. |
+| Add a new section to State 2 | Give it `id="sec-{name}"` (matches the `scroll_to` tool convention). Consider whether it deserves a `Person.knowsAbout` entry or a JSON-LD type. |
+| Production domain change | `lib/seo/site.ts` default OR set `NEXT_PUBLIC_SITE_URL` env var on Vercel. Also update the wordmark in `app/opengraph-image.tsx`. Resubmit sitemap to Search Console. |
+
+**Files that should never need manual edits if the above is followed:**
+- `app/robots.ts`, `app/sitemap.ts`, `app/manifest.ts` — derive from `siteUrl`
+- `lib/seo/structured-data.ts` — derives from `lib/content/*`
+
+**Verification after a sync:**
+```bash
+curl -s http://localhost:3000/robots.txt
+curl -s http://localhost:3000/sitemap.xml
+curl -s http://localhost:3000/llms.txt
+curl -s http://localhost:3000 | grep 'application/ld+json'
+```
+Then paste the deployed URL into [Rich Results Test](https://search.google.com/test/rich-results) — should pick up `Person`, `WebSite`, `ItemList`.
+
+**When NOT to expand SEO surface:**
+- Don't add `WebSite.potentialAction` SearchAction — there's no `/search` route.
+- Don't add per-project routes just for SEO; the chat-first single-page UX is the product. Anchors (`#project-{slug}`) are sufficient for LLM citation.
+- Don't auto-generate `llms.txt` from `lib/content/*` — the curated voice and section ordering is intentional and matters for LLM extraction quality.
 
 ## Testing
 

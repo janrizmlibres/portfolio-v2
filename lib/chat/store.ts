@@ -77,8 +77,9 @@ export function createChatStore(): ChatStore {
     },
     clear() {
       // New thread on clear so the next conversation traces as a fresh LangSmith thread.
+      // Keep `activated` so the visitor stays in State 2 — clear only wipes messages.
       state = {
-        activated: false,
+        activated: state.activated,
         messages: [],
         updatedAt: new Date().toISOString(),
         threadId: newThreadId(),
