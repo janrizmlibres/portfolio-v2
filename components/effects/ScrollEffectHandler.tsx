@@ -7,7 +7,8 @@ import { on } from "@/lib/tool-effects/event-bus";
 
 const SECTION_IDS = {
   about: "#sec-about",
-  work: "#sec-work",
+  experience: "#sec-work",
+  work: "#sec-selected-projects",
   projects: "#sec-projects",
   contact: "#sec-contact",
 } as const;

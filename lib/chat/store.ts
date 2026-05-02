@@ -1,4 +1,4 @@
-import { ChatMessage, ChatState, STORAGE_KEY } from "./types";
+import { ChatMessage, ChatState, STORAGE_KEY, newThreadId } from "./types";
 
 type Listener = () => void;
 
@@ -11,7 +11,12 @@ export interface ChatStore {
 }
 
 function emptyState(): ChatState {
-  return { activated: false, messages: [], updatedAt: new Date(0).toISOString() };
+  return {
+    activated: false,
+    messages: [],
+    updatedAt: new Date(0).toISOString(),
+    threadId: newThreadId(),
+  };
 }
 
 function readFromStorage(): ChatState {
@@ -24,6 +29,7 @@ function readFromStorage(): ChatState {
       activated: Boolean(parsed.activated),
       messages: Array.isArray(parsed.messages) ? (parsed.messages as ChatMessage[]) : [],
       updatedAt: typeof parsed.updatedAt === "string" ? parsed.updatedAt : new Date(0).toISOString(),
+      threadId: typeof parsed.threadId === "string" && parsed.threadId ? parsed.threadId : newThreadId(),
     };
   } catch {
     return emptyState();
@@ -54,6 +60,7 @@ export function createChatStore(): ChatStore {
         activated: true,
         messages: [...state.messages, msg],
         updatedAt: new Date().toISOString(),
+        threadId: state.threadId,
       };
       writeToStorage(state);
       notify();
@@ -63,12 +70,19 @@ export function createChatStore(): ChatStore {
         activated: messages.length > 0,
         messages,
         updatedAt: new Date().toISOString(),
+        threadId: state.threadId,
       };
       writeToStorage(state);
       notify();
     },
     clear() {
-      state = { activated: false, messages: [], updatedAt: new Date().toISOString() };
+      // New thread on clear so the next conversation traces as a fresh LangSmith thread.
+      state = {
+        activated: false,
+        messages: [],
+        updatedAt: new Date().toISOString(),
+        threadId: newThreadId(),
+      };
       writeToStorage(state);
       notify();
     },

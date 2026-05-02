@@ -1,7 +1,10 @@
 import { NextRequest } from "next/server";
-import { streamText, stepCountIs, convertToModelMessages } from "ai";
+import * as ai from "ai";
+import { stepCountIs, convertToModelMessages } from "ai";
 import type { UIMessage } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { Client } from "langsmith";
+import { wrapAISDK, createLangSmithProviderOptions } from "langsmith/experimental/vercel";
 import { SYSTEM_PROMPT } from "@/lib/ai/system-prompt";
 import { tools } from "@/lib/ai/tools";
 import { checkRateLimit } from "@/lib/limits/rate-limit";
@@ -9,6 +12,13 @@ import { hasBudget, recordUsage } from "@/lib/limits/cost-cap";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+// LangSmith client + wrapped AI SDK. When LANGSMITH_TRACING is unset/false the
+// client no-ops, so wrapping is safe in every environment.
+const lsClient = new Client();
+const { streamText } = wrapAISDK(ai, { client: lsClient });
+
+const CHAT_MODEL = process.env.OPENAI_CHAT_MODEL ?? "gpt-4o";
 
 function getClientIp(req: NextRequest): string {
   const fwd = req.headers.get("x-forwarded-for");
@@ -52,21 +62,31 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const body = (await req.json()) as { messages?: UIMessage[] };
+  const body = (await req.json()) as { messages?: UIMessage[]; threadId?: string };
   const messages = await convertToModelMessages(body.messages ?? []);
+  const threadId = typeof body.threadId === "string" && body.threadId ? body.threadId : undefined;
+
+  // session_id is the LangSmith convention for grouping runs into a thread in
+  // the Threads tab. thread_id mirrors it for downstream consumers.
+  const langsmith = createLangSmithProviderOptions({
+    name: "portfolio-chat",
+    metadata: threadId ? { session_id: threadId, thread_id: threadId } : {},
+    tags: ["portfolio", "chat"],
+  });
 
   const result = streamText({
-    model: openai("gpt-4o"),
+    model: openai(CHAT_MODEL),
     system: SYSTEM_PROMPT,
     messages,
     tools,
     stopWhen: stepCountIs(4),
+    providerOptions: { langsmith },
     onFinish: async ({ totalUsage }) => {
       await recordUsage({
         totalTokens: totalUsage.totalTokens ?? 0,
         promptTokens: totalUsage.inputTokens ?? undefined,
         completionTokens: totalUsage.outputTokens ?? undefined,
-        model: "gpt-4o",
+        model: CHAT_MODEL,
       });
     },
   });

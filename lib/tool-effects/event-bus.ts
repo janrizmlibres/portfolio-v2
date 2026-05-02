@@ -1,9 +1,8 @@
-type ScrollSection = "about" | "work" | "projects" | "contact";
-type ProjectSlug = "flowstack" | "pulsevr" | "mercado";
+type ScrollSection = "about" | "experience" | "work" | "projects" | "contact";
 
 interface Events {
   scrollTo: { section: ScrollSection };
-  highlightProject: { slug: ProjectSlug };
+  highlightProject: { slug: string };
 }
 
 type Listener<K extends keyof Events> = (data: Events[K]) => void;

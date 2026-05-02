@@ -6,11 +6,12 @@ const redis = Redis.fromEnv();
  * GPT-4o pricing per 1M tokens (April 2026 reference; bump if it changes).
  * Stored in micro-cents (1 cent = 1000 micro-cents) so we don't need floats.
  */
-const PRICE_USD_PER_1M = { input: 2.5, output: 10 };
+const PRICE_USD_PER_1M = { input: 2.5, output: 15 };
 
 function monthKey(d = new Date()) {
   const ym = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
   return `jrz:cost:${ym}`;
+  
 }
 
 function capMicroCents(): number {

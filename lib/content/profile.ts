@@ -20,7 +20,7 @@ export const profile = {
     "pgvector",
     "MCP",
   ],
-  currentlyOpenTo: ["AI eng roles", "remote"],
+  currentlyOpenTo: ["Full-stack", "AI eng roles", "remote"],
   portraitSrc: "/profile.jpg",
   portraitAlt: "Janriz Libres",
   /** Words that the State 1 / State 2 headlines cycle through. */

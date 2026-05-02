@@ -51,6 +51,16 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
       </div>
     );
   }
+  if (msg.role === "system") {
+    return (
+      <div
+        role="status"
+        className="self-center max-w-[94%] break-words [overflow-wrap:anywhere] rounded-md border border-ink-line bg-ink-surface-1/60 px-3 py-2 font-mono text-[12px] leading-snug text-ink-fg-fade [&_em]:text-italic-accent [&_a]:text-saffron-500 [&_a]:border-b [&_a]:border-saffron-700 [&_a]:transition-colors [&_a:hover]:border-saffron-500"
+      >
+        {renderInline(msg.content)}
+      </div>
+    );
+  }
   // assistant
   return (
     <div className="max-w-[92%] self-start py-2 text-[15px] leading-snug text-ink-fg [&_em]:text-italic-accent [&_a]:text-saffron-500 [&_a]:border-b [&_a]:border-saffron-700 [&_a]:transition-colors [&_a:hover]:border-saffron-500">

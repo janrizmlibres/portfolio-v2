@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { AmbientBackdrop } from "@/components/ui/AmbientBackdrop";
@@ -39,8 +39,46 @@ function HomeInner() {
   // - onToolCall: toolCall.toolName + toolCall.input (not .args)
   // - onFinish: { message, messages, isAbort, isDisconnect, isError, finishReason }
   // - transport: DefaultChatTransport defaults to POST /api/chat
+  // Resolved per-request so the latest threadId (regenerated on `clear`) is sent.
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: () => ({ threadId: store.getState().threadId }),
+      }),
+    [store]
+  );
+
   const { sendMessage, status, setMessages } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
+    transport,
+
+    onError(error) {
+      // Drop any pending tool-call breadcrumbs from the aborted turn so they
+      // don't leak into the next assistant message.
+      pendingToolCallsRef.current = [];
+      // The SDK serializes non-OK responses by stringifying the JSON body
+      // into error.message — extract the human-readable `message` field.
+      const raw = error?.message?.trim() ?? "";
+      let message =
+        "The agent isn't responding right now — try again, or email me directly at libres.janriz@gmail.com.";
+      const jsonStart = raw.indexOf("{");
+      if (jsonStart >= 0) {
+        try {
+          const parsed = JSON.parse(raw.slice(jsonStart)) as { message?: string };
+          if (parsed?.message) message = parsed.message;
+        } catch {
+          if (raw && raw.length < 300) message = raw;
+        }
+      } else if (raw && raw.length < 300) {
+        message = raw;
+      }
+      appendMessage({
+        id: crypto.randomUUID(),
+        role: "system",
+        content: message,
+        createdAt: new Date().toISOString(),
+      });
+    },
 
     onToolCall({ toolCall }) {
       // v6: tool call input lives at toolCall.input (not toolCall.args)

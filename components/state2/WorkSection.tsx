@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { SectionHead } from "@/components/ui/SectionHead";
 import { workTimeline, workTotalLabel } from "@/lib/content/work-timeline";
 import { professionalProjects } from "@/lib/content/professional-projects";
+import { on } from "@/lib/tool-effects/event-bus";
 
 function Timeline() {
   return (
@@ -44,6 +45,18 @@ export function WorkSection() {
     gsap.from("#work-detail", { opacity: 0, y: 10, duration: 0.35, ease: "power2.out" });
   }, [activeIdx]);
 
+  // When the agent calls highlight_project with a professional slug, auto-switch
+  // to that project so the detail panel reflects what's being highlighted.
+  useEffect(() => {
+    const off = on("highlightProject", ({ slug }) => {
+      const idx = professionalProjects.findIndex((p) => p.slug === slug);
+      if (idx >= 0) setActiveIdx(idx);
+    });
+    return () => {
+      off();
+    };
+  }, []);
+
   return (
     <section id="sec-work" className="border-b border-ink-line py-16">
       <SectionHead
@@ -55,7 +68,10 @@ export function WorkSection() {
 
       <Timeline />
 
-      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-fg-dim">
+      <h3
+        id="sec-selected-projects"
+        className="mb-4 scroll-mt-6 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-fg-dim"
+      >
         Selected projects
       </h3>
 
@@ -65,6 +81,7 @@ export function WorkSection() {
             <button
               key={p.slug}
               type="button"
+              data-project-slug={p.slug}
               onClick={() => setActiveIdx(i)}
               className={
                 "rounded-full border px-4 py-3.5 text-left text-[15px] transition-all duration-200 " +
@@ -80,6 +97,7 @@ export function WorkSection() {
 
         <div
           id="work-detail"
+          data-project-slug={active.slug}
           className="rounded-2xl border border-ink-line bg-ink-surface-1 p-7 md:p-8"
         >
           <h3 className="text-display mb-2 text-2xl font-medium leading-tight text-ink-fg">

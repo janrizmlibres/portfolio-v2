@@ -13,4 +13,4 @@ export const workTimeline: TimelineEntry[] = [
   { years: "2023–24", durationLabel: "10 mo", company: "The Crusader Yearbook", role: "Software Developer", techLabel: "Laravel · WordPress · Python" },
 ];
 
-export const workTotalLabel = "~22 months across 4 roles";
+export const workTotalLabel = "~1 year and 10 months across 4 roles";
