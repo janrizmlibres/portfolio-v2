@@ -15,7 +15,7 @@ export function SectionHead({ num, eyebrow, title, lede }: SectionHeadProps) {
     <div className="mb-10 grid items-start gap-8 md:grid-cols-[1fr_2fr]">
       <div>
         <Eyebrow num={num}>{eyebrow}</Eyebrow>
-        <h2 className="text-display text-[clamp(2rem,4.5vw,3.5rem)] leading-none m-0 font-medium text-ink-fg">
+        <h2 className="text-display text-[clamp(2rem,4.5vw,3.5rem)] leading-none m-0 font-medium text-ink-fg [word-spacing:-0.35em]">
           {renderItalicAccents(title, "text-italic-accent")}
         </h2>
       </div>
