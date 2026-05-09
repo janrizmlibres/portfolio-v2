@@ -22,19 +22,28 @@ export function MobileBottomSheet({ children, collapsedVh = 32, expandedVh = 92 
     gsap.registerPlugin(Draggable);
     gsap.set(sheet, { height: `${collapsedVh}vh` });
 
+    let startVh = collapsedVh;
+    let isExpanded = false;
+
     Draggable.create(handleRef.current, {
       type: "y",
-      bounds: { minY: -window.innerHeight, maxY: 0 },
+      bounds: { minY: -window.innerHeight, maxY: window.innerHeight },
       inertia: false,
+      onPress() {
+        startVh = isExpanded ? expandedVh : collapsedVh;
+      },
       onDrag() {
-        const next = Math.max(
-          collapsedVh,
-          Math.min(expandedVh, collapsedVh + (-this.y / window.innerHeight) * 100)
-        );
+        const deltaVh = (-this.y / window.innerHeight) * 100;
+        const next = Math.max(collapsedVh, Math.min(expandedVh, startVh + deltaVh));
         gsap.set(sheet, { height: `${next}vh` });
       },
       onDragEnd() {
-        const willExpand = -this.y > window.innerHeight * 0.15;
+        const deltaPx = -this.y;
+        const threshold = window.innerHeight * 0.1;
+        let willExpand = isExpanded;
+        if (deltaPx > threshold) willExpand = true;
+        else if (deltaPx < -threshold) willExpand = false;
+        isExpanded = willExpand;
         gsap.to(sheet, {
           height: `${willExpand ? expandedVh : collapsedVh}vh`,
           duration: 0.36,

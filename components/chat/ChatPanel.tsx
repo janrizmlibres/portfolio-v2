@@ -7,6 +7,7 @@ import { useChatState } from "@/lib/chat/hook";
 import { useChatStore } from "./ChatStateProvider";
 import { MessageList } from "./MessageList";
 import { ChatInput } from "./ChatInput";
+import { ChipRow } from "@/components/state1/ChipRow";
 import type { ToolCall } from "@/lib/chat/types";
 
 interface Props {
@@ -117,6 +118,13 @@ export function ChatPanel({
         isStreaming={isStreaming}
         pendingToolCalls={pendingToolCalls}
       />
+
+      <div className="border-t border-ink-line px-3 pb-1 pt-3">
+        <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.08em] text-ink-fg-fade">
+          try asking
+        </div>
+        <ChipRow compact onPick={(text) => onSubmit(text)} />
+      </div>
 
       <ChatInput onSubmit={onSubmit} disabled={disabled} />
     </aside>

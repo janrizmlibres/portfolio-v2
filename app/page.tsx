@@ -16,6 +16,7 @@ import { registerGsapPlugins } from "@/lib/gsap/register";
 import { runStateTransition } from "@/lib/gsap/use-state-transition";
 import { emit } from "@/lib/tool-effects/event-bus";
 import type { ToolCall } from "@/lib/chat/types";
+import { useActiveSection } from "@/lib/state/use-active-section";
 
 function HomeInner() {
   const store = useChatStore();
@@ -35,6 +36,16 @@ function HomeInner() {
   const pendingToolCallsRef = useRef<ToolCall[]>([]);
   const [pendingToolCalls, setPendingToolCalls] = useState<ToolCall[]>([]);
 
+  // Track which State 2 section the visitor is currently looking at, so each
+  // /api/chat request can tell the model "they're viewing About right now".
+  // Held in a ref so the memoized transport's body() callback always reads
+  // the latest value without rebuilding the transport.
+  const activeSection = useActiveSection(state.activated);
+  const activeSectionRef = useRef(activeSection);
+  useEffect(() => {
+    activeSectionRef.current = activeSection;
+  }, [activeSection]);
+
   // AI SDK v6: useChat from @ai-sdk/react
   // - sendMessage({ text }) to submit user messages
   // - status: 'submitted' | 'streaming' | 'ready' | 'error'
@@ -47,7 +58,15 @@ function HomeInner() {
     () =>
       new DefaultChatTransport({
         api: "/api/chat",
-        body: () => ({ threadId: store.getState().threadId }),
+        body: () => {
+          const a = activeSectionRef.current;
+          return {
+            threadId: store.getState().threadId,
+            viewContext: a
+              ? { sectionId: a.sectionId, domId: a.domId, label: a.label }
+              : undefined,
+          };
+        },
       }),
     [store]
   );

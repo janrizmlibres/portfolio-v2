@@ -6,6 +6,7 @@ import { openai } from "@ai-sdk/openai";
 import { Client } from "langsmith";
 import { wrapAISDK, createLangSmithProviderOptions } from "langsmith/experimental/vercel";
 import { SYSTEM_PROMPT } from "@/lib/ai/system-prompt";
+import { PAGE_CONTEXT_BLOCK } from "@/lib/ai/page-context";
 import { tools } from "@/lib/ai/tools";
 import { checkRateLimit } from "@/lib/limits/rate-limit";
 import { hasBudget, recordUsage } from "@/lib/limits/cost-cap";
@@ -62,9 +63,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const body = (await req.json()) as { messages?: UIMessage[]; threadId?: string };
+  const body = (await req.json()) as {
+    messages?: UIMessage[];
+    threadId?: string;
+    viewContext?: { sectionId?: string; domId?: string; label?: string };
+  };
   const messages = await convertToModelMessages(body.messages ?? []);
   const threadId = typeof body.threadId === "string" && body.threadId ? body.threadId : undefined;
+
+  const vc = body.viewContext;
+  const viewLine =
+    vc && typeof vc.sectionId === "string" && typeof vc.domId === "string" && typeof vc.label === "string"
+      ? `\n\n# Visitor view\nThe visitor is currently viewing the "${vc.label}" section (#${vc.domId}, slug: ${vc.sectionId}). When they say "this", "here", "above", "this section", or ask "what is this", assume they mean that section unless context clearly says otherwise. Reference its content from the display block above; only call \`search_wiki\` for depth beyond what's on the page.`
+      : "";
+  const system = `${SYSTEM_PROMPT}\n\n${PAGE_CONTEXT_BLOCK}${viewLine}`;
 
   // session_id is the LangSmith convention for grouping runs into a thread in
   // the Threads tab. thread_id mirrors it for downstream consumers.
@@ -76,7 +88,7 @@ export async function POST(req: NextRequest) {
 
   const result = streamText({
     model: openai(CHAT_MODEL),
-    system: SYSTEM_PROMPT,
+    system,
     messages,
     tools,
     stopWhen: stepCountIs(4),
