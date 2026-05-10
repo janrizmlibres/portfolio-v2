@@ -131,7 +131,7 @@ export function MessageList({ messages, isStreaming, pendingToolCalls }: Message
   }, [messages, showTyping, pendingToolCalls?.length]);
 
   return (
-    <div ref={ref} aria-live="polite" className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+    <div ref={ref} aria-live="polite" className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain p-4" style={{ touchAction: "pan-y" }}>
       {messages.map((m) => (
         <div key={m.id} className="flex flex-col gap-1.5">
           {m.toolCalls?.map((c, i) => <ToolCallLine key={i} call={c} />)}

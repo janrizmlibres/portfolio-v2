@@ -64,7 +64,7 @@ export function MobileBottomSheet({ children, collapsedVh = 32, expandedVh = 92 
         <div ref={handleRef} className="flex cursor-grab justify-center pt-2 pb-1 active:cursor-grabbing">
           <span className="block h-1 w-9 rounded-full bg-ink-line" />
         </div>
-        <div className="flex-1 min-h-0">{children}</div>
+        <div className="flex-1 min-h-0" style={{ touchAction: "none" }}>{children}</div>
       </div>
     </div>
   );
