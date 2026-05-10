@@ -2,6 +2,7 @@
 
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { profile } from "@/lib/content/profile";
+import { renderItalicMarkers } from "@/lib/content/italic";
 import { useTypewriter } from "@/lib/gsap/use-typewriter";
 import { useChatStore } from "@/components/chat/ChatStateProvider";
 import { useChatState } from "@/lib/chat/hook";
@@ -31,8 +32,7 @@ export function CompactHero() {
           {profile.headlineSuffix}
         </p>
         <p className="m-0 max-w-[26rem] shrink text-base leading-normal text-ink-fg-muted md:text-right">
-          Building production systems across full-stack and AI. Based in{" "}
-          <span className="text-italic-accent text-ink-fg">Cebu</span>, working remotely.
+          {renderItalicMarkers(profile.taglineState2)}
         </p>
       </div>
     </div>

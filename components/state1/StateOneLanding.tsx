@@ -3,6 +3,7 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import Image from "next/image";
 import { profile } from "@/lib/content/profile";
+import { renderItalicMarkers } from "@/lib/content/italic";
 import { useTypewriter } from "@/lib/gsap/use-typewriter";
 import { useChatStore } from "@/components/chat/ChatStateProvider";
 import { useChatState } from "@/lib/chat/hook";
@@ -91,8 +92,7 @@ export const StateOneLanding = forwardRef<StateOneLandingHandle, Props>(function
           </h1>
 
           <p className="mx-auto mb-11 max-w-[38rem] text-[1.0625rem] leading-relaxed text-ink-fg-muted">
-            I build production systems — full-stack platforms, AI agents, and RAG pipelines. Instead of scrolling, just{" "}
-            <span className="text-italic-accent text-ink-fg">ask</span> — the chat is me, just faster.
+            {renderItalicMarkers(profile.taglineState1)}
           </p>
 
           <div className="mx-auto w-full max-w-[640px]">

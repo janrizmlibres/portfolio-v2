@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
+import { profile } from "@/lib/content/profile";
 
 export const runtime = "edge";
-export const alt = "Janriz Libres — Full-stack & AI engineer";
+export const alt = `${profile.name} — ${profile.roleShort}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -44,7 +45,7 @@ export default function OgImage() {
               letterSpacing: -2,
             }}
           >
-            Janriz Libres
+            {profile.name}
           </div>
           <div
             style={{

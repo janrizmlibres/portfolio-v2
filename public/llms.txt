@@ -25,7 +25,7 @@ GSAP, Drizzle ORM, Supabase, Upstash Redis.
 
 ## Professional experience
 
-- 2025–26 — LogoLife — Full-stack / AI Engineer (TypeScript, MCP, Mem0).
+- 2025–26 — LogoLife — Data / AI Engineer (TypeScript, MCP, Mem0).
   Shipped Athena, a context-aware admissions assistant with Mem0-backed memory
   and a scoped MCP server, plus production crawlers, dashboards, and
   load-testing harnesses.

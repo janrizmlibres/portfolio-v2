@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
+import { profile } from "@/lib/content/profile";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Janriz Libres — Full-stack & AI engineer",
-    short_name: "Janriz Libres",
-    description:
-      "Full-stack and AI engineer based in Cebu. Chat-first portfolio.",
+    name: `${profile.name} — ${profile.roleShort}`,
+    short_name: profile.name,
+    description: profile.siteDescription,
     start_url: "/",
     display: "standalone",
     background_color: "#0e0c08",

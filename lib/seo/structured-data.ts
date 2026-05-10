@@ -2,6 +2,7 @@ import { profile } from "@/lib/content/profile";
 import { contactLinks } from "@/lib/content/contact";
 import { workTimeline } from "@/lib/content/work-timeline";
 import { personalProjects } from "@/lib/content/personal-projects";
+import { stripItalicMarkers } from "@/lib/content/italic";
 import { siteUrl } from "@/lib/seo/site";
 
 const email = contactLinks.find((l) => l.slug === "email")?.value;
@@ -9,19 +10,21 @@ const sameAs = contactLinks
   .filter((l) => l.slug !== "email")
   .map((l) => l.href);
 
+const [cityLocality, cityCountry] = profile.cityShort.split(",").map((s) => s.trim());
+
 export const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: profile.name,
   url: siteUrl,
   image: `${siteUrl}${profile.portraitSrc}`,
-  jobTitle: "Full-stack & AI Engineer",
+  jobTitle: profile.roleShort,
   description: profile.aboutLede,
   email,
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Cebu",
-    addressCountry: "PH",
+    addressLocality: cityLocality,
+    addressCountry: cityCountry,
   },
   worksFor: {
     "@type": "Organization",
@@ -53,7 +56,7 @@ export const websiteSchema = {
   url: siteUrl,
   inLanguage: "en",
   author: { "@type": "Person", name: profile.name },
-  description: profile.taglineState1,
+  description: stripItalicMarkers(profile.taglineState1),
 };
 
 export const projectsSchema = {

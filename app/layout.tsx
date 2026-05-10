@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Fraunces } from "next/font/google";
 import "./globals.css";
 import { siteUrl } from "@/lib/seo/site";
+import { profile } from "@/lib/content/profile";
 import {
   personSchema,
   websiteSchema,
@@ -24,20 +25,19 @@ const fraunces = Fraunces({
   weight: "variable",
 });
 
-const title = "Janriz Libres — Full-stack & AI engineer";
-const description =
-  "Full-stack and AI engineer based in Cebu. The chat on this site has read everything I've written — instead of scrolling, just ask.";
+const title = `${profile.name} — ${profile.roleShort}`;
+const description = profile.siteDescription;
 
 export const metadata: Metadata = {
-  title: { default: title, template: "%s — Janriz Libres" },
+  title: { default: title, template: `%s — ${profile.name}` },
   description,
   metadataBase: new URL(siteUrl),
-  applicationName: "Janriz Libres",
-  authors: [{ name: "Janriz Libres", url: siteUrl }],
-  creator: "Janriz Libres",
-  publisher: "Janriz Libres",
+  applicationName: profile.name,
+  authors: [{ name: profile.name, url: siteUrl }],
+  creator: profile.name,
+  publisher: profile.name,
   keywords: [
-    "Janriz Libres",
+    profile.name,
     "full-stack engineer",
     "AI engineer",
     "RAG",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteUrl,
-    siteName: "Janriz Libres",
+    siteName: profile.name,
     title,
     description,
     locale: "en_US",
