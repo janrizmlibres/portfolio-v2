@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Entry point behind `curl -fsSL jrz-dev.vercel.app/wiki | bash`. A copy is served from portfolio-v2 at public/wiki.
+# Clones the private repo with the gh login, then hands off to the repo's install.sh.
+set -euo pipefail
+[ -d "$HOME/.claude/llm-wiki/.git" ] || gh repo clone janrizmlibres/llm-wiki-template "$HOME/.claude/llm-wiki" -- -q
+exec "$HOME/.claude/llm-wiki/install.sh"
