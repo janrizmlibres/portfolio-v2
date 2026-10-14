@@ -1,0 +1,175 @@
+{
+  "loop": 30.769229166666666,
+  "sampleRate": 48000,
+  "frames": 1476923,
+  "stems": {
+    "bed": {
+      "seconds": 37,
+      "peakDb": -7.3,
+      "rmsDb": -20,
+      "seam": 0,
+      "files": {
+        "webm": {
+          "stereo": {
+            "file": "bed.7a31ea3151.webm",
+            "bytes": 311833
+          },
+          "mono": {
+            "file": "bed.mono.1f77b5cba1.webm",
+            "bytes": 161959
+          }
+        },
+        "mp3": {
+          "stereo": {
+            "file": "bed.5716adccd9.mp3",
+            "bytes": 592916
+          },
+          "mono": {
+            "file": "bed.mono.d34e433aef.mp3",
+            "bytes": 296468
+          }
+        }
+      }
+    },
+    "drone": {
+      "seconds": 11,
+      "peakDb": -11.2,
+      "rmsDb": -22,
+      "seam": 0,
+      "files": {
+        "webm": {
+          "stereo": {
+            "file": "drone.13f8ad1136.webm",
+            "bytes": 93137
+          },
+          "mono": {
+            "file": "drone.mono.bedd24bb31.webm",
+            "bytes": 49629
+          }
+        },
+        "mp3": {
+          "stereo": {
+            "file": "drone.c58a9b850a.mp3",
+            "bytes": 177044
+          },
+          "mono": {
+            "file": "drone.mono.5bba1e57f0.mp3",
+            "bytes": 88532
+          }
+        }
+      }
+    },
+    "keys": {
+      "seconds": 30.769229166666666,
+      "peakDb": -10.1,
+      "rmsDb": -24,
+      "seam": 0,
+      "files": {
+        "webm": {
+          "stereo": {
+            "file": "keys.1943497201.webm",
+            "bytes": 259384
+          },
+          "mono": {
+            "file": "keys.mono.13dc0671ca.webm",
+            "bytes": 134821
+          }
+        },
+        "mp3": {
+          "stereo": {
+            "file": "keys.b5ecacba7e.mp3",
+            "bytes": 493460
+          },
+          "mono": {
+            "file": "keys.mono.ff8583953d.mp3",
+            "bytes": 246740
+          }
+        }
+      }
+    },
+    "lead": {
+      "seconds": 30.769229166666666,
+      "peakDb": -13.2,
+      "rmsDb": -24,
+      "seam": 0,
+      "files": {
+        "webm": {
+          "stereo": {
+            "file": "lead.fe83d6b749.webm",
+            "bytes": 259385
+          },
+          "mono": {
+            "file": "lead.mono.1b6fa22030.webm",
+            "bytes": 134583
+          }
+        },
+        "mp3": {
+          "stereo": {
+            "file": "lead.cdf016ad7c.mp3",
+            "bytes": 493460
+          },
+          "mono": {
+            "file": "lead.mono.e51ad7a780.mp3",
+            "bytes": 246740
+          }
+        }
+      }
+    },
+    "pulse": {
+      "seconds": 30.769229166666666,
+      "peakDb": -6.2,
+      "rmsDb": -21,
+      "seam": 0,
+      "files": {
+        "webm": {
+          "stereo": {
+            "file": "pulse.75ba1e3738.webm",
+            "bytes": 259205
+          },
+          "mono": {
+            "file": "pulse.mono.7084273bc4.webm",
+            "bytes": 128796
+          }
+        },
+        "mp3": {
+          "stereo": {
+            "file": "pulse.bfce6e63d4.mp3",
+            "bytes": 493460
+          },
+          "mono": {
+            "file": "pulse.mono.171e087110.mp3",
+            "bytes": 246740
+          }
+        }
+      }
+    },
+    "thinking": {
+      "seconds": 13,
+      "peakDb": -11.8,
+      "rmsDb": -26,
+      "seam": 0,
+      "files": {
+        "webm": {
+          "stereo": {
+            "file": "thinking.60c833a642.webm",
+            "bytes": 110082
+          },
+          "mono": {
+            "file": "thinking.mono.a2e4165eaf.webm",
+            "bytes": 57391
+          }
+        },
+        "mp3": {
+          "stereo": {
+            "file": "thinking.d4ff3b7400.mp3",
+            "bytes": 208916
+          },
+          "mono": {
+            "file": "thinking.mono.fdf8f16e49.mp3",
+            "bytes": 104468
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,376 @@
+/* The wake-up (components/wake/WakeUp.tsx). Everything here applies only while <html> has .wake, which the wake-up's
+   head script sets before first paint. */
+
+#wake {
+  display: none;
+}
+html.wake #wake {
+  display: block;
+}
+
+/* ---------------------------------------------------------------- the loader: over everything, until the load is done */
+/* black, the name typing in over a small count, a sweep of light across it at 100 */
+#wake .wk-load {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  background: #000;
+}
+#wake .wk-mark {
+  position: relative;
+  margin: 0;
+  font: 400 clamp(22px, 3.1vw, 46px) / 1 var(--f-display);
+  letter-spacing: 0.32em;
+  /* the tracking hangs off the last letter; give it back so the name is centred */
+  margin-right: -0.32em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+/* the name is there from first paint, faint, and types in bright over itself */
+#wake .wk-mark span {
+  color: rgba(244, 246, 255, 0.09);
+}
+html.wake-still #wake .wk-mark span {
+  color: var(--ink);
+}
+/* the sweep: a hairline of the stars' light drawn across the name, brightest at its middle */
+#wake .wk-sweep {
+  position: absolute;
+  left: -40vw;
+  right: -40vw;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(223, 231, 255, 0.15) 30%, #dfe7ff 50%, rgba(223, 231, 255, 0.15) 70%, transparent);
+  box-shadow: 0 0 6px rgba(160, 180, 255, 0.6);
+  visibility: hidden;
+}
+#wake .wk-pct {
+  margin: 0;
+  font: 400 11px / 1 var(--f-data);
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- Tycho: dead centre on his stage, then his corner */
+/* the stage under him while he charges is black, as space is */
+html.wake-centre,
+html.wake-centre body {
+  background: #000;
+}
+/* while he charges he stands on a dark stage, a product revealed (his corner is bubble.css's), a little above the
+   middle in his frame (below). His canvas is 1.22 times the square he fills (ROOM in WakeUp.tsx, which pulls the
+   camera back to match), so his antenna stays in it as the camera comes in from below */
+html.wake-centre #tycho .tycho-body {
+  --s: calc(var(--wk-S) * 1.22);
+  right: auto;
+  bottom: auto;
+  left: calc(50% - var(--s) / 2);
+  top: calc(var(--wk-c) - var(--s) / 2);
+  width: var(--s);
+  height: var(--s);
+}
+/* nothing of his answers until he wakes: no clicks on him, and his keyboard keys are out of reach */
+html.wake-lock #tycho .tycho-body {
+  pointer-events: none;
+}
+html.wake-lock #tycho .tycho-key {
+  visibility: hidden;
+}
+
+/* ---------------------------------------------------------------- the stage's sky */
+/* a faint cool glow behind him and a sparse field of still stars, over the universe's canvas (held dark) and under his
+   frame; the stars drift against the sway, and the full sky comes up over them when he wakes */
+#wake .wk-sky {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+}
+#wake .wk-sky canvas {
+  position: absolute;
+  display: block;
+}
+#wake .wk-glow {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* the far sky: its wrapper drifts with the sway, and its square canvas (placed by WakeUp, centred on his middle)
+   turns inside it */
+#wake .wk-far {
+  position: absolute;
+  inset: 0;
+}
+#wake .wk-stars {
+  transform-origin: 50% 50%;
+}
+/* a satellite: a point of reflected light, catching the sun once as it passes */
+#wake .wk-sat {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 2px;
+  margin: -1px 0 0 -1px;
+  border-radius: 50%;
+  background: #f4f6ff;
+  box-shadow: 0 0 4px 1px rgba(220, 230, 255, 0.6);
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------- his states: the frame round him */
+/* he stands a little above the middle, framed by a hairline ring whose eight arcs light with his band, and under him
+   his state machine: charging, dozing, the wake button as the trigger, awake. The head script marks html.wake before
+   first paint, so his size never jumps */
+html.wake {
+  --wk-S: min(52vh, 70vw);
+  --wk-c: 43vh;
+}
+@media (max-width: 700px) {
+  html.wake {
+    --wk-S: min(84vw, 46vh);
+    --wk-c: 42vh;
+  }
+}
+/* the frame is the wake's target, with the button: only a click inside it (inside the ring's circle) wakes him. The
+   ring stands round him, just clear of his antenna and his feet */
+#wake .wk-frame {
+  position: fixed;
+  left: 50%;
+  top: var(--wk-c);
+  z-index: 40;
+  width: calc(var(--wk-S) * 1.1);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+  opacity: 0;
+}
+#wake .wk-frame .wk-fin {
+  position: absolute;
+  inset: 0;
+}
+#wake .wk-frame svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+#wake .wk-frame .base {
+  fill: none;
+  stroke: rgba(226, 232, 255, 0.16);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+#wake .wk-frame .arc {
+  fill: none;
+  stroke: #ffa95a;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+}
+#wake[data-state="dozing"] .wk-frame {
+  cursor: pointer;
+}
+#wake[data-state="dozing"] .wk-frame:hover .base {
+  stroke: rgba(226, 232, 255, 0.36);
+}
+/* the controls under him: the states with the wake button in their row, the readout, the headphones line */
+#wake .wk-ctl {
+  position: fixed;
+  left: 50%;
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transform: translate(-50%, 0);
+}
+html.wake #wake .wk-ctl {
+  top: calc(var(--wk-c) + var(--wk-S) * 0.52 + 22px);
+}
+#wake .wk-states {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#wake .wk-states .st {
+  position: relative;
+  font: 400 11px / 1 var(--f-data);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(226, 232, 255, 0.36);
+}
+#wake .wk-states .st b {
+  font-weight: 400;
+}
+/* each state's mark under it: hollow ahead, lit warm while live, filled pale once passed */
+#wake .wk-states .st i {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 9px);
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  border: 1px solid rgba(226, 232, 255, 0.4);
+  box-sizing: border-box;
+}
+#wake .wk-states .ln {
+  position: relative;
+  width: 44px;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(226, 232, 255, 0.2);
+}
+#wake .wk-states .ln i {
+  position: absolute;
+  inset: 0;
+  background: #ffa95a;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+#wake[data-state="charging"] .st[data-st="charging"],
+#wake[data-state="dozing"] .st[data-st="dozing"],
+#wake[data-state="awake"] .st[data-st="awake"] {
+  color: var(--ink);
+}
+#wake[data-state="charging"] .st[data-st="charging"] i,
+#wake[data-state="dozing"] .st[data-st="dozing"] i,
+#wake[data-state="awake"] .st[data-st="awake"] i {
+  background: #ffa95a;
+  border-color: #ffa95a;
+  box-shadow: 0 0 8px rgba(255, 169, 90, 0.75);
+}
+#wake[data-state="dozing"] .st[data-st="charging"],
+#wake[data-state="awake"] .st[data-st="charging"],
+#wake[data-state="awake"] .st[data-st="dozing"] {
+  color: var(--ink-3);
+}
+#wake[data-state="dozing"] .st[data-st="charging"] i,
+#wake[data-state="awake"] .st[data-st="charging"] i,
+#wake[data-state="awake"] .st[data-st="dozing"] i {
+  background: rgba(226, 232, 255, 0.55);
+  border-color: transparent;
+}
+/* his inputs, live: the band's segments, his eyes, the sound */
+#wake .wk-read {
+  margin: 10px 0 0;
+  font: 400 10px / 1 var(--f-data);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+#wake .wk-states .st,
+#wake .wk-states .ln,
+#wake .wk-read {
+  visibility: hidden;
+  opacity: 0;
+}
+/* the plain page's wake: the button alone */
+#wake[data-stalled] .wk-states .st,
+#wake[data-stalled] .wk-states .ln,
+#wake[data-stalled] .wk-read,
+#wake[data-stalled] .wk-frame {
+  display: none;
+}
+@media (max-width: 700px) {
+  #wake .wk-states {
+    gap: 8px;
+  }
+  #wake .wk-states .st {
+    font-size: 10px;
+  }
+  #wake .wk-states .ln {
+    width: 14px;
+  }
+}
+
+/* ---------------------------------------------------------------- the wake button: a bare [ WAKE ME ], under him */
+#wake .wk-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin: 0;
+  padding: 10px 8px;
+  border: 0;
+  background: none;
+  white-space: nowrap;
+  font: 400 13px / 1 var(--f-data);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-shadow: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+#wake[data-chip="on"] .wk-chip,
+html.wake #wake[data-state] .wk-chip {
+  visibility: visible;
+}
+#wake .wk-chip b {
+  font-weight: 400;
+  /* the tracking hangs off the last letter; give it back so the words sit centred in their brackets */
+  margin-right: -0.12em;
+}
+#wake .wk-chip .br {
+  display: inline-block;
+  color: var(--ink-2, var(--ink));
+}
+#wake .wk-chip:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 4px;
+}
+/* the headphones line: one quiet line of the data face under the button */
+#wake .wk-phones {
+  margin: 0;
+  white-space: nowrap;
+  font: 400 10px / 1 var(--f-data);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-shadow: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+#wake[data-phones="on"] .wk-phones {
+  visibility: visible;
+}
+#wake .wk-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- the lock: nothing else answers until he wakes */
+html.wake-lock,
+html.wake-lock body {
+  overflow: hidden;
+}
+html.wake-lock .askb,
+html.wake-lock #runway .shot.hero {
+  visibility: hidden;
+}
+/* the hand's stars and chips, and the route map, wait until he's landed: the frame stays his while he flies */
+html.wake #hand,
+html.wake .routemap {
+  visibility: hidden;
+}

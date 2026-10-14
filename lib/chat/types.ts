@@ -1,22 +1,15 @@
-export type ChatRole = "user" | "assistant" | "tool" | "system";
-
-export interface ToolCall {
-  name: "search_wiki" | "scroll_to" | "highlight_project";
-  args: Record<string, unknown>;
-  resultPreview?: string; // for the tool-call display line
-}
+/** `system` is his line when a request fails. A conversation saved before may carry other fields; they're ignored. */
+export type ChatRole = "user" | "assistant" | "system";
 
 export interface ChatMessage {
   id: string;
   role: ChatRole;
-  /** For text messages. Tool calls live in `toolCalls`. */
   content: string;
-  toolCalls?: ToolCall[];
   createdAt: string; // ISO
 }
 
+/** The conversation, which the log shows; nothing about the page. */
 export interface ChatState {
-  activated: boolean;
   messages: ChatMessage[];
   updatedAt: string;
   /** Stable per-conversation id used to group LangSmith traces into a thread. */

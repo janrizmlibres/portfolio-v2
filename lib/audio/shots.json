@@ -1,0 +1,1302 @@
+{
+  "chirp1": {
+    "seconds": 0.45,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "chirp1.71d57e04f5.webm",
+          "bytes": 4517
+        },
+        "mono": {
+          "file": "chirp1.mono.98a42243fa.webm",
+          "bytes": 2420
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "chirp1.1bece6b513.mp3",
+          "bytes": 8084
+        },
+        "mono": {
+          "file": "chirp1.mono.48aea225ea.mp3",
+          "bytes": 4052
+        }
+      }
+    }
+  },
+  "chirp2": {
+    "seconds": 0.35,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "chirp2.360ce8dd13.webm",
+          "bytes": 3677
+        },
+        "mono": {
+          "file": "chirp2.mono.c1538a01f8.webm",
+          "bytes": 1687
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "chirp2.c99dd50f5c.mp3",
+          "bytes": 6548
+        },
+        "mono": {
+          "file": "chirp2.mono.ee520e29de.mp3",
+          "bytes": 3284
+        }
+      }
+    }
+  },
+  "chirp3": {
+    "seconds": 0.45,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "chirp3.7b7d884597.webm",
+          "bytes": 4517
+        },
+        "mono": {
+          "file": "chirp3.mono.59b84f5036.webm",
+          "bytes": 2395
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "chirp3.eb5e6daa88.mp3",
+          "bytes": 8084
+        },
+        "mono": {
+          "file": "chirp3.mono.2644f1c598.mp3",
+          "bytes": 4052
+        }
+      }
+    }
+  },
+  "chirp4": {
+    "seconds": 0.45,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "chirp4.4f0153759f.webm",
+          "bytes": 4517
+        },
+        "mono": {
+          "file": "chirp4.mono.d7edffdc80.webm",
+          "bytes": 2530
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "chirp4.370c296718.mp3",
+          "bytes": 8084
+        },
+        "mono": {
+          "file": "chirp4.mono.3d21f74c3d.mp3",
+          "bytes": 4052
+        }
+      }
+    }
+  },
+  "climax": {
+    "seconds": 6.51,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "climax.59b2aad2fe.webm",
+          "bytes": 55450
+        },
+        "mono": {
+          "file": "climax.mono.16a7ea1354.webm",
+          "bytes": 28640
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "climax.5f20ee4433.mp3",
+          "bytes": 105236
+        },
+        "mono": {
+          "file": "climax.mono.c8de253b7d.mp3",
+          "bytes": 52628
+        }
+      }
+    }
+  },
+  "dive": {
+    "seconds": 8.36,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "dive.7545ed099e.webm",
+          "bytes": 70832
+        },
+        "mono": {
+          "file": "dive.mono.ce5081d1a4.webm",
+          "bytes": 35360
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "dive.97f63c78f3.mp3",
+          "bytes": 134804
+        },
+        "mono": {
+          "file": "dive.mono.4ddf949901.mp3",
+          "bytes": 67412
+        }
+      }
+    }
+  },
+  "dock": {
+    "seconds": 2.98,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "dock.e6c2fda3d7.webm",
+          "bytes": 25769
+        },
+        "mono": {
+          "file": "dock.mono.9e7c57c7a6.webm",
+          "bytes": 13817
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "dock.190de7d225.mp3",
+          "bytes": 48788
+        },
+        "mono": {
+          "file": "dock.mono.63e60b0fa1.mp3",
+          "bytes": 24404
+        }
+      }
+    }
+  },
+  "emote-allGood": {
+    "seconds": 0.41,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-allGood.0b9d922438.webm",
+          "bytes": 4128
+        },
+        "mono": {
+          "file": "emote-allGood.mono.7db8fb0456.webm",
+          "bytes": 2539
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-allGood.64299ec863.mp3",
+          "bytes": 7700
+        },
+        "mono": {
+          "file": "emote-allGood.mono.e506acdf18.mp3",
+          "bytes": 3860
+        }
+      }
+    }
+  },
+  "emote-anticipate": {
+    "seconds": 0.6,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-anticipate.29096048b4.webm",
+          "bytes": 5761
+        },
+        "mono": {
+          "file": "emote-anticipate.mono.40302b7e8c.webm",
+          "bytes": 3159
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-anticipate.822ee31e89.mp3",
+          "bytes": 10772
+        },
+        "mono": {
+          "file": "emote-anticipate.mono.4faefee642.mp3",
+          "bytes": 5396
+        }
+      }
+    }
+  },
+  "emote-apologise": {
+    "seconds": 0.67,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-apologise.bf4835972b.webm",
+          "bytes": 6328
+        },
+        "mono": {
+          "file": "emote-apologise.mono.68b2a59265.webm",
+          "bytes": 2996
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-apologise.4b6cf7ea60.mp3",
+          "bytes": 11924
+        },
+        "mono": {
+          "file": "emote-apologise.mono.edda758654.mp3",
+          "bytes": 5972
+        }
+      }
+    }
+  },
+  "emote-flinch": {
+    "seconds": 0.44,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-flinch.2af6934b58.webm",
+          "bytes": 4471
+        },
+        "mono": {
+          "file": "emote-flinch.mono.98e37d2f69.webm",
+          "bytes": 2246
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-flinch.d3ff4475f0.mp3",
+          "bytes": 8084
+        },
+        "mono": {
+          "file": "emote-flinch.mono.b24005094c.mp3",
+          "bytes": 4052
+        }
+      }
+    }
+  },
+  "emote-glance": {
+    "seconds": 0.27,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-glance.e9e4b77934.webm",
+          "bytes": 2918
+        },
+        "mono": {
+          "file": "emote-glance.mono.ee32f715da.webm",
+          "bytes": 1638
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-glance.fcc859c355.mp3",
+          "bytes": 5396
+        },
+        "mono": {
+          "file": "emote-glance.mono.40b2513b86.mp3",
+          "bytes": 2708
+        }
+      }
+    }
+  },
+  "emote-greet": {
+    "seconds": 0.72,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-greet.18e253ea83.webm",
+          "bytes": 6853
+        },
+        "mono": {
+          "file": "emote-greet.mono.5f00a87c83.webm",
+          "bytes": 3244
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-greet.16e90c0513.mp3",
+          "bytes": 12692
+        },
+        "mono": {
+          "file": "emote-greet.mono.b2214b8b9e.mp3",
+          "bytes": 6356
+        }
+      }
+    }
+  },
+  "emote-notice": {
+    "seconds": 0.47,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-notice.34eed4c56a.webm",
+          "bytes": 4633
+        },
+        "mono": {
+          "file": "emote-notice.mono.a306252c85.webm",
+          "bytes": 2466
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-notice.2483ff2705.mp3",
+          "bytes": 8468
+        },
+        "mono": {
+          "file": "emote-notice.mono.7757bb8b66.mp3",
+          "bytes": 4244
+        }
+      }
+    }
+  },
+  "emote-point": {
+    "seconds": 0.55,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-point.b4ef82ca21.webm",
+          "bytes": 5335
+        },
+        "mono": {
+          "file": "emote-point.mono.f0309fad5c.webm",
+          "bytes": 3034
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-point.9ae1d191e2.mp3",
+          "bytes": 10004
+        },
+        "mono": {
+          "file": "emote-point.mono.16356c0615.mp3",
+          "bytes": 5012
+        }
+      }
+    }
+  },
+  "emote-scoot": {
+    "seconds": 0.68,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-scoot.af654bb06d.webm",
+          "bytes": 6533
+        },
+        "mono": {
+          "file": "emote-scoot.mono.3e4c863ac3.webm",
+          "bytes": 3149
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-scoot.00b8019914.mp3",
+          "bytes": 11924
+        },
+        "mono": {
+          "file": "emote-scoot.mono.e0c650380b.mp3",
+          "bytes": 5972
+        }
+      }
+    }
+  },
+  "emote-settle": {
+    "seconds": 0.56,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "emote-settle.2dc7b9a71e.webm",
+          "bytes": 5493
+        },
+        "mono": {
+          "file": "emote-settle.mono.67c5fb3d65.webm",
+          "bytes": 2777
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "emote-settle.2a2174e7cc.mp3",
+          "bytes": 10004
+        },
+        "mono": {
+          "file": "emote-settle.mono.50ae3d70ce.mp3",
+          "bytes": 5012
+        }
+      }
+    }
+  },
+  "fairing": {
+    "seconds": 2.57,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "fairing.c7d6557c21.webm",
+          "bytes": 22166
+        },
+        "mono": {
+          "file": "fairing.mono.5f55699d61.webm",
+          "bytes": 11700
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "fairing.f31d3b2e4a.mp3",
+          "bytes": 42260
+        },
+        "mono": {
+          "file": "fairing.mono.f3487bff8b.mp3",
+          "bytes": 21140
+        }
+      }
+    }
+  },
+  "inst-bell-74": {
+    "seconds": 1.75,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-74.12464467c4.webm",
+          "bytes": 15375
+        },
+        "mono": {
+          "file": "inst-bell-74.mono.758e6a1223.webm",
+          "bytes": 8107
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-74.3c9341385f.mp3",
+          "bytes": 28820
+        },
+        "mono": {
+          "file": "inst-bell-74.mono.65bcd60708.mp3",
+          "bytes": 14420
+        }
+      }
+    }
+  },
+  "inst-bell-77": {
+    "seconds": 1.74,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-77.c76f009e5a.webm",
+          "bytes": 15376
+        },
+        "mono": {
+          "file": "inst-bell-77.mono.b8eb58d614.webm",
+          "bytes": 8085
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-77.6405ae9ebb.mp3",
+          "bytes": 28820
+        },
+        "mono": {
+          "file": "inst-bell-77.mono.2e4eb14a8a.mp3",
+          "bytes": 14420
+        }
+      }
+    }
+  },
+  "inst-bell-79": {
+    "seconds": 1.69,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-79.58515598e1.webm",
+          "bytes": 14845
+        },
+        "mono": {
+          "file": "inst-bell-79.mono.c27a595df1.webm",
+          "bytes": 7984
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-79.d959ceb4cc.mp3",
+          "bytes": 28052
+        },
+        "mono": {
+          "file": "inst-bell-79.mono.856849d951.mp3",
+          "bytes": 14036
+        }
+      }
+    }
+  },
+  "inst-bell-81": {
+    "seconds": 1.74,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-81.4e2364af8b.webm",
+          "bytes": 15370
+        },
+        "mono": {
+          "file": "inst-bell-81.mono.69d242c11c.webm",
+          "bytes": 8312
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-81.77ba41d71b.mp3",
+          "bytes": 28820
+        },
+        "mono": {
+          "file": "inst-bell-81.mono.09b290bf45.mp3",
+          "bytes": 14420
+        }
+      }
+    }
+  },
+  "inst-bell-84": {
+    "seconds": 1.75,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-84.6627e56890.webm",
+          "bytes": 15395
+        },
+        "mono": {
+          "file": "inst-bell-84.mono.fcd604c693.webm",
+          "bytes": 8309
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-84.12f31e7925.mp3",
+          "bytes": 28820
+        },
+        "mono": {
+          "file": "inst-bell-84.mono.57fce58197.mp3",
+          "bytes": 14420
+        }
+      }
+    }
+  },
+  "inst-bell-86": {
+    "seconds": 1.79,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-86.21ca419de4.webm",
+          "bytes": 15742
+        },
+        "mono": {
+          "file": "inst-bell-86.mono.2fc0be83a7.webm",
+          "bytes": 8558
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-86.16b55ef613.mp3",
+          "bytes": 29588
+        },
+        "mono": {
+          "file": "inst-bell-86.mono.28f31cd459.mp3",
+          "bytes": 14804
+        }
+      }
+    }
+  },
+  "inst-bell-89": {
+    "seconds": 1.75,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-89.35176a5c66.webm",
+          "bytes": 15396
+        },
+        "mono": {
+          "file": "inst-bell-89.mono.9d9d1faf43.webm",
+          "bytes": 8421
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-89.916b32e70c.mp3",
+          "bytes": 28820
+        },
+        "mono": {
+          "file": "inst-bell-89.mono.f018fc4b5e.mp3",
+          "bytes": 14420
+        }
+      }
+    }
+  },
+  "inst-bell-91": {
+    "seconds": 1.7,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-91.8152c93258.webm",
+          "bytes": 15041
+        },
+        "mono": {
+          "file": "inst-bell-91.mono.960588d1bf.webm",
+          "bytes": 8376
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-91.0c737db54b.mp3",
+          "bytes": 28436
+        },
+        "mono": {
+          "file": "inst-bell-91.mono.4cf882735b.mp3",
+          "bytes": 14228
+        }
+      }
+    }
+  },
+  "inst-bell-93": {
+    "seconds": 1.72,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-93.b62c9002e2.webm",
+          "bytes": 15270
+        },
+        "mono": {
+          "file": "inst-bell-93.mono.55fa0af9cf.webm",
+          "bytes": 8600
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-93.d064048b27.mp3",
+          "bytes": 28436
+        },
+        "mono": {
+          "file": "inst-bell-93.mono.43905efdfc.mp3",
+          "bytes": 14228
+        }
+      }
+    }
+  },
+  "inst-bell-96": {
+    "seconds": 1.75,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-96.83032178d4.webm",
+          "bytes": 15391
+        },
+        "mono": {
+          "file": "inst-bell-96.mono.5d48bbfcb5.webm",
+          "bytes": 8433
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-96.b15ae15a28.mp3",
+          "bytes": 28820
+        },
+        "mono": {
+          "file": "inst-bell-96.mono.e85956ad5d.mp3",
+          "bytes": 14420
+        }
+      }
+    }
+  },
+  "inst-bell-98": {
+    "seconds": 1.74,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-bell-98.6b5f6bae68.webm",
+          "bytes": 15378
+        },
+        "mono": {
+          "file": "inst-bell-98.mono.0a3297a420.webm",
+          "bytes": 8517
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-bell-98.4ddc56792f.mp3",
+          "bytes": 28820
+        },
+        "mono": {
+          "file": "inst-bell-98.mono.1392bd2fb0.mp3",
+          "bytes": 14420
+        }
+      }
+    }
+  },
+  "inst-celesta-74": {
+    "seconds": 1.76,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-74.ac893211ba.webm",
+          "bytes": 15486
+        },
+        "mono": {
+          "file": "inst-celesta-74.mono.c8eb8fc7ba.webm",
+          "bytes": 8169
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-74.100b520a2b.mp3",
+          "bytes": 29204
+        },
+        "mono": {
+          "file": "inst-celesta-74.mono.58eb7e0964.mp3",
+          "bytes": 14612
+        }
+      }
+    }
+  },
+  "inst-celesta-77": {
+    "seconds": 1.82,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-77.b185be7e22.webm",
+          "bytes": 16011
+        },
+        "mono": {
+          "file": "inst-celesta-77.mono.fcc2db4239.webm",
+          "bytes": 8374
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-77.93e3f59915.mp3",
+          "bytes": 29972
+        },
+        "mono": {
+          "file": "inst-celesta-77.mono.b37e217025.mp3",
+          "bytes": 14996
+        }
+      }
+    }
+  },
+  "inst-celesta-79": {
+    "seconds": 1.83,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-79.1581e84e9a.webm",
+          "bytes": 15986
+        },
+        "mono": {
+          "file": "inst-celesta-79.mono.5388151a4c.webm",
+          "bytes": 8685
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-79.df761c7407.mp3",
+          "bytes": 30356
+        },
+        "mono": {
+          "file": "inst-celesta-79.mono.d27b45e2ca.mp3",
+          "bytes": 15188
+        }
+      }
+    }
+  },
+  "inst-celesta-81": {
+    "seconds": 1.82,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-81.75d491dec3.webm",
+          "bytes": 15997
+        },
+        "mono": {
+          "file": "inst-celesta-81.mono.f9dcf0bbb4.webm",
+          "bytes": 8692
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-81.084b5dc207.mp3",
+          "bytes": 29972
+        },
+        "mono": {
+          "file": "inst-celesta-81.mono.cc569e0eae.mp3",
+          "bytes": 14996
+        }
+      }
+    }
+  },
+  "inst-celesta-84": {
+    "seconds": 1.82,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-84.49c3102e67.webm",
+          "bytes": 16017
+        },
+        "mono": {
+          "file": "inst-celesta-84.mono.77c3f1dd81.webm",
+          "bytes": 8545
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-84.410f455c72.mp3",
+          "bytes": 29972
+        },
+        "mono": {
+          "file": "inst-celesta-84.mono.15fd8e7ed4.mp3",
+          "bytes": 14996
+        }
+      }
+    }
+  },
+  "inst-celesta-86": {
+    "seconds": 1.79,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-86.46091c8a53.webm",
+          "bytes": 15700
+        },
+        "mono": {
+          "file": "inst-celesta-86.mono.809cc5f6ff.webm",
+          "bytes": 8443
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-86.d628441d61.mp3",
+          "bytes": 29588
+        },
+        "mono": {
+          "file": "inst-celesta-86.mono.a2b4a53712.mp3",
+          "bytes": 14804
+        }
+      }
+    }
+  },
+  "inst-celesta-89": {
+    "seconds": 1.78,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-89.c7c740b455.webm",
+          "bytes": 15663
+        },
+        "mono": {
+          "file": "inst-celesta-89.mono.49a1c40b10.webm",
+          "bytes": 8406
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-89.2e9f979b1a.mp3",
+          "bytes": 29588
+        },
+        "mono": {
+          "file": "inst-celesta-89.mono.5b46e3382f.mp3",
+          "bytes": 14804
+        }
+      }
+    }
+  },
+  "inst-celesta-91": {
+    "seconds": 1.74,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-91.f5283900ad.webm",
+          "bytes": 15403
+        },
+        "mono": {
+          "file": "inst-celesta-91.mono.2f3cb3a786.webm",
+          "bytes": 7971
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-91.e786a97438.mp3",
+          "bytes": 28820
+        },
+        "mono": {
+          "file": "inst-celesta-91.mono.923ca46989.mp3",
+          "bytes": 14420
+        }
+      }
+    }
+  },
+  "inst-celesta-93": {
+    "seconds": 1.76,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-93.41ce8e8c61.webm",
+          "bytes": 15533
+        },
+        "mono": {
+          "file": "inst-celesta-93.mono.127ee9bfb2.webm",
+          "bytes": 7626
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-93.97115bf769.mp3",
+          "bytes": 29204
+        },
+        "mono": {
+          "file": "inst-celesta-93.mono.56effca754.mp3",
+          "bytes": 14612
+        }
+      }
+    }
+  },
+  "inst-celesta-96": {
+    "seconds": 1.69,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-96.717e28f306.webm",
+          "bytes": 14833
+        },
+        "mono": {
+          "file": "inst-celesta-96.mono.28299f343a.webm",
+          "bytes": 7174
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-96.6904d72493.mp3",
+          "bytes": 28052
+        },
+        "mono": {
+          "file": "inst-celesta-96.mono.0a9f4ad95a.mp3",
+          "bytes": 14036
+        }
+      }
+    }
+  },
+  "inst-celesta-98": {
+    "seconds": 1.76,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "inst-celesta-98.d8a7f9830c.webm",
+          "bytes": 15577
+        },
+        "mono": {
+          "file": "inst-celesta-98.mono.ac5c6c1897.webm",
+          "bytes": 8598
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "inst-celesta-98.6ce3818907.mp3",
+          "bytes": 29204
+        },
+        "mono": {
+          "file": "inst-celesta-98.mono.2d1348b552.mp3",
+          "bytes": 14612
+        }
+      }
+    }
+  },
+  "open": {
+    "seconds": 3.81,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "open.82d07e6283.webm",
+          "bytes": 32577
+        },
+        "mono": {
+          "file": "open.mono.28e3ee5151.webm",
+          "bytes": 16786
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "open.5f9bca1ee5.mp3",
+          "bytes": 61844
+        },
+        "mono": {
+          "file": "open.mono.a44fd3b647.mp3",
+          "bytes": 30932
+        }
+      }
+    }
+  },
+  "peel": {
+    "seconds": 3.1,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "peel.132ef63159.webm",
+          "bytes": 26742
+        },
+        "mono": {
+          "file": "peel.mono.b216ee9080.webm",
+          "bytes": 13787
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "peel.df5a594fe6.mp3",
+          "bytes": 50324
+        },
+        "mono": {
+          "file": "peel.mono.64ff34f988.mp3",
+          "bytes": 25172
+        }
+      }
+    }
+  },
+  "pullout": {
+    "seconds": 6.23,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "pullout.ef14c24c47.webm",
+          "bytes": 53024
+        },
+        "mono": {
+          "file": "pullout.mono.6ca05ebabc.webm",
+          "bytes": 26740
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "pullout.7270d9e44c.mp3",
+          "bytes": 100628
+        },
+        "mono": {
+          "file": "pullout.mono.a00482bc44.mp3",
+          "bytes": 50324
+        }
+      }
+    }
+  },
+  "relay": {
+    "seconds": 0.52,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "relay.9a6b7b6683.webm",
+          "bytes": 5119
+        },
+        "mono": {
+          "file": "relay.mono.dfeb7c7ea3.webm",
+          "bytes": 2741
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "relay.d93f39d3ac.mp3",
+          "bytes": 9236
+        },
+        "mono": {
+          "file": "relay.mono.fe7d2c3eed.mp3",
+          "bytes": 4628
+        }
+      }
+    }
+  },
+  "ribbon": {
+    "seconds": 2.21,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "ribbon.cf366926f2.webm",
+          "bytes": 19146
+        },
+        "mono": {
+          "file": "ribbon.mono.d754c63f64.webm",
+          "bytes": 9639
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "ribbon.ba99a65fb0.mp3",
+          "bytes": 36500
+        },
+        "mono": {
+          "file": "ribbon.mono.9baab6f54f.mp3",
+          "bytes": 18260
+        }
+      }
+    }
+  },
+  "toggle": {
+    "seconds": 0.19,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "toggle.318403b7d7.webm",
+          "bytes": 2281
+        },
+        "mono": {
+          "file": "toggle.mono.43136b05de.webm",
+          "bytes": 1250
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "toggle.d503370507.mp3",
+          "bytes": 3860
+        },
+        "mono": {
+          "file": "toggle.mono.2784f904bd.mp3",
+          "bytes": 1940
+        }
+      }
+    }
+  },
+  "ui-click": {
+    "seconds": 0.17,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "ui-click.f33d0a50e8.webm",
+          "bytes": 2129
+        },
+        "mono": {
+          "file": "ui-click.mono.ec3251de21.webm",
+          "bytes": 1176
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "ui-click.6ec61b973a.mp3",
+          "bytes": 3860
+        },
+        "mono": {
+          "file": "ui-click.mono.cb07ac33c4.mp3",
+          "bytes": 1940
+        }
+      }
+    }
+  },
+  "ui-fold": {
+    "seconds": 0.48,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "ui-fold.fa917b4fa6.webm",
+          "bytes": 4854
+        },
+        "mono": {
+          "file": "ui-fold.mono.b84d2bb384.webm",
+          "bytes": 2798
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "ui-fold.09f7819598.mp3",
+          "bytes": 8852
+        },
+        "mono": {
+          "file": "ui-fold.mono.b4cd734c97.mp3",
+          "bytes": 4436
+        }
+      }
+    }
+  },
+  "ui-hover": {
+    "seconds": 0.1,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "ui-hover.c726d5f43e.webm",
+          "bytes": 1661
+        },
+        "mono": {
+          "file": "ui-hover.mono.7c803581f6.webm",
+          "bytes": 896
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "ui-hover.becf862b0e.mp3",
+          "bytes": 2708
+        },
+        "mono": {
+          "file": "ui-hover.mono.e823ddf3ba.mp3",
+          "bytes": 1364
+        }
+      }
+    }
+  },
+  "ui-open": {
+    "seconds": 0.56,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "ui-open.28d881e6ce.webm",
+          "bytes": 5515
+        },
+        "mono": {
+          "file": "ui-open.mono.af5447576e.webm",
+          "bytes": 2875
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "ui-open.3c69120e4c.mp3",
+          "bytes": 10004
+        },
+        "mono": {
+          "file": "ui-open.mono.44d024800a.mp3",
+          "bytes": 5012
+        }
+      }
+    }
+  },
+  "warp-arrive": {
+    "seconds": 2.7,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "warp-arrive.fca4568f5f.webm",
+          "bytes": 23503
+        },
+        "mono": {
+          "file": "warp-arrive.mono.8bca51b495.webm",
+          "bytes": 12687
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "warp-arrive.9c9712ab7b.mp3",
+          "bytes": 44180
+        },
+        "mono": {
+          "file": "warp-arrive.mono.13269b9e8d.mp3",
+          "bytes": 22100
+        }
+      }
+    }
+  },
+  "warp": {
+    "seconds": 3.97,
+    "files": {
+      "webm": {
+        "stereo": {
+          "file": "warp.32c3e7e282.webm",
+          "bytes": 34022
+        },
+        "mono": {
+          "file": "warp.mono.1f62daf94e.webm",
+          "bytes": 16481
+        }
+      },
+      "mp3": {
+        "stereo": {
+          "file": "warp.dff1cb6321.mp3",
+          "bytes": 64532
+        },
+        "mono": {
+          "file": "warp.mono.2395493386.mp3",
+          "bytes": 32276
+        }
+      }
+    }
+  }
+}

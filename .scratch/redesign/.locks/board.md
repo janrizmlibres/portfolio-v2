@@ -734,3 +734,426 @@
 01:23 relay-session: models build verify
 01:29 relay-session: final checks
 01:33 relay-session: tsc + e2e routemap rerun
+10:56 wake-session: wake probe
+10:58 wake-session: wake probe
+10:59 wake-session: wake probe sweep
+11:03 wake-session: e2e wake red
+11:04 wake-session: e2e wake green
+11:05 wake-session: probe recheck + wake.spec
+11:09 wake-session: tsc + eslint wake files
+11:44 wake-session: caption tests + shots
+11:45 wake-session: caption tests + shots 2
+11:46 wake-session: caption phone shot 3
+13:04 home-build: station model (split)
+13:06 home-build: harness shots shots-calib.json
+13:08 home-build: harness shots shots-r1.json
+13:09 home-build: harness shots shots-r2.json
+13:09 home-build: harness shots shots-r3.json
+13:10 home-build: harness shots shots-r4.json
+13:11 home-build: harness shots shots-r5.json
+13:19 home-build: station model (split)
+13:21 home-build: harness shots shots-build1.json
+13:22 home-build: clip out/build-a.mp4
+13:23 home-build: clip out/build-b.mp4
+13:23 home-build: clip out/build-b-seam.mp4
+13:27 home-build: craft model
+13:29 home-build: clip out/build-c.mp4
+13:29 home-build: clip out/build-d.mp4
+13:41 hauler-fork: preview 1
+13:41 hauler-fork: preview 2
+13:42 pod-fork: preview
+13:42 crane-fork: preview 1
+13:42 home-build: drone model
+13:42 home-build: worker model
+13:42 hauler-fork: preview 3
+13:43 pod-fork: preview 2
+13:43 shuttle-fork: preview 1
+13:43 hauler-fork: site build
+13:43 crane-fork: preview 2
+13:43 hauler-fork: final preview + site build
+13:44 pod-fork: preview 3
+13:44 shuttle-fork: preview 2
+13:44 crane-fork: preview 3
+13:44 pod-fork: site build
+13:44 shuttle-fork: preview 3
+13:45 crane-fork: site build
+13:45 shuttle-fork: site build
+13:45 home-build: clip out/swarm-a.mp4
+13:46 home-build: clip out/swarm-a.mp4
+13:46 home-build: clip out/swarm-b.mp4
+13:47 home-build: clip out/timelapse-a.mp4
+13:54 home-build: station model into public
+13:57 home-build: models into public
+14:02 home-build: vitest work red
+14:03 home-build: vitest work green
+14:04 home-build: vitest place red
+14:04 home-build: vitest place green
+14:08 home-build: vitest work-camera
+14:13 home-build: tsc
+14:14 home-build: tsc 2
+14:14 home-build: vitest all
+14:16 home-build: vitest all 2
+14:16 home-build: site shots 1
+14:17 home-build: site shots 2
+14:18 home-build: site shots 3 (phone + desktop)
+14:19 home-build: e2e voyage routemap warp
+14:20 home-build: e2e all
+14:24 home-build: eslint + turns
+14:24 home-build: frame cost
+14:26 home-build: final tsc + unit + lint
+20:39 spur-removal: poses + baseline shots
+20:42 spur-removal: vitest path
+20:43 spur-removal: vitest path
+20:43 spur-removal: vitest path
+20:43 spur-removal: vitest path
+20:44 spur-removal: vitest path
+20:45 spur-removal: tsc + shots
+20:47 spur-removal: tsc + shots
+20:48 spur-removal: poses
+20:49 spur-removal: shots
+20:50 spur-removal: shots
+20:54 spur-removal: tsc + shots
+20:55 spur-removal: turns + phone shots
+20:55 spur-removal: phone shots
+20:57 spur-removal: phone shots
+20:58 spur-removal: phone shots
+21:00 spur-removal: tsc + eslint + vitest
+21:01 spur-removal: e2e voyage routemap warp
+21:02 spur-removal: e2e rest
+21:05 spur-removal: turns final
+21:45 spur-removal: shots of Athena→climax for ideas
+21:51 spur-removal: shots pipeline close + compare
+21:58 camera-moves: climax composition probe
+22:01 camera-moves: tsc
+22:01 camera-moves: climax shots
+22:02 camera-moves: climax shots 2
+22:03 ring-real: blender preview
+22:04 camera-moves: deck turn probe
+22:04 slate-fork: tsc
+22:05 slate-fork: shots glass
+22:05 ring-real: build.sh pipeline
+22:05 camera-moves: tsc + climax shots 3
+22:06 slate-fork: shots eink silica
+22:06 camera-moves: turns + phone climax
+22:07 ring-real: vitest takes
+22:07 slate-fork: sheets slab glass eink silica
+22:08 camera-moves: tsc + turns + phone climax
+22:08 slate-fork: reshoot silica
+22:10 ring-real: tsc
+22:10 camera-moves: turns + phone climax
+22:11 slate-fork: eslint + vitest lib/voyage
+22:11 ring-real: tsc + shots
+22:11 slate-fork: tsc + reshoot silica + phone glass
+22:12 ring-real: rebuild + shots
+22:13 camera-moves: tsc + athena→crawler
+22:13 slate-fork: phone glass
+22:13 ring-real: cost probe
+22:14 slate-fork: final eslint + tsc + vitest
+22:14 camera-moves: athena→crawler v2
+22:15 ring-real: shadow check
+22:15 ring-real: eslint + vitest + phone cost + now raw build
+22:16 camera-moves: poses crawler
+22:17 ring-real: rebuild + phone/desktop cost
+22:19 camera-moves: crawler moons
+22:19 ring-real: cost isolation
+22:19 camera-moves: crawler moons 2
+22:20 ring-real: phone cost after + final shots + preview render
+22:22 camera-moves: athena→crawler v3
+22:22 ring-real: final tsc + eslint + vitest
+22:23 camera-moves: athena→crawler v4
+22:23 camera-moves: athena→crawler v5
+22:24 camera-moves: athena→crawler v6
+22:25 camera-moves: athena→crawler v7
+22:25 camera-moves: athena→crawler v8
+22:27 camera-moves: rim probe
+22:28 camera-moves: rim reveal v1
+22:32 camera-moves: rim reveal v1
+22:33 camera-moves: rim reveal v2
+22:34 camera-moves: rim reveal v3 + phone
+22:34 camera-moves: rim reveal v4
+22:36 camera-moves: turns whole film
+22:36 camera-moves: kink probe
+22:37 camera-moves: climax re-aim
+22:38 camera-moves: phone all
+22:39 camera-moves: tsc + eslint + vitest
+22:39 camera-moves: e2e all
+22:43 camera-moves: picks together
+10:20 records: takes test (red)
+10:23 records: tsc
+10:23 records: tsc
+10:23 records: stream + ribbon frames (before)
+10:27 records: stream x2.5 + ribbon backs
+10:29 records: stream rolled, desktop + phone
+10:30 records: tsc + eslint + vitest lib/voyage
+10:31 records: final pipeline frames
+10:34 rings: blender preview
+10:37 rings: blender preview v2
+10:42 rings: blender preview v3
+10:48 rings: tri count
+10:48 rings: tri count 2
+10:49 rings: build.sh pipeline (bake + export)
+10:54 rings: takes test (red)
+10:54 rings: takes test (green) + tsc
+10:54 rings: site frames v1
+10:56 rings: gpu cost 1440 + 390
+10:57 rings: site frames v2 + phone
+10:58 rings: climax frames v3
+10:59 rings: tsc + eslint + vitest + e2e
+11:03 rings: vitest (excl .scratch)
+11:14 projects: probe flight path
+11:15 projects: probe flight path
+11:19 routemap: repro (before)
+11:23 warp: probe trail (desktop link)
+11:24 routemap: frames (before)
+11:25 warp: log trail points
+11:25 projects: spiral test (red)
+11:26 projects: spiral test (green)
+11:26 warp: circle frames
+11:29 routemap: repro (before, new checks)
+11:30 routemap: vitest grow (red)
+11:30 warp: probe question warp
+11:30 warp: probe question warp
+11:30 projects: tsc
+11:31 projects: probe new path
+11:31 projects: probe path v2
+11:31 warp: probe phone + hurry
+11:32 projects: frames v1
+11:32 routemap: vitest lib/routemap + tsc + eslint
+11:32 warp: probe phone
+11:33 routemap: repro (after)
+11:36 projects: frames v2 + path
+11:36 warp: back-to-back repro
+11:37 projects: spots + turns
+11:37 projects: spots frames + phone
+11:37 warp: probe busy GPU
+11:38 projects: gpu cost
+11:39 routemap: pre-fix swap: repro comeback + e2e new cases
+11:40 projects: shadow cost
+11:41 warp: vitest red (trail + flight-path)
+11:41 routemap: repro comeback + e2e routemap.spec (after)
+11:43 projects: probe crawler state
+11:44 warp: vitest green (trail + flight-path)
+11:44 routemap: comeback frame dump
+11:44 warp: verify fixes (points, b2b, probe)
+11:45 projects: probe shadow skip
+11:46 projects: athena frames
+11:46 routemap: fold timeline debug
+11:47 warp: vitest red (ring's last point)
+11:47 warp: vitest warp files
+11:47 routemap: dash offset debug
+11:48 projects: tsc + eslint + vitest
+11:49 projects: e2e voyage.spec
+11:50 warp: probe throat pass (before)
+11:50 projects: probe rise
+11:50 routemap: vitest chart (red)
+11:50 warp: vitest red (past the eye)
+11:50 routemap: vitest lib/routemap + tsc + eslint (2)
+11:50 warp: vitest green (past the eye)
+11:50 projects: e2e voyage.spec 2
+11:51 routemap: chart framing probe
+11:51 routemap: chart framing probe (2)
+11:51 warp: verify pass + question + phone
+11:52 routemap: vitest + probe + tsc + eslint (3)
+11:53 warp: tsc + eslint
+11:53 warp: e2e warp.spec
+11:54 routemap: repro + frames + e2e routemap.spec (after, 2)
+11:58 warp: sweep every section (desktop + phone)
+12:00 routemap: what covers the map in a warp
+12:00 warp: busy GPU (after)
+12:01 routemap: e2e warp-hover diag x6
+12:02 warp: final vitest + tsc + eslint + e2e
+12:03 routemap: e2e warp-hover diag x6 (after)
+12:04 routemap: e2e warp-hover diag x6 (hit test)
+12:05 routemap: e2e warp-hover diag x2 (what's under)
+12:06 warp: vitest red (ring tolerance)
+12:06 warp: read his corner spots
+12:06 routemap: e2e warp-hover + click-focus x6
+12:07 warp: vitest green (ring tolerance)
+12:07 warp: ring tolerance frames
+12:07 routemap: vitest lib/routemap + tsc + eslint (4)
+12:08 routemap: final: pre-fix swap, then tsc/eslint/vitest/e2e/repro
+12:13 warp: streak turns, rig drawn as placed (idle + busy)
+12:15 warp: pose inputs at 0.5 s
+12:16 warp: vitest (join check)
+12:17 warp: final vitest (warp+tycho+chat) + tsc + eslint
+12:17 warp: e2e bubble.spec + bubble-flat.spec + warp.spec
+12:20 projects: full vitest + tsc + eslint
+12:22 warp: lean flip, before (pose, phone streaks, frames)
+12:24 warp: lean flip frames (before, screencast)
+13:06 warp: vitest red (leanAround)
+13:06 warp: vitest green (leanAround)
+13:07 warp: tsc + eslint (lean)
+13:07 warp: lean flip, after (pose, streaks x4, frames)
+13:11 warp: lean after, matching path (pose retries)
+13:13 warp: final checks (lean): vitest, tsc, eslint, e2e bubble + warp
+13:16 projects: full e2e
+13:20 projects: e2e wake.spec alone
+13:23 projects: full e2e (2nd)
+13:27 projects: e2e sky-chat alone x2
+13:29 projects: gpu cost (quiet)
+13:51 projects: exit test (red)
+13:51 projects: exit test (green)
+13:53 projects: tsc + exit frames
+13:53 projects: probe crawler hide
+13:54 projects: exit frames v5
+13:54 warp: throat GPU cost, before (words)
+13:57 projects: tsc + eslint + vitest voyage + e2e voyage
+14:05 warp: vitest red (warp palette)
+14:05 warp: vitest green (warp palette)
+14:06 warp: vitest green (warp palette)
+14:07 warp: tsc + eslint (palette wiring)
+14:07 warp: colour frames per destination (desktop)
+14:16 projects: tsc + eslint (hairline)
+14:16 projects: stream frames (no hairline)
+14:17 warp: tsc + eslint (pieces)
+14:17 warp: pieces down the throat (desktop, first look)
+14:19 warp: portrait upload probe
+14:22 warp: tsc + eslint (pieces v2)
+14:22 warp: pieces down the throat (desktop, v2)
+14:23 warp: phone colours + pieces, busy pieces
+14:26 warp: phone portrait probe
+14:28 warp: tsc + eslint (cargo keys)
+14:28 projects: replay+engine tests (red)
+14:28 warp: throat GPU cost, after (objects)
+14:32 projects: replay+engine tests (green)
+14:33 projects: wake replay test (red)
+14:33 projects: wake replay test (green)
+14:33 warp: tsc+eslint, throat GPU (objects v2)
+14:34 warp: throat GPU (objects v2, retry)
+14:38 projects: replay tsc + eslint + unit
+14:38 warp: throat GPU (objects, 5 passes)
+14:45 projects: e2e replay (wake.spec)
+14:45 warp: pieces final (desktop + busy)
+14:47 projects: replay frames
+14:48 warp: busy GL warning probe
+14:49 projects: replay frames 2
+14:50 warp: busy GL warning probe (stub vs not)
+14:51 projects: replay Start test (red)
+14:51 projects: replay Start (green) + tsc + eslint
+14:51 warp: busy GL warning probe (maps uploaded ahead)
+14:53 projects: e2e replay + Start (wake.spec, routemap Start)
+14:53 warp: busy GL warning probe (stubbed, x2)
+14:56 warp: final checks (colour + pieces): vitest, tsc, eslint, e2e
+14:58 warp: programs compiled by a first warp
+15:00 projects: final tsc + eslint + vitest + e2e
+15:05 projects: eslint after doc comments
+18:06 perf: whole-film cost audit 1440 + 390
+18:10 perf: tycho eyes probe
+18:11 perf: tycho eyes repro (before)
+18:12 perf: tycho eyes probe 2
+18:14 perf: tycho eyes probe 2 retry
+18:15 takes: tsc
+18:15 takes: tsc + eslint
+18:15 perf: tycho eyes repro 2
+18:16 takes: vitest
+18:16 perf: tycho eyes repro after fix
+18:17 takes: e2e wake voyage bubble warp
+18:20 takes: e2e remaining specs
+18:22 takes: e2e smooth-scroll rerun
+18:25 A4: e2e smooth-scroll repro
+18:25 A4: e2e smooth-scroll repro gpu
+18:26 A4: deep-link probe
+18:26 A4: e2e smooth-scroll pinned plain
+18:28 A4: vitest governor (red)
+18:28 A3: vitest red (gate, count, engine)
+18:29 A4: vitest governor (green)
+18:29 A2: vitest red run
+18:29 A5: vitest red (subjects, fade, later, ships, jump capture)
+18:30 A5: vitest jump capture
+18:30 A1: vitest route+rate-limit (red)
+18:31 A3: vitest wake+audio
+18:32 A1: vitest server tests
+18:32 A2: tsc
+18:32 A3: vitest wake+audio, tsc
+18:32 A2: eslint
+18:32 A1: vitest server tests
+18:32 A2: vitest my files
+18:32 A2: vitest my files
+18:32 A3: eslint+tsc
+18:33 A2: e2e bubble+warp
+18:34 A3: e2e wake.spec
+18:37 A1: tsc
+18:37 A2: e2e rerun bubble+warp
+18:38 A3: eslint+tsc+e2e routemap
+18:43 A1: eslint + vitest touched
+18:43 A5: vitest lib/voyage
+18:43 A4: vitest tier (red)
+18:43 A2: e2e focus red
+18:43 A5: vitest traffic red/green
+18:43 A1: eslint touched
+18:44 A4: vitest+tsc+eslint (A4 files)
+18:44 A3: e2e routemap rerun
+18:45 A4: context-loss probe
+18:45 A3: final tsc+vitest
+18:45 A4: context-loss probe 2
+18:45 A5: vitest jump red
+18:46 A2: e2e focus green
+18:46 A4: tsc+eslint
+18:46 A5: tsc + eslint lib/voyage
+18:46 A2: e2e keyboard case x3
+18:46 A4: e2e voyage warp smooth-scroll
+18:47 A2: e2e keyboard case x3
+18:47 A5: browser dock probe
+18:48 A2: e2e bubble+warp
+18:49 A5: final vitest lib/voyage + tsc + eslint
+18:49 A4: crossfade probe
+18:49 A2: tsc+eslint+vitest final
+18:49 A5: e2e voyage.spec
+18:50 main: final tsc+eslint+vitest+e2e
+18:51 main: final full e2e
+18:59 B: perf audit baseline (390 play x3, sweeps)
+19:17 B: tsc + vitest universe
+19:17 B: vitest universe
+19:17 B: quality probe
+19:18 B: quality probe 2
+19:19 B: tsc + eslint + full vitest
+19:19 B: e2e voyage warp bubble wake
+19:23 B: perf audit after (long, ~60 min)
+20:23 B: done, lock released
+20:24 coord: final verify after wave B
+20:25 coord: full e2e after wave B
+21:18 motion: vitest perf-meter (red)
+21:18 motion: vitest perf-meter
+21:20 motion: probe trial run
+21:21 motion: probe trials (touch, warm, trace)
+21:23 motion: probe matrix BEFORE (~60 min, don't edit lib/ or components/)
+21:28 motion: (holding lock) vitest perf-meter, then matrix BEFORE (~55 min; don't edit lib/ components/)
+21:49 motion: matrix before done, lock released
+21:54 motion: tsc + vitest wake/voyage/audio
+21:55 motion: eslint + probe trial after
+21:58 motion: probe trial after (fixed)
+22:04 motion: tsc+eslint, then matrix AFTER (~60 min; don't edit lib/ components/)
+22:29 motion: matrix after done, lock released
+22:29 motion: growth check runs
+22:35 motion: wake time + idle-GPU runs, new then old (source swapped to old for ~15 min)
+22:50 motion: culling audit before (GPU busy with LM Studio; counts only)
+22:57 motion: culling audit 1440 + 390
+23:04 motion: frame shots before/after traffic cull (traffic.ts swapped briefly)
+23:05 motion: culling audit after
+23:11 motion: traced throttled run
+23:12 motion: final tsc + eslint + vitest
+23:12 motion: full e2e (temp config, :3000, workers 2)
+23:17 motion: done, lock released
+23:18 coord: verify after motion wave
+23:40 coord: next build (prod check)
+23:42 fade: vitest wake (red)
+23:42 fade: vitest wake (green)
+23:44 fade: census current
+23:45 fade: ship meshes
+23:46 fade: census variants
+23:47 fade: frame shots
+23:50 fade: merge cost + 390 census
+23:51 fade: probe smoke
+23:54 fade: clip smoke
+23:54 fade: clip frames
+23:58 fade: probe matrix (5 rounds x 3 conditions x 4 takes)
+01:46 fade: diag loader timeouts
+03:36 fade: diag with vsync off (lid closed)
+04:34 fade: sheets and clips (PIL, ffmpeg)
+05:53 fade: tsc, eslint, vitest
+06:39 fade: vitest, the 4 files whose workers timed out
+07:14 fade: e2e full suite (temp config, :3000)
+09:31 coord: verify after fade wave
+09:36 coord: prod build + smoke on :3098
+09:37 coord: prod smoke on :3098
+09:53 coord: final verify + build before commit

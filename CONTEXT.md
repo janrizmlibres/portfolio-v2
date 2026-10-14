@@ -6,8 +6,8 @@ Janriz's personal portfolio: one page set in a small universe, where Tycho, a sm
 
 **Wake-up**:
 The opening every load starts with:
-- **the loader**, black, with the name typing in over a count of the real load;
-- then Tycho in 3D on a black stage, charging up and dozing;
+- **the loader**, black, with the name typing in over a count of the real load: the whole voyage, every scene built and warmed;
+- then Tycho in 3D on a black stage, charging up and dozing (a show of fixed length: nothing loads from here on);
 - until the visitor's click wakes him and turns the sound on.
 
 Nothing else works until then.
@@ -52,11 +52,11 @@ A visible change Tycho makes to the page during an answer: lighting the stars he
 _Avoid_: Side effect, action
 
 **Warp**:
-Tycho's jump to a scene when a tool effect or a nav link sends him there. It pulls back out to the whole sky (unless it is already there), flares the stars he explored, and circles once to take off; his fire winds into a spark that bursts into a black hole, the sky falls in, and he dives after it down the wormhole's throat, out of a white hole at the destination's reading spot. Scrolling never warps.
+Tycho's jump to a scene when a tool effect or a nav link sends him there. It pulls back out to the whole sky (unless it is already there), flares the stars he explored, and circles once to take off; his fire winds into a spark that bursts into a black hole, the sky falls in, and he dives after it down the wormhole's throat, past real pieces of the section left behind (its craft, its records, his portrait), out of a white hole at the destination's reading spot. Its fire and gas glow in the destination's light from the start (`warp-palette.ts`), the white-hot cores staying white. Scrolling never warps.
 _Avoid_: Teleport, page transition, scroll jump
 
 **Replay**:
-What "Back to the start" does from Contact: the frame fades to black, the page lands on the film's first frame under it, and the black lifts. It never travels or plays the film back, since Contact already shows the whole sky. Browser Back returns to Contact.
+What "Replay experience" does from Contact: the frame fades to black, the page lands on the film's first frame under it, and the wake-up comes back from its loader, the name on black without the count, since everything's loaded; waking Tycho again starts the film, the score coming back up from under the black. It never travels or plays the film back. The route map's Start replays only to the first frame: black, and the black lifts on it, as happens wherever the page has no wake-up. Browser Back returns to Contact.
 _Avoid_: Rewind, warp home, back to top
 
 ## Universe
@@ -94,23 +94,43 @@ The scroll between two reading stretches, where one subject grows into the next 
 _Avoid_: Page transition, cut, jump
 
 **Slab**:
-The voyage's one recurring object, 1.6 to 1 with softly rounded corners. Standing, it's his portrait's plate. Lying down, it's each record in the crawler and each screenshot in the ribbon.
+The voyage's one recurring object, 1.6 to 1 with softly rounded corners. Standing, it's his portrait's plate. Lying down, it's each screenshot in the ribbon.
 _Avoid_: Card, panel, tile
 
+**Slate**:
+A record, from the crawler's search to Athena: a thin plate, 1 by 1.6, satin aluminium round black glass, whose screen shows what the record is at each stage: a web page, then a record of fields, its missing ones lit warm once enriched, its screen dark once merged or stored. The swarm, the stream into Athena and the backs of the ribbon's slabs are slates.
+_Avoid_: Slab (the records' look until 2026-10-13), card, tile
+
 **Relay**:
-A company's scene on Work: a jump relay, two rings turning round a core of light ahead of a barrel of coils you're thrown down. There's one per company, run oldest first as a loop: the newest stands by home, throws you back to August 2023, and the chain brings you home again. They grow with his career (a scaffold still being built, compact, full, the flagship), and each plays its own beat: in over its rings and down the barrel, straight through it, watched from off its side as it fires its beam, or held from in front at home (ADR 0012).
+Work's intro: one jump relay by home, finished, two rings turning round a core of light ahead of a barrel of coils. The camera holds behind it while Work's intro is read, and it throws you back to August 2023 (ADR 0014).
 _Avoid_: Gate, dock, milestone, checkpoint, station (the station is home's ship)
 
-**Lane**:
-The straight way from one relay to the next, flown along one line, its buoys beside it. The lanes quicken one after another, as AI did.
-_Avoid_: Road, route, track
-
 **Throw**:
-A relay sending you on: down its barrel (or along its beam), faster and faster, the stars stretching into streaks, then a flash the next lane comes out of. Never the warp's wormhole.
+The relay sending you back to August 2023: down its barrel, faster and faster, the stars stretching into streaks, then a flash that cuts to home as it was. Never the warp's wormhole.
 _Avoid_: Jump, warp, launch
 
+**Build**:
+Work after the throw: home built job by job, a quarter of its ring a company, oldest first, like a timelapse, until it's the ship About showed.
+_Avoid_: Construction, assembly
+
+**Quarter**:
+A company's part of home's ring: a spoke, three nodes and three modules. It builds itself in place: its spoke, its skeleton, the hull closing over that, its fittings, its solar wings.
+_Avoid_: Section, segment, slice
+
+**Skeleton**:
+A quarter's bare structure, ring frames and longerons, seen before its hull closes over it.
+_Avoid_: Wireframe, cage (the model's name for it)
+
+**Traffic**:
+What comes and goes round home while it's built: drones welding at the build's front, workers in EVA suits, and the breakthroughs' craft.
+_Avoid_: Swarm (the crawler's records)
+
+**Call**:
+An AI breakthrough's craft coming by home after the company it came out during: one he built with docks at the hub, the rest pass close. Its card (date, name, why) is pinned in the column while it comes by, its leader following the craft.
+_Avoid_: Buoy, beacon (that is his star at Contact), marker, billboard
+
 **Stack**:
-A role's tools, each named on a leader line from one of its relay's equipment boxes.
+A role's tools, each named on a leader line from a part of its quarter, once that's built.
 _Avoid_: Bead, chip, tag, badge
 
 **Fling**:
@@ -129,16 +149,8 @@ _Avoid_: Tooltip
 The bracketed `[ ASK ABOUT … ]` that follows the pointer over a subject and names it; a click asks Tycho. Each block's "Ask Tycho about …" button is its keyboard twin.
 _Avoid_: Tooltip, cursor label
 
-**Buoy**:
-An AI breakthrough on Work: a comm buoy (a small satellite with a blinking strobe) standing still beside the lane into the relay of the role it came out during. Its block (date, name, why) hangs above it on a leader line, read as you pass it, and each is the nearest one ahead when it's read.
-_Avoid_: Monolith, beacon (that is his star at Contact), marker, sign, billboard
-
-**Spur**:
-The line Projects branch off along: a transfer arc leaving LogoLife's relay by home, curling into a capture orbit round Athena.
-_Avoid_: Branch, fork, link
-
 **Shaft**:
-The AI Web Crawler's pipeline at full size, dropped out of the crawler: one machined ring per stage of his diagram, each carrying what its stage does, on a mast. The camera falls down it with one record among the **swarm**, the records falling with you, and each ring burns its stage's colour as they pass.
+The AI Web Crawler's pipeline at full size, dropped out of the crawler: one ring per stage of his diagram on a deployable mast, each fitted out for its stage's work and carrying what its stage does (ADR 0015). The camera falls down it with one record among the **swarm**, the records falling with you, and each ring burns its stage's colour as they pass.
 _Avoid_: Tower, tube, pipeline diagram
 
 **Front**:
@@ -146,12 +158,16 @@ The film's one climax: a crest of warm light running down the shaft, fast at fir
 _Avoid_: Burst, wave, explosion
 
 **Ribbon**:
-The personal work's scene: a deployable array of slabs, each a screen showing one screenshot, its back a record's engraving, hinged one to the next round a boom. The record you followed flies out of the shaft and opens out into the first slab, and the rest pay out from it; each turns square to you as it comes round. As the camera pulls out, it folds back up.
+The personal work's scene: its frames, slabs each showing one screenshot, its back the face of the record it was. After the climax they come out of Save's store, down the bore and out from under the shaft's foot, each growing from a record into a frame as it swings out to its place on a spiral winding down round the shaft's axis. Nothing holds them: they stand free, as the stream's records fly. Each turns square to you as the camera comes round. The crawler goes while they're read; as the camera pulls out to Contact, they slide on round the spiral as one chain and go out by a hidden exit a step past the last, each shrinking into thin air there (ADR 0016).
 _Avoid_: Gallery, carousel, strip
 
 **Route map**:
 The nav: a porthole onto the sky in miniature, top right, framed on the voyage, with each section marked where it sits and a "you are here". At rest five ticks stand beside it; hover or focus grows it and hangs the section names on it. Its links warp, except Start, which replays.
 _Avoid_: Menu, progress bar
+
+**Quality**:
+How much the 3D draws on this device for the visit: high, mid or low. It sets sharpness and shadow fidelity (the sky's pixel ratio, its far galaxies, shadow maps, Tycho's canvas, the warp's weight), never what's in the frame, where or when. A visit starts from what the browser says about the device (a phone starts at mid) and only ever steps down, when the sky's governor is at its floor and frames are still missed (ADR 0017).
+_Avoid_: Tier (the film's tier is how it plays: film, still or plain), graphics setting, phone mode
 
 **Sky**:
 The wiki drawn as the universe's stars: one star per passage Tycho can read, placed by meaning, lighting up when Tycho reads it.
@@ -168,7 +184,7 @@ The voyage's music, keyed to where the visitor is in the film and remixed per se
 _Avoid_: Soundtrack, background music, ambience
 
 **Stem**:
-One layer of the score as a pre-rendered loop (the pad, the bass, the drone…). All the stems start on one audio-clock time and play sample-locked; the mix sets each one's level per scene. The hero's stems load under the wake-up's charge, the rest after the wake.
+One layer of the score as a pre-rendered loop (the pad, the bass, the drone…). All the stems start on one audio-clock time and play sample-locked; the mix sets each one's level per scene. The hero's stems load under the wake-up's loader, the rest after the wake.
 _Avoid_: Track, channel, sample
 
 **One-shot**:

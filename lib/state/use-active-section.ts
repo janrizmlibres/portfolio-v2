@@ -1,98 +1,58 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import type { SectionId } from "@/lib/film/block";
+import { filmT, sectionHere, spotAt } from "@/lib/film/here";
 
 export interface ActiveSection {
-  /** Semantic slug used by the chat tools and system prompt. */
-  sectionId: "about" | "experience" | "work" | "projects" | "contact";
-  /** DOM anchor id (without `#`). */
-  domId: string;
-  /** Human-readable label injected into the system prompt. */
+  /** the section's slug, as the chat's tools and system prompt name it */
+  sectionId: "hero" | "about" | "work" | "projects" | "contact";
+  /** its id on the page (without `#`) */
+  domId: SectionId;
+  /** what the visitor is reading, for the system prompt: the block's title, and its section */
   label: string;
 }
 
-const SECTIONS: ActiveSection[] = [
-  { sectionId: "about", domId: "sec-about", label: "About" },
-  { sectionId: "experience", domId: "sec-work", label: "Work timeline" },
-  { sectionId: "work", domId: "sec-selected-projects", label: "Selected professional projects" },
-  { sectionId: "projects", domId: "sec-projects", label: "Personal projects" },
-  { sectionId: "contact", domId: "sec-contact", label: "Contact" },
-];
+const SECTION_NAME: Record<SectionId, string> = { "sec-hero": "the opening", "sec-about": "About", "sec-work": "Work", "sec-projects": "Projects", "sec-contact": "Contact" };
+
+// the runway's blocks in film order with their spots and titles, read once (the runway is laid at first paint)
+let blocks: { spot: number; title: string | undefined }[] | null = null;
+const laid = () =>
+  (blocks = blocks?.length ? blocks : [...document.querySelectorAll<HTMLElement>("#runway [data-block]")]
+    .map((el) => ({ spot: spotAt(el), title: el.querySelector("h1, h2, h3")?.textContent?.trim() }))
+    .sort((a, b) => a.spot - b.spot));
+
+/** the title of the block being read at film time `t`: the last one whose reading spot the film has reached */
+const titleAt = (t: number) => laid().findLast((b) => b.spot <= t + 0.3)?.title;
+
+function read(): ActiveSection {
+  const t = filmT(), sec = sectionHere(t);
+  const title = titleAt(t);
+  const name = SECTION_NAME[sec];
+  return { sectionId: sec.slice(4) as ActiveSection["sectionId"], domId: sec, label: title && title !== name ? `${title} (in ${name})` : name };
+}
 
 /**
- * Tracks which section the visitor is currently looking at, using an
- * IntersectionObserver tuned to a thin band near the viewport center.
- *
- * Pass `enabled=false` while the visitor is on State 1 — the State 2 sections
- * aren't mounted yet and there's nothing to observe.
+ * What the visitor is reading on the voyage, from the film's time: its section and the block at its reading spot
+ * (each `[data-block]` on the runway is laid at its spot). Read at most once a frame while scrolling.
  */
 export function useActiveSection(enabled: boolean): ActiveSection | null {
   const [active, setActive] = useState<ActiveSection | null>(null);
-  const debounceRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!enabled || typeof window === "undefined") return;
-
-    const ratios = new Map<string, number>();
-
-    const pickBest = () => {
-      let bestId: string | null = null;
-      let bestRatio = 0;
-      for (const [id, r] of ratios) {
-        if (r > bestRatio) {
-          bestRatio = r;
-          bestId = id;
-        }
-      }
-      if (!bestId) return;
-      const next = SECTIONS.find((s) => s.domId === bestId);
-      if (!next) return;
-      setActive((prev) => (prev?.domId === next.domId ? prev : next));
+    if (!enabled) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const next = read();
+      setActive((prev) => (prev?.label === next.label && prev.domId === next.domId ? prev : next));
     };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          ratios.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0);
-        }
-        if (debounceRef.current !== null) {
-          window.clearTimeout(debounceRef.current);
-        }
-        debounceRef.current = window.setTimeout(pickBest, 120);
-      },
-      {
-        // Thin band near the center of the viewport — whichever section
-        // crosses it is what the visitor is reading.
-        rootMargin: "-40% 0px -55% 0px",
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-      }
-    );
-
-    // Sections may not all be mounted on first render (transition from State 1).
-    // Retry until they appear, then stop.
-    let cancelled = false;
-    let attempts = 0;
-    const attach = () => {
-      if (cancelled) return;
-      let attached = 0;
-      for (const s of SECTIONS) {
-        const el = document.getElementById(s.domId);
-        if (el) {
-          observer.observe(el);
-          attached++;
-        }
-      }
-      if (attached < SECTIONS.length && attempts < 20) {
-        attempts++;
-        window.setTimeout(attach, 100);
-      }
-    };
-    attach();
-
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    onScroll();
+    addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      cancelled = true;
-      if (debounceRef.current !== null) window.clearTimeout(debounceRef.current);
-      observer.disconnect();
+      removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
     };
   }, [enabled]);
 

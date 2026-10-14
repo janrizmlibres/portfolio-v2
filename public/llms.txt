@@ -20,18 +20,36 @@ deeper knowledge is retrieved from a personal knowledge wiki via pgvector.
 
 ## Current stack
 
-Next.js, Vercel AI SDK, OpenAI, pgvector, MCP, TypeScript, Postgres, Tailwind,
-GSAP, Drizzle ORM, Supabase, Upstash Redis.
+Next.js, NestJS, Vercel AI SDK, LangChain, OpenAI, pgvector, MCP, TypeScript,
+Postgres, Tailwind, GSAP, Drizzle ORM, Supabase, Upstash Redis.
 
 ## Professional experience
 
-- 2025–26 — LogoLife — Data / AI Engineer (TypeScript, MCP, Mem0).
-  Shipped Athena, a context-aware admissions assistant with Mem0-backed memory
-  and a scoped MCP server, plus production crawlers, dashboards, and
-  load-testing harnesses.
-- 2025 — Tolstoy — Full-stack / AI Engineer (TanStack, AWS).
-- 2024 — Elinnov Technologies — Software Engineer Intern (ASP.NET, React).
-- 2023–24 — The Crusader Yearbook — Software Developer (Laravel, WordPress, Python).
+- Oct 2025 – Oct 2026 — LogoLife — Full-Stack / AI Engineer (TypeScript, MCP,
+  Mem0, GPT-5 mini, Grok 4 Fast). Shipped Athena, an assistant that remembers
+  students across sessions, and the AI Web Crawler behind it.
+- Aug – Oct 2025 — Tolstoy — Full-Stack / AI Engineer (TanStack, AWS, Vercel AI
+  SDK, GPT-5, GPT-4.1). Built the retrieval behind an AI shop assistant. One
+  client's sitewide conversion rose 11% within six days.
+- Aug – Nov 2024 — Elinnov Technologies — Software Engineer Intern (ASP.NET,
+  React). Built API endpoints for a warehouse system, and client pages that
+  lifted traffic 10% in their first month.
+- Aug 2023 – May 2024 — The Crusader Yearbook — Software Developer (Laravel,
+  WordPress, Python). Kept the yearbook's Laravel site running, and wrote the
+  OCR and mailing tools behind its photo sessions.
+
+## Work projects (NDA)
+
+Built at LogoLife. Under NDA: patterns only, no screenshots.
+
+- Athena — React, Express, Vercel AI SDK, Mem0, MCP. An admissions assistant
+  that coaches students and remembers each one across sessions. Patterns:
+  memory that lasts across sessions, a secure MCP server for live student
+  data, and nudges that bring students back.
+- AI Web Crawler — Firecrawl, OpenAI GPT-5 mini, text-embedding-3-large,
+  Grok 4 Fast, MongoDB Atlas. A five-stage pipeline that searches the web,
+  turns pages into records and enriches them. Two dedup layers, one before
+  enrichment and one after it, cut enrichment costs by 70%.
 
 ## Personal projects
 
@@ -41,8 +59,8 @@ GSAP, Drizzle ORM, Supabase, Upstash Redis.
 - PulseVR — https://pulse-vr.vercel.app/ — TypeScript, React, Tailwind.
   Responsive landing page for a fictional VR startup — mobile-first,
   motion-rich. Repo: https://github.com/janrizmlibres/pulse-vr
-- Mercado — https://mercado-front-production.up.railway.app/ — TS, TanStack,
-  Nest.js, Postgres, Docker. Type-safe e-commerce frontend with GraphQL,
+- Mercado — https://mercado-front-production.up.railway.app/ — TypeScript,
+  TanStack, NestJS, Postgres. Type-safe e-commerce frontend with GraphQL,
   cart, checkout, and admin dashboard.
   Repo: https://github.com/janrizmlibres/mercado-front/
 

@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Fraunces } from "next/font/google";
+import { JetBrains_Mono, Jost, DM_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
+import "./voyage.css";
+import "./routemap.css";
+import { TIER_SCRIPT } from "@/lib/film/tier";
+import { WAKE_SCRIPT } from "@/lib/wake/script";
 import { siteUrl } from "@/lib/seo/site";
 import { profile } from "@/lib/content/profile";
 import {
@@ -9,21 +13,19 @@ import {
   projectsSchema,
 } from "@/lib/seo/structured-data";
 
+// one small label in the log's sheet: not worth a preload
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: "swap",
   weight: ["300", "400", "500", "700"],
+  preload: false,
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  display: "swap",
-  axes: ["opsz"],
-  style: ["italic"],
-  weight: "variable",
-});
+// the voyage's type: Jost capitals for the voice, DM Mono small print, Newsreader for reading
+const jost = Jost({ variable: "--font-jost", subsets: ["latin"], display: "swap" });
+const dmMono = DM_Mono({ variable: "--font-dm-mono", subsets: ["latin"], display: "swap", weight: ["400", "500"] });
+const newsreader = Newsreader({ variable: "--font-newsreader", subsets: ["latin"], display: "swap", axes: ["opsz"], style: ["normal", "italic"] });
 
 const title = `${profile.name} — ${profile.roleShort}`;
 const description = profile.siteDescription;
@@ -71,7 +73,6 @@ export const metadata: Metadata = {
     description,
     creator: "@janrizmlibres",
   },
-  icons: { icon: "/favicon.ico", apple: "/profile.jpg" },
   manifest: "/manifest.webmanifest",
 };
 
@@ -87,15 +88,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${jetbrainsMono.variable} ${fraunces.variable}`}
-      style={{ ['--font-general-sans' as string]: "'General Sans', ui-sans-serif, system-ui" }}
+      // the head script below marks how the voyage plays here before first paint
+      suppressHydrationWarning
+      className={`${jetbrainsMono.variable} ${jost.variable} ${dmMono.variable} ${newsreader.variable}`}
     >
       <head>
-        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap"
-        />
+        <script dangerouslySetInnerHTML={{ __html: TIER_SCRIPT }} />
+        {/* after the tier, which it reads: whether the wake-up opens this load */}
+        <script dangerouslySetInnerHTML={{ __html: WAKE_SCRIPT }} />
       </head>
       <body className="min-h-dvh antialiased">
         <script

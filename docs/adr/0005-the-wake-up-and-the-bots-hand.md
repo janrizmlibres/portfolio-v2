@@ -1,6 +1,6 @@
 # The page opens on Tycho waking up, and the bot moves the page three ways
 
-Status: accepted (2026-10-01). It replaces ADR 0001's "There is no loading screen" and the rule that the AI entrypoint is usable within the first second. Amended 2026-10-04 (*Finalize the wake-up*): a loader comes first, and Tycho's charge-up is a show (see the end).
+Status: accepted (2026-10-01). It replaces ADR 0001's "There is no loading screen" and the rule that the AI entrypoint is usable within the first second. Amended 2026-10-04 (*Finalize the wake-up*): a loader comes first, and Tycho's charge-up is a show (see the end). Amended 2026-10-13 by ADR 0018: the whole voyage loads under the loader, not only the first scene.
 
 *Plan the signature moments* weighed the page's moments together. In a one-take film the scene changes are the moments, and *Storyboard the voyage* had already settled them. Two decisions were left that change how the site works, not how a scene looks.
 

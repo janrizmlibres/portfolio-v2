@@ -2,22 +2,27 @@
 
 A chat-first AI engineer portfolio. The landing page IS a chat with an agent that has read everything I've written.
 
-[Live](https://janrizlibres.vercel.app) · [Spec](docs/superpowers/specs/2026-04-27-portfolio-v2-design.md) · [Visual prototype](docs/superpowers/design/2026-04-27-visual-prototype.html)
+[Live](https://janrizlibres.vercel.app) · [Redesign prototype](docs/design/2026-09-27-redesign-prototype.html)
 
 ## What this is
 
-This site has two states:
+One page: a voyage through a sky of everything I've written, played by the scroll like a film.
 
-1. **State 1 — chat-first landing.** A centered prompt, suggested chips, no traditional portfolio sections.
-2. **State 2 — activated.** After the visitor's first message, a GSAP timeline reveals the portfolio (Hero, About, Work, Personal Projects, Contact) alongside a persistent chat panel. Returning visitors land here directly.
+1. **The wake-up.** Every load opens on Tycho, the site's guide, charging up while the first scene loads. A click wakes him and turns the sound on. The page's HTML is complete underneath from first paint.
+2. **The voyage.** Hero, About, Work, Projects and Contact are scenes the camera flies through: his ship, the road of his roles, the projects' worlds, the ribbon of personal work, then out to the whole sky. The text is real HTML placed over the picture. Everything past the first scene loads after the wake.
+3. **Tycho's bubble.** Ask Tycho anything: he answers in his bubble, the log keeps the conversation, the stars his answer read from light up, and he can take you to a section or point at a project.
 
-The chat is powered by OpenAI GPT-4o via the Vercel AI SDK v6, retrieving from a shared **Supabase + pgvector** index that's populated by the [adjacent personal wiki](https://github.com/janrizmlibres/llm-wiki). The portfolio is one consumer of that index.
+Under reduced motion the film plays as stills; without WebGL it's a plain reading page.
+
+The chat is powered by OpenAI GPT-4o via the Vercel AI SDK v6, retrieving from a **Supabase + pgvector** index of the [personal wiki](https://github.com/janrizmlibres/llm-wiki). The index is a snapshot of the wiki's last publish; nothing refreshes it now.
 
 ## Stack
 
 - Next.js 16 (App Router) + React 19 + TypeScript 5
 - Tailwind CSS v4
-- GSAP 3.15+ (motion), `@gsap/react` (`useGSAP`), ScrollTrigger, ScrollToPlugin, Draggable
+- GSAP 3.15+ (all motion: the film's clock, ScrollSmoother on the plain page)
+- three.js (the sky and the voyage's 3D, loaded after first paint)
+- Web Audio (the score and sound effects, one AudioContext)
 - Vercel AI SDK v6 (`ai` + `@ai-sdk/openai` + `@ai-sdk/react`)
 - Drizzle ORM + `postgres-js` driver against Supabase Postgres + pgvector
 - Upstash Redis + `@upstash/ratelimit`
@@ -44,7 +49,7 @@ Open <http://localhost:3000>.
 
 ### Database setup
 
-The `wiki_chunks` table is shared with the [adjacent wiki publisher](https://github.com/janrizmlibres/llm-wiki). One repo owns the migration; both consume the same Supabase project.
+The `wiki_chunks` table is a snapshot of the last publish from the [personal wiki](https://github.com/janrizmlibres/llm-wiki). The wiki's publisher was removed on 2026-08-31, so nothing writes to the table now; this repo's Drizzle schema and migrations describe it.
 
 ```bash
 # Generate migration (only when schema changes)
@@ -53,7 +58,7 @@ pnpm db:generate
 pnpm db:migrate
 ```
 
-The chat won't return useful answers until the wiki has run its `pnpm publish` script and populated the table.
+The chat won't return useful answers against an empty table, and neither repo can repopulate it today.
 
 ## Scripts
 
@@ -63,7 +68,8 @@ The chat won't return useful answers until the wiki has run its `pnpm publish` s
 | `pnpm build` | Production build |
 | `pnpm test` | Vitest unit/integration tests |
 | `pnpm test:watch` | Vitest in watch mode |
-| `pnpm test:e2e` | Playwright happy path |
+| `pnpm test:e2e` | Playwright: the wake-up, the voyage, the warp, the bubble |
+| `pnpm audio:export` | Render the score's stems and write `lib/audio/stems.json` |
 | `pnpm db:generate` | Drizzle Kit — generate a migration from schema |
 | `pnpm db:migrate` | Drizzle Kit — apply migrations |
 | `pnpm lint` | ESLint |
@@ -71,43 +77,38 @@ The chat won't return useful answers until the wiki has run its `pnpm publish` s
 ## Architecture in 60 seconds
 
 ```
-┌─────────────┐    state transition (GSAP)
-│  State 1    │ ─────────────────────────────► ┌─────────────┐
-│  landing    │                                 │  State 2    │
-└─────────────┘                                 │  portfolio  │
-                                                └──────┬──────┘
-                                                       │
-                                       ┌───────────────┴───────────────┐
-                                       │                               │
-                              ┌────────▼─────────┐          ┌──────────▼──────────┐
-                              │  display content │          │     chat panel       │
-                              │  (lib/content/*) │          │  (components/chat)   │
-                              │  hand-authored   │          │                      │
-                              └──────────────────┘          └──────────┬───────────┘
-                                                                       │ POST /api/chat
-                                                                       ▼
-                                                               ┌──────────────┐
-                                                               │ Vercel AI SDK│
-                                                               │   GPT-4o     │
-                                                               └──┬───────────┘
-                                                                  │ tool calls
-                                       ┌──────────────────────────┼────────────────────────┐
-                                       ▼                          ▼                        ▼
-                              ┌─────────────────┐       ┌──────────────────┐    ┌──────────────────┐
-                              │  search_wiki    │       │   scroll_to      │    │ highlight_project│
-                              │  pgvector       │       │   GSAP scroll    │    │  GSAP pulse      │
-                              │  (Supabase)     │       │   to section     │    │  on card         │
-                              └─────────────────┘       └──────────────────┘    └──────────────────┘
+ first paint: complete HTML (the voyage's text) under the wake-up's loader
+        │
+        ▼  after first paint, lazily
+ ┌──────────────────────┐      wake (click)      ┌──────────────────────────────┐
+ │ the sky + the first  │ ─────────────────────► │ the voyage: the film played  │
+ │ scene (three.js)     │                        │ by native scroll; later      │
+ └──────────────────────┘                        │ scenes load after the wake   │
+                                                 └──────────────┬───────────────┘
+                     display content (lib/content/*,            │ Tycho's bubble
+                     hand-authored) is the film's text          ▼ POST /api/chat
+                                                         ┌──────────────┐
+                                                         │ Vercel AI SDK│
+                                                         │   GPT-4o     │
+                                                         └──┬───────────┘
+                                                            │ tool calls
+                              ┌─────────────────────────────┼──────────────────────────┐
+                              ▼                             ▼                          ▼
+                     ┌─────────────────┐         ┌───────────────────┐      ┌───────────────────┐
+                     │  search_wiki    │         │   scroll_to       │      │ highlight_project │
+                     │  pgvector       │         │   the warp to a   │      │ Tycho points at   │
+                     │  (lights stars) │         │   section         │      │ the project       │
+                     └─────────────────┘         └───────────────────┘      └───────────────────┘
 ```
 
 - Display content (Hero / About / Work / Projects / Contact) is hand-authored. The agent doesn't render these.
 - RAG content is sourced separately from the wiki. The agent can answer deeper questions than what's on the page — that's a feature.
-- localStorage `jrz-chat-v1` persists chat history per-browser. No accounts.
+- localStorage `jrz-chat-v1` keeps the conversation per browser. No accounts.
 
 ## Adjacent wiki
 
 - Repo: <https://github.com/janrizmlibres/llm-wiki>
-- The wiki owns chunking + embedding + DB upsert via `pnpm publish`. It's a hard prerequisite for the chat to work.
+- The wiki is where the chat's knowledge comes from, but it no longer publishes: its publisher (chunking, embedding and the DB upsert behind `pnpm publish`) was removed on 2026-08-31. `wiki_chunks` keeps the last publish.
 
 ## Deferred / out of scope
 

@@ -1,8 +1,7 @@
 import { profile } from "@/lib/content/profile";
 import { contactLinks } from "@/lib/content/contact";
-import { workTimeline } from "@/lib/content/work-timeline";
+import { ROLES } from "@/lib/content/voyage";
 import { personalProjects } from "@/lib/content/personal-projects";
-import { stripItalicMarkers } from "@/lib/content/italic";
 import { siteUrl } from "@/lib/seo/site";
 
 const email = contactLinks.find((l) => l.slug === "email")?.value;
@@ -28,7 +27,7 @@ export const personSchema = {
   },
   worksFor: {
     "@type": "Organization",
-    name: workTimeline[0]?.company ?? "LogoLife",
+    name: ROLES[0]!.company,
   },
   alumniOf: {
     "@type": "CollegeOrUniversity",
@@ -56,7 +55,7 @@ export const websiteSchema = {
   url: siteUrl,
   inLanguage: "en",
   author: { "@type": "Person", name: profile.name },
-  description: stripItalicMarkers(profile.taglineState1),
+  description: profile.siteDescription,
 };
 
 export const projectsSchema = {

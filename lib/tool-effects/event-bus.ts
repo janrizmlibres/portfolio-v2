@@ -1,4 +1,5 @@
-type ScrollSection = "about" | "experience" | "work" | "projects" | "contact";
+/** The voyage's sections the agent can warp to. */
+export type ScrollSection = "about" | "work" | "projects" | "contact";
 
 interface Events {
   scrollTo: { section: ScrollSection };

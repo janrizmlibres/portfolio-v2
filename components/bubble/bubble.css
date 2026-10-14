@@ -1,0 +1,441 @@
+/*
+ * Tycho's bubble and the log, in the look Finalize the bubble settled (.is-phone under 700 px): a square card on a
+ * hairline, its tail a leader line from his head; a logbook for the log; on phones the card is opaque.
+ * Type E: Tycho's name and the log's title in Jost capitals, labels in DM Mono capitals, the words in Newsreader. Colour: the voyage's ink on space, no colour of its own (meaning is drawn unlit).
+ * Order over the page: the route map, the veil (40), Tycho (41) and his leader, the bubble (42), the log (45).
+ */
+
+#tycho {
+  --pb-line: rgba(226, 232, 255, 0.26);
+  --pb-hair: rgba(226, 232, 255, 0.14);
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------- Tycho */
+#tycho .tycho-body {
+  position: fixed;
+  right: 18px;
+  bottom: 14px;
+  width: 128px;
+  height: 128px;
+  z-index: 41;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 40%;
+  -webkit-tap-highlight-color: transparent;
+}
+#tycho .tycho-body canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+#tycho .tycho-body:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 4px;
+}
+#tycho.is-phone .tycho-body {
+  right: 6px;
+  bottom: 6px;
+  width: 92px;
+  height: 92px;
+}
+
+/* ---------------------------------------------------------------- the leader */
+#tycho .tycho-leader {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 41;
+  pointer-events: none;
+}
+#tycho .tycho-leader line {
+  stroke: rgba(226, 232, 255, 0.62);
+  stroke-width: 1;
+}
+#tycho .tycho-leader circle {
+  fill: var(--ink);
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------- the bubble */
+#tycho .tycho-bubble {
+  position: fixed;
+  z-index: 42;
+  right: 24px;
+  bottom: 168px;
+  width: min(26rem, calc(100vw - 48px));
+  max-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+  background: rgba(4, 5, 12, 0.86);
+  border: 1px solid var(--pb-line);
+}
+
+/* phones: the bubble spans the width above Tycho, opaque */
+#tycho.is-phone .tycho-bubble {
+  left: 10px;
+  right: 10px;
+  bottom: 104px;
+  width: auto;
+  background: #05060d;
+}
+
+#tycho .pb-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 10px 4px 20px;
+}
+#tycho .pb-who {
+  font: 400 13px/1 var(--f-display);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+#tycho .pb-sp {
+  flex: 1;
+}
+#tycho .pb-logb,
+#tycho .pb-x {
+  border: 0;
+  background: none;
+  color: var(--ink-3);
+  cursor: pointer;
+  padding: 6px 8px;
+  font: 400 11px/1 var(--f-data);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+#tycho .pb-logb:hover,
+#tycho .pb-x:hover,
+#tycho .pb-logb:focus-visible,
+#tycho .pb-x:focus-visible {
+  color: var(--ink);
+}
+#tycho .pb-x svg {
+  width: 11px;
+  height: 11px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 1.3;
+}
+
+#tycho .pb-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px 20px 4px;
+}
+#tycho .pb-q {
+  margin: 0 0 10px;
+  font: italic 400 15px/1.4 var(--f-text);
+  color: var(--ink-3);
+}
+#tycho .pb-tag {
+  font: normal 400 10px/1 var(--f-data);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+#tycho .pb-a {
+  font: 400 17.5px/1.5 var(--f-text);
+  color: var(--ink);
+}
+#tycho.is-phone .pb-a {
+  font-size: 17px;
+}
+#tycho .pb-a p,
+#tycho .pl-a p {
+  margin: 0 0 0.55em;
+}
+#tycho .pb-a p:last-child,
+#tycho .pl-a p:last-child {
+  margin-bottom: 0;
+}
+#tycho .pb-a ul,
+#tycho .pl-a ul {
+  margin: 0.2em 0 0.65em;
+  padding-left: 1.1em;
+  list-style: "– ";
+}
+#tycho .pb-a li,
+#tycho .pl-a li {
+  margin: 0.3em 0;
+}
+#tycho .pb-a a,
+#tycho .pl-a a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(226, 232, 255, 0.45);
+}
+#tycho .pb-a strong,
+#tycho .pl-a strong {
+  font-weight: 600;
+}
+#tycho .pb-a .w {
+  display: inline-block;
+}
+
+#tycho .pb-foot {
+  padding: 10px 20px 16px;
+}
+#tycho .pb-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+#tycho .pb-chips button {
+  border: 1px solid var(--pb-line);
+  background: none;
+  color: var(--ink-2);
+  cursor: pointer;
+  padding: 7px 10px;
+  font: 400 11px/1 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+#tycho .pb-chips button:hover,
+#tycho .pb-chips button:focus-visible {
+  color: var(--ink);
+  border-color: var(--ink-3);
+}
+#tycho .pb-form {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--pb-line);
+}
+#tycho .pb-form input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--ink);
+  font: 400 16px/1.2 var(--f-text);
+  padding: 10px 6px 10px 0;
+}
+#tycho .pb-form input::placeholder {
+  color: var(--ink-3);
+  font-style: italic;
+}
+#tycho .pb-form button {
+  border: 0;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+#tycho .pb-form button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+#tycho .pb-form button svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  fill: none;
+}
+
+/* ---------------------------------------------------------------- the log */
+#tycho .tycho-log {
+  position: fixed;
+  z-index: 45;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(27rem, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: #05060d;
+  border-left: 1px solid var(--pb-hair);
+  visibility: hidden;
+  box-shadow: -24px 0 60px rgba(2, 3, 10, 0.6);
+}
+#tycho.is-phone .tycho-log {
+  top: auto;
+  left: 0;
+  width: auto;
+  height: 74dvh;
+  border-left: 0;
+  border-top: 1px solid var(--pb-line);
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -24px 60px rgba(2, 3, 10, 0.7);
+}
+#tycho .pl-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 24px 18px 18px 26px;
+  border-bottom: 1px solid var(--pb-hair);
+}
+#tycho .pl-title {
+  font: 400 16px/1 var(--f-display);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+#tycho .pl-count,
+#tycho .pl-close,
+#tycho .pl-foot,
+#tycho .pl-foot button {
+  font: 400 11px/1 var(--f-data);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+#tycho .pl-close,
+#tycho .pl-foot button {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+#tycho .pl-close:hover,
+#tycho .pl-foot button:hover,
+#tycho .pl-close:focus-visible,
+#tycho .pl-foot button:focus-visible {
+  color: var(--ink);
+}
+#tycho .pl-foot button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+#tycho .pl-rows {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 0 26px;
+  list-style: none;
+}
+#tycho .pl-row {
+  padding: 20px 0;
+  border-top: 1px solid var(--pb-hair);
+}
+#tycho .pl-row:first-child {
+  border-top: 0;
+}
+#tycho .pl-empty {
+  padding: 28px 0;
+  font: italic 400 16px/1.4 var(--f-text);
+  color: var(--ink-3);
+}
+#tycho .pl-a {
+  font: 400 16.5px/1.5 var(--f-text);
+  color: var(--ink-2);
+}
+#tycho .pl-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px 18px 26px;
+  border-top: 1px solid var(--pb-hair);
+}
+
+/* a logbook: numbered entries with the time, the question in mono capitals */
+#tycho .pl-meta {
+  display: flex;
+  gap: 14px;
+  margin: 0 0 8px;
+  font: 400 10.5px/1 var(--f-data);
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+}
+#tycho .pl-q {
+  margin: 0 0 10px;
+  font: 400 12.5px/1.45 var(--f-data);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+/* ---------------------------------------------------------------- Tycho in the film (Finalize Tycho in the film) */
+/* his spot is a transform from his corner, written each frame; a drag needs the pointer, not the page's pan */
+#tycho .tycho-body {
+  touch-action: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+/* the keyboard's "Ask Tycho" and "Move Tycho", seen only when focused, side by side beside him */
+#tycho .tycho-key {
+  position: fixed;
+  bottom: 20px;
+  z-index: 41;
+  padding: 8px 12px;
+  font: 500 11px/1 var(--font-mono, ui-monospace, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: rgba(4, 5, 12, 0.86);
+  border: 1px solid rgba(226, 232, 255, 0.26);
+  clip-path: inset(50%);
+  opacity: 0;
+}
+#tycho .tycho-ask {
+  right: 290px;
+}
+#tycho .tycho-move {
+  right: 160px;
+}
+#tycho.is-flat .tycho-ask {
+  right: 160px;
+}
+#tycho.is-phone .tycho-ask {
+  right: auto;
+  left: 10px;
+  bottom: 110px;
+}
+#tycho.is-phone .tycho-move {
+  right: auto;
+  left: 140px;
+  bottom: 110px;
+}
+#tycho .tycho-key:focus-visible {
+  clip-path: none;
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------- without 3D: the flat Tycho, parked and still */
+#tycho .tycho-flat {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+#tycho .tf-outline {
+  fill: #0b0d16;
+  stroke: rgba(226, 232, 255, 0.5);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+#tycho .tf-lines {
+  fill: none;
+  stroke: rgba(226, 232, 255, 0.34);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+#tycho .tf-glyph {
+  fill: var(--ink);
+}
+
+/* ---------------------------------------------------------------- one question at a time */
+/* the welcome back's way into the log, a chip like the starters but set apart */
+#tycho .pb-chips .pb-open-log {
+  color: var(--ink);
+  border-color: rgba(226, 232, 255, 0.5);
+}
+/* the page's "Ask Tycho about …" buttons wait while he answers */
+html[data-answering] .askb {
+  cursor: progress;
+  opacity: 0.55;
+}

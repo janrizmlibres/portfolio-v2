@@ -31,7 +31,7 @@ export const personalProjects: PersonalProject[] = [
   {
     slug: "mercado",
     title: "Mercado",
-    stack: "TS · TanStack · Nest.js · Postgres · Docker",
+    stack: "TypeScript · TanStack · NestJS · Postgres",
     description: "Type-safe e-commerce frontend with GraphQL, cart, checkout, and admin dashboard.",
     images: ["/projects/mercado/1.png", "/projects/mercado/2.png", "/projects/mercado/3.png"],
     repoUrl: "https://github.com/janrizmlibres/mercado-front/",

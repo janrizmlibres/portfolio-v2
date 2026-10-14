@@ -1,6 +1,7 @@
 # Work is a chain of relays, with a buoy for each breakthrough
 
-Status: accepted (2026-10-10, amended 2026-10-11). It replaces Work's road: its gates, monoliths and look back.
+Status: superseded after the first throw by ADR 0014 (2026-10-11): Work builds home, and the relay by home is only Work's
+intro. Accepted 2026-10-10, amended 2026-10-11. It replaced Work's road: its gates, monoliths and look back.
 
 Work was a winding road through the career lobe, with a gate (a ring) at each company, a monolith beside the road for each AI breakthrough, and a look back over the whole route at the end. Janriz, 2026-10-10: "Lots of swerving left and right it me dizzy the entire sequence … the dock thingys … look out of place … It would be nice if they're like 'jump points' … Think Mass Effect. And I hate the look back. Why do we even have this in the first place."
 

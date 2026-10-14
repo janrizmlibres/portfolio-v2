@@ -19,46 +19,12 @@
   --color-saffron-500: #e8b75a;
   --color-saffron-700: #b78a3d;
 
-  /* Phosphor cyan */
-  --color-phosphor-300: #8df5ec;
-  --color-phosphor-500: #5ee5d9;
-  --color-phosphor-700: #3aa89f;
-
   /* Fonts (CSS variables come from next/font in layout.tsx) */
-  --font-display: var(--font-jetbrains-mono), ui-monospace, monospace;
-  --font-body:    var(--font-general-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-italic:  var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-body:    ui-sans-serif, system-ui, sans-serif;
   --font-mono:    var(--font-jetbrains-mono), ui-monospace, monospace;
-
-  /* Animations */
-  --animate-blink: blink 1.05s steps(2) infinite;
-  --animate-pulse-soft: pulse-soft 1.6s ease-in-out infinite;
-
-  @keyframes blink { 50% { opacity: 0; } }
-  @keyframes pulse-soft {
-    0%, 100% { opacity: 0.5; }
-    50%      { opacity: 1; }
-  }
 }
 
 @layer base {
-  .scrolled-to { position: relative; }
-  .scrolled-to::before {
-    content: "";
-    position: absolute;
-    left: -16px;
-    top: 4rem;
-    bottom: 4rem;
-    width: 2px;
-    background: var(--color-phosphor-500);
-    box-shadow: 0 0 12px var(--color-phosphor-500);
-    animation: scrolled-fade 2.4s ease-out forwards;
-  }
-  @keyframes scrolled-fade {
-    0%, 60% { opacity: 1; }
-    100%    { opacity: 0; }
-  }
-
   html { background: var(--color-ink-bg); color-scheme: dark; }
   body {
     font-family: var(--font-body);
@@ -75,26 +41,6 @@
     outline-offset: 4px;
     border-radius: 4px;
   }
-}
-
-@utility container-prose {
-  max-width: 78rem;
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 3rem);
-}
-
-@utility text-display {
-  font-family: var(--font-display);
-  font-feature-settings: 'ss03', 'ss05', 'cv02';
-  letter-spacing: -0.03em;
-}
-
-@utility text-italic-accent {
-  font-family: var(--font-italic);
-  font-style: italic;
-  font-weight: 600;
-  color: var(--color-saffron-500);
-  font-feature-settings: 'ss01';
 }
 
 @layer base {
