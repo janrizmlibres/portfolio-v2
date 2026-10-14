@@ -9,7 +9,7 @@ describe("system prompt: Tycho, talking about Janriz from what the page shows", 
   });
 
   it("names the site by the host of its canonical URL", () => {
-    expect(SYSTEM_PROMPT).toContain("Janriz Libres's portfolio at jrz-dev.vercel.app.");
+    expect(SYSTEM_PROMPT).toContain("Janriz Libres's portfolio at jrz-libres.vercel.app.");
   });
 
   it("names the latest role the page shows as his most recent, years only", () => {
