@@ -10,6 +10,7 @@ import { onBuilt } from "@/lib/wake/built";
 import { offerReplay, onReplayWake, wakeClasses } from "@/lib/wake/replay";
 import { setTier } from "@/lib/film/tier";
 import { currentRig } from "@/lib/tycho/current";
+import { isLite } from "@/lib/film/lite";
 import { onSky } from "@/lib/universe/live";
 import type { TychoRig } from "@/lib/tycho/rig";
 import type { Sky } from "@/lib/universe/sky";
@@ -219,6 +220,8 @@ function run(html: HTMLElement, el: HTMLDivElement, o: { replay?: boolean } = {}
 
   // ---------------------------------------------------------------- the count: real milestones, never backwards
   const count = createCount();
+  // lite: his flat drawing stands on the stage, with no 3D of his to wait for (lib/film/lite.ts)
+  if (isLite()) (["three", "tycho"] as const).forEach((m) => count.mark(m));
   const uni = document.querySelector<HTMLElement>("[data-universe]");
   const uniCanvas = () => uni?.querySelector("canvas") ?? null;
   const onUni = () => {

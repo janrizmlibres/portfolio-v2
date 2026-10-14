@@ -16,6 +16,7 @@ import { placeCard, type CardPlace } from "@/lib/tycho/card";
 import { createRoam } from "@/lib/tycho/roam";
 import { onReplayWake } from "@/lib/wake/replay";
 import { setCurrentRig, setCurrentRoam } from "@/lib/tycho/current";
+import { isLite } from "@/lib/film/lite";
 import { onTier } from "@/lib/film/tier";
 import { onWarp } from "@/lib/film/warp";
 import { currentSound } from "@/lib/audio/current";
@@ -39,7 +40,8 @@ const media = (q: string) => ({
   get: () => matchMedia(q).matches,
 });
 const isPhone = media(phoneQuery), isReduced = media("(prefers-reduced-motion: reduce)");
-const noWebGL = () => document.documentElement.dataset.film === "plain";
+// without 3D, or lite (lib/film/lite.ts): his flat drawing, so no canvas of his draws on
+const drawnFlat = () => document.documentElement.dataset.film === "plain" || isLite();
 // Whether the visitor last moved about by keyboard. Focus handed back on a close (to where it came from, or the "Ask
 // Tycho" key) is given back only then: after a pointer, a programmatic focus still matches :focus-visible, and would
 // show the key to someone who never pressed Tab. Otherwise focus is let go, to the page.
@@ -72,8 +74,8 @@ const onTierChange = (fn: () => void) => onTier(fn);
  * - **Keyboard and screen readers:** an "Ask Tycho" button early in the tab order, shown when focused, beside "Move
  *   Tycho". The bubble is a dialog that doesn't trap focus: focus goes in when it opens, Esc closes it and returns
  *   focus. "Tycho is reading his notes" is announced once, then each finished sentence.
- * - **Tiers:** without 3D (no WebGL, or 3D that failed or took more than 10 s) the flat Tycho sits parked and still
- *   and opens the same bubble. Under reduced motion the card and the log fade and words fade in place, at the same
+ * - **Tiers:** without 3D (no WebGL, or 3D that failed or took more than 10 s), and in lite, the flat Tycho sits
+ *   parked and still and opens the same bubble. Under reduced motion the card and the log fade and words fade in place, at the same
  *   pace. On phones the keyboard never covers the input.
  * His talking is told to anything that follows it through `lib/chat/talk.ts` (his voice listens there).
  */
@@ -87,10 +89,10 @@ export function Tycho() {
   const [logOpen, setLogOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [said, setSaid] = useState("");
-  // without 3D: no WebGL at all, or 3D that failed or was late
-  const plain = useSyncExternalStore(onTierChange, noWebGL, () => false);
+  // without 3D (no WebGL at all, or 3D that failed or was late), or lite
+  const flatTier = useSyncExternalStore(onTierChange, drawnFlat, () => false);
   const [failed, setFailed] = useState(false);
-  const flat = plain || failed;
+  const flat = flatTier || failed;
 
   const c = useRef<convo.Conversation>(convo.start());
   const shownCount = useRef(0); // word units shown, as last told
@@ -167,7 +169,7 @@ export function Tycho() {
 
   // his body, after first paint; the flat Tycho without 3D
   useEffect(() => {
-    if (!here || plain || !canvas.current) return;
+    if (!here || flatTier || !canvas.current) return;
     let gone = false;
     const late = setTimeout(() => !gone && setFailed(true), FLAT_AFTER_MS);
     import("@/lib/tycho/rig")
@@ -187,7 +189,7 @@ export function Tycho() {
       rig.current = null;
       setCurrentRig(null);
     };
-  }, [here, plain, reduced]);
+  }, [here, flatTier, reduced]);
   // without 3D, the drawing takes his place, parked
   useEffect(() => {
     if (!flat) return;

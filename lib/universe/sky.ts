@@ -57,8 +57,10 @@ import type { Rgb } from "./light";
 import { seeded as rng, starMagnitude } from "./magnitude";
 import { noise3 } from "./noise";
 import type { Tier } from "./tier";
+import { noteSlow } from "@/lib/film/lite";
+import { drawnMs, drawsNow } from "@/lib/film/pace";
 import { createGovernor } from "./governor";
-import { lowerQuality } from "./tier";
+import { lowerQuality, quality } from "./tier";
 
 type Vec3 = [number, number, number];
 export type StarLayout = { version: number; layout: string; stars: { id: string; x: number; y: number; z: number; topic: string }[] };
@@ -489,7 +491,13 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
   const perf = { gpu: null as number | null, pending: [] as WebGLQuery[] };
   const spare: WebGLQuery[] = [];
   // the resolution, stepped down while the GPU can't hold 60 fps and back up once it can (governor.ts)
-  const governor = createGovernor({ dpr, lower: lowerQuality });
+  // and at the lowest level, still missing frames, the visit is judged too slow for the film (lib/film/lite.ts)
+  const lower = () => {
+    if (lowerQuality()) return true;
+    if (quality() === "low") noteSlow();
+    return false;
+  };
+  const governor = createGovernor({ dpr, lower });
   let lastFrame = 0;
 
   // A lost context takes its queries and extensions with it. three rebuilds its own state when the context is
@@ -509,6 +517,8 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
   canvas.addEventListener("webglcontextlost", onLost);
   canvas.addEventListener("webglcontextrestored", onRestored);
 
+  // drawn on GSAP's ticker until the film draws it, on the frames the film is drawn on (lib/film/pace.ts)
+  const ownFrame = () => { if (drawsNow()) frame(); };
   function frame() {
     if (lost) return;
     const t0 = performance.now();
@@ -520,7 +530,7 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
       }
     }
     lastFrame = t0;
-    const dt = gsap.ticker.deltaRatio(60) / 60;
+    const dt = drawnMs() / 1000;
     if (!reduced) {
       cam.az += spin.speed * spin.factor * dt;
       U.uTime.value = (performance.now() / 1000) % 1000; // the twinkle's clock, kept small for the shader's precision
@@ -601,8 +611,8 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
     setManual(on: boolean) {
       if (on === manual) return;
       manual = on;
-      if (on) gsap.ticker.remove(frame);
-      else gsap.ticker.add(frame);
+      if (on) gsap.ticker.remove(ownFrame);
+      else gsap.ticker.add(ownFrame);
     },
     /** Draws a frame now. */
     render: () => frame(),
@@ -650,7 +660,7 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
     dispose() {
       // star flares still waiting on their beat
       gen++;
-      gsap.ticker.remove(frame);
+      gsap.ticker.remove(ownFrame);
       removeEventListener("resize", resize);
       canvas.removeEventListener("webglcontextlost", onLost);
       canvas.removeEventListener("webglcontextrestored", onRestored);
@@ -664,6 +674,6 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
 
   resize();
   addEventListener("resize", resize);
-  gsap.ticker.add(frame);
+  gsap.ticker.add(ownFrame);
   return api;
 }

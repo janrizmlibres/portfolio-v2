@@ -11,11 +11,11 @@
  * compile then, and waits without drawing. In the warp it's drawn off the ticker, as each frame places him (`place`),
  * so the nozzles his fire is left at are where that frame draws them.
  */
-import gsap from "gsap";
 import type { TychoRig } from "./rig";
 import { currentRig, currentRoam } from "./current";
 import { nozzleTrail, project, type At, type P3 } from "./flight-path";
 import { detail } from "@/lib/universe/tier";
+import { drawnMs } from "@/lib/film/pace";
 
 // the canvas's laid-out size (CSS px; scaled on screen from there), and how many of his heights it frames, so his
 // flames aren't cut off; his corner canvas frames 1.12 of them
@@ -111,8 +111,8 @@ export async function createTychoFlight() {
       // and no more than the visit's quality gives him
       const q = detail(), need = B * S * Math.min(devicePixelRatio, S > 1.3 ? 1.25 : 1.5, q.tycho.dpr), max = q.flight;
       rig.buffer(BUCKETS.find((b) => b >= need && b <= max) ?? max);
-      // drawn now, posed as this frame places him, before his fire is left at his nozzles (the ticker's step, in ms)
-      rig.draw(gsap.ticker.deltaRatio(1000));
+      // drawn now, posed as this frame places him, before his fire is left at his nozzles (ms since the last frame drawn)
+      rig.draw(drawnMs());
     },
     /**
      * Leaves his fire: a point per jet at its nozzle, and between frames more along his path (`along`, from the last

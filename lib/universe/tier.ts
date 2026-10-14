@@ -41,13 +41,19 @@ export const DETAIL: Record<Quality, Detail> = {
 export type Signals = { width: number; height: number; coarsePointer: boolean; memory?: number; cores?: number; gpu?: string };
 
 // old or entry-level mobile GPUs, and Intel's integrated HD Graphics before UHD: families known to be slow
-const WEAK_GPU = /Mali-(4\d\d|T\d)|Adreno \(TM\) [345]\d\d|PowerVR|Intel\(R\) HD Graphics/;
+export const WEAK_GPU = /Mali-(4\d\d|T\d)|Adreno \(TM\) [345]\d\d|PowerVR|Intel\(R\) HD Graphics/;
+/** little memory (GB) and few cores, both reported */
+export const LEAN = { memory: 4, cores: 4 };
+
+/** A GPU from a family known to be slow. */
+export const weakGpu = (gpu?: string) => !!gpu && WEAK_GPU.test(gpu);
+/** Little memory with few cores, where the browser reports both. */
+export const lean = ({ memory, cores }: Pick<Signals, "memory" | "cores">) =>
+  memory !== undefined && cores !== undefined && memory <= LEAN.memory && cores <= LEAN.cores;
 
 export function startQuality({ width, height, coarsePointer, memory, cores, gpu }: Signals): Quality {
   const phone = coarsePointer || Math.min(width, height) < 600;
-  const lean = memory !== undefined && cores !== undefined && memory <= 4 && cores <= 4;
-  const weak = !!gpu && WEAK_GPU.test(gpu);
-  return LEVELS[Math.min(2, Number(phone) + Number(lean) + Number(weak))]!;
+  return LEVELS[Math.min(2, Number(phone) + Number(lean({ memory, cores })) + Number(weakGpu(gpu)))]!;
 }
 
 export type Device = { width: number; height: number; devicePixelRatio: number };

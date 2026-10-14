@@ -65,6 +65,15 @@ describe("the sky's resolution follows what the GPU can hold (a mid-range laptop
     expect(g.scale).toBeLessThan(1);
   });
 
+  it("without a GPU timer, on a 120 Hz display drawn at 60 fps (lib/film/pace.ts), a frame on its turn isn't missed and one a display frame late is", () => {
+    const g = createGovernor({ dpr: 2 });
+    const t = { now: 0 };
+    // its first half second drawn every display frame, before the display was measured
+    run(g, 30, null, 1000 / 120, t);
+    expect(run(g, 600, null, 1000 / 60, t)).toEqual([]);
+    expect(run(g, 60, null, 25, t)).toEqual([0.85]);
+  });
+
   it("without a GPU timer, a display that only runs at 30 fps (Low Power Mode) isn't read as missing frames", () => {
     const g = createGovernor({ dpr: 2 });
     expect(run(g, 600, null, 33.4)).toEqual([]);
