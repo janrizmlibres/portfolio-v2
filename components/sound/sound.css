@@ -19,8 +19,18 @@
   text-transform: uppercase;
   cursor: pointer;
 }
-.snd[data-on="off"] .snd-chip:first-child {
+/* off, the toggle and the Lite / Full switch beside it are dimmed together, a pair; each comes up under the pointer or
+   the keyboard's focus */
+.snd[data-on="off"] :is(.snd-chip:first-child, .lite-chip) {
   opacity: 0.6;
+}
+.snd[data-on="off"] :is(.snd-chip:first-child, .lite-chip):focus-visible {
+  opacity: 1;
+}
+@media (hover: hover) {
+  .snd[data-on="off"] :is(.snd-chip:first-child, .lite-chip):hover {
+    opacity: 1;
+  }
 }
 .snd-chip:focus-visible {
   outline: 1px solid currentColor;
@@ -89,4 +99,28 @@
 .mx-acts {
   display: flex;
   gap: 8px;
+}
+/* the Lite / Full switch, a chip like the toggle's; the offer, a line above the chips, shown by GSAP (LiteSwitch.tsx) */
+.lite-offer {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  padding: 6px 6px;
+  border: 0;
+  background: rgba(3, 4, 10, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--ink, #e8e8ee);
+  font: 400 11px / 1 var(--f-data);
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+}
+.lite-offer:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
 }

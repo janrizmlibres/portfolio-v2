@@ -1157,3 +1157,39 @@
 09:36 coord: prod build + smoke on :3098
 09:37 coord: prod smoke on :3098
 09:53 coord: final verify + build before commit
+11:57 lite: vitest pace (red)
+11:57 lite: vitest pace
+12:00 lite: vitest lite units
+12:01 lite: tsc
+12:02 lite: screenshots of the switch
+12:02 lite: screenshots of the switch
+12:03 lite: lite wake shots
+12:04 lite: lite wake shots
+12:05 lite: e2e lite.spec
+12:05 lite: e2e lite.spec
+12:06 lite: cap probe
+12:07 lite: tick probe
+12:08 lite: cap probe
+12:09 lite: tick probe new headless
+12:09 lite: tick probe chrome headless
+12:10 lite: cadence probe
+12:12 lite: tsc
+12:12 lite: eslint
+12:13 lite: vitest full
+12:13 lite: e2e voyage wake bubble routemap lite
+12:17 lite: e2e full
+12:21 lite: next build
+12:23 coord: verify lite
+12:41 switch: vitest script.test (red)
+12:41 switch: vitest script.test (green)
+12:42 switch: e2e lite.spec
+12:43 switch: e2e lite.spec
+12:43 switch: e2e lite.spec red check
+12:44 switch: screenshots
+12:45 switch: ink probe old/new css
+12:46 switch: ink probe old/new css
+12:47 switch: screenshots
+12:48 switch: tsc, eslint, vitest full
+12:48 switch: e2e full
+12:53 switch: next build
+12:54 coord: verify switch

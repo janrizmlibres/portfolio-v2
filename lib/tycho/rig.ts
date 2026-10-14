@@ -27,6 +27,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import gsap from "gsap";
 import { currentSound } from "@/lib/audio/current";
+import { drawnMs, drawsNow } from "@/lib/film/pace";
 import { emoteSound } from "@/lib/audio/hooks";
 import { leanAround } from "./flight-path";
 import { detail, onQuality, quality, shadowSize } from "@/lib/universe/tier";
@@ -562,7 +563,9 @@ export function createTychoRig(canvas: HTMLCanvasElement, { reduced = false, sta
       gl.deleteQuery(done);
     }
   }
-  gsap.ticker.add(apply);
+  // on the ticker, drawn on the frames the film is drawn on (lib/film/pace.ts), with the time since the last of them
+  const onTicker = () => { if (drawsNow()) apply(undefined, drawnMs()); };
+  gsap.ticker.add(onTicker);
   let drawing = true;
 
   // --- the eyes ---------------------------------------------------------------------------------------------------
@@ -973,8 +976,8 @@ export function createTychoRig(canvas: HTMLCanvasElement, { reduced = false, sta
     drawing(on: boolean) {
       if (on === drawing) return;
       drawing = on;
-      if (on) gsap.ticker.add(apply);
-      else gsap.ticker.remove(apply);
+      if (on) gsap.ticker.add(onTicker);
+      else gsap.ticker.remove(onTicker);
     },
     /**
      * draws him once, now (`deltaMs` since the last time), for a rig drawn by whoever moves him rather than on the
@@ -1059,7 +1062,7 @@ export function createTychoRig(canvas: HTMLCanvasElement, { reduced = false, sta
     destroy() {
       dead = true;
       offQuality();
-      gsap.ticker.remove(apply);
+      gsap.ticker.remove(onTicker);
       removeEventListener("pointermove", onPointer);
       resized?.disconnect();
       loops.forEach((l) => l.kill());

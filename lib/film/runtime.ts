@@ -20,6 +20,7 @@ import { tabEntry } from "./tab-entry";
 import { glideTo, jumpTo, JUMP_EVENT, provideMeasures, scrollYOf, spotOf } from "./scroll";
 import { clamp01, smooth } from "./smooth";
 import type { Laid } from "./spots";
+import { drawnMs, drawsNow } from "./pace";
 import { onStage, onStillsStale, type Stage } from "./stage";
 import { getTier, isPort, isShort, onTier, reframes, type Tier } from "./tier";
 import { isLocked } from "@/lib/wake/lock";
@@ -410,10 +411,10 @@ export function createFilmRuntime({ root, blocks, total, leaders, stills, timeZo
   window.addEventListener("pagehide", savePlace);
 
   function tick() {
-    if (tier === "plain") return;
+    if (tier === "plain" || !drawsNow()) return;
     // (after the wake-up, which opens every load at the top)
     if (restore !== null && root.offsetHeight > 0 && !isLocked()) { jumpTo(measures.top + restore * measures.screen); restore = null; }
-    const dt = gsap.ticker.deltaRatio(60) / 60;
+    const dt = drawnMs() / 1000;
     const aim = target(), t = clock.step(aim, dt, { eased: tier === "film" });
     stage?.fling?.(fling.step(aim, dt, tier !== "film"), fling);
     if (tier === "still") stillFrame(t);

@@ -4,6 +4,7 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import gsap from "gsap";
 import { currentSound, onSound } from "@/lib/audio/current";
 import type { Sound } from "@/lib/audio/engine";
+import { LiteSwitch } from "./LiteSwitch";
 import { Mixer } from "./Mixer";
 import "./sound.css";
 
@@ -25,7 +26,8 @@ const htmlClass = {
  * The sound toggle, and the restore control a stuck context needs: a bracketed chip bottom left with a hairline trace
  * of the score's output. It shows once the wake-up is over (or straight away where there's none) and, where there was no
  * wake-up, it's how the sound comes on. A click acts at once, inside the gesture, which is what unlocks audio, so
- * the engine's module is fetched ahead: after first paint, or sooner as the pointer or focus comes to the chip.
+ * the engine's module is fetched ahead: after first paint, or sooner as the pointer or focus comes to the chip. The
+ * Lite / Full switch sits beside it, shown and hidden with it.
  */
 export function SoundToggle() {
   const here = useSyncExternalStore(never, () => true, () => false);
@@ -106,6 +108,7 @@ export function SoundToggle() {
           <span aria-hidden="true">[</span> Sound stuck? Restore <span aria-hidden="true">]</span>
         </button>
       )}
+      <LiteSwitch />
     </div>
   );
 }

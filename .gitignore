@@ -54,3 +54,4 @@ scripts/models/tex/
 !.scratch/**/
 !.scratch/**/*.md
 /test-results/
+.scratch/**/backup*/**

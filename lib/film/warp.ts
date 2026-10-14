@@ -26,6 +26,7 @@ import type { SectionId } from "./block";
 import { filmT } from "./here";
 import { jumpTo, scrollYOf } from "./scroll";
 import { smooth } from "./smooth";
+import { drawsNow } from "./pace";
 import { onStage, type Stage } from "./stage";
 import { getTier, isPort } from "./tier";
 import { dolly, pullPose, type CamPose } from "./warp-camera";
@@ -365,7 +366,8 @@ function journey(sec: SectionId, t: number, kind: WarpKind, sky: Sky, gear: Gear
   sky.overlay = overlay;
 
   // ---- the timeline
-  const tl = gsap.timeline({ paused: true, onUpdate: frame, onComplete: finish });
+  // on the frames the film is drawn on (pace.ts); `frame` reads its time from the timeline, so none is lost between
+  const tl = gsap.timeline({ paused: true, onUpdate: () => { if (drawsNow()) frame(); }, onComplete: finish });
   const tUnlock = P.unlock + 0.001; // the page is given back
   run = {
     plan: P, tl, sec, kind,

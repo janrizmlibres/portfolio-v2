@@ -169,6 +169,10 @@ _Avoid_: Menu, progress bar
 How much the 3D draws on this device for the visit: high, mid or low. It sets sharpness and shadow fidelity (the sky's pixel ratio, its far galaxies, shadow maps, Tycho's canvas, the warp's weight), never what's in the frame, where or when. A visit starts from what the browser says about the device (a phone starts at mid) and only ever steps down, when the sky's governor is at its floor and frames are still missed (ADR 0017).
 _Avoid_: Tier (the film's tier is how it plays: film, still or plain), graphics setting, phone mode
 
+**Lite**:
+The voyage for a device that can't hold the film: the same scenes as stills, one per reading spot, crossfaded, with Tycho in his flat drawing. A weak device starts in it, and so does a browser where an earlier visit was too slow for the film even at the lowest quality; a visit that grows too slow is offered it once, never switched mid-visit. The visitor's own choice, made with the Lite / Full switch beside the sound toggle, is kept per browser and wins (ADR 0019). Reduced motion plays the same stills but isn't lite: it has no switch.
+_Avoid_: Low mode, no-3D version (lite keeps the 3D's pictures), reduced motion
+
 **Sky**:
 The wiki drawn as the universe's stars: one star per passage Tycho can read, placed by meaning, lighting up when Tycho reads it.
 _Avoid_: Starfield, constellation map, knowledge graph

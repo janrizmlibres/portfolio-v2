@@ -2,11 +2,14 @@
  * `?perf`: a small frame readout over the page, for finding where the film hitches on a real device, the deployed site
  * included. Each late frame is listed with its film time and what changed in it (perf-meter.ts). It's loaded only when
  * the address asks for it (a dynamic import from the voyage), so without the flag it costs nothing. The frames are also
- * kept on `window.__perf` for the motion probe (.scratch/redesign/research/motion/scroll.mjs).
+ * kept on `window.__perf` for the motion probe (.scratch/redesign/research/motion/scroll.mjs). It reads the frames
+ * drawn (pace.ts), so on a 120 Hz display a frame is late against 60 fps, and its head gives both rates.
  */
+import gsap from "gsap";
 import { onQuality, quality } from "@/lib/universe/tier";
 import { onSky } from "@/lib/universe/live";
 import type { Sky } from "@/lib/universe/sky";
+import { drawsNow, pace } from "./pace";
 import { createPerfMeter, type Sample } from "./perf-meter";
 
 /** frames kept for the probe: about five minutes at 60 Hz */
@@ -19,7 +22,7 @@ type Script = { invokerType?: string; invoker?: string; sourceFunctionName?: str
 export function startPerfHud({ film }: { film: { t: number } }) {
   const meter = createPerfMeter();
   const frames: Sample[] = [];
-  let sky: Sky | null = null, level: string = quality(), idle = 0, raf = 0, wrote = 0, decoding = 0;
+  let sky: Sky | null = null, level: string = quality(), idle = 0, wrote = 0, decoding = 0;
   const io: string[] = [];
   const offSky = onSky((s) => {
     sky = s;
@@ -91,12 +94,17 @@ export function startPerfHud({ film }: { film: { t: number } }) {
   };
   const write = () => {
     const { frames: n, missed, cadence } = meter.totals();
-    const head = `${Math.round(1000 / cadence)} Hz · missed ${missed}/${n} · dpr ${sky ? sky.renderer.getPixelRatio().toFixed(2) : "-"} · ${level} · t ${film.t.toFixed(2)}`;
+    const { display, every } = pace();
+    const hz = every > 1 ? `${Math.round(1000 / display)} Hz drawn at ${Math.round(1000 / cadence)}` : `${Math.round(1000 / cadence)} Hz`;
+    const head = `${hz} · missed ${missed}/${n} · dpr ${sky ? sky.renderer.getPixelRatio().toFixed(2) : "-"} · ${level} · t ${film.t.toFixed(2)}`;
     const rows = meter.hitches().slice(-8).reverse().map((h) => `t ${h.t.toFixed(2)} ${String(Math.round(h.dt)).padStart(4)}ms ${h.phase === "film" ? "" : `[${h.phase}] `}${h.flags.join(" · ")}`);
     box.textContent = [head, ...rows].join("\n");
   };
 
-  const tick = (at: number) => {
+  // each frame drawn (pace.ts): on a 120 Hz display, every other one
+  const tick = () => {
+    if (!drawsNow()) return;
+    const at = Number(document.timeline?.currentTime ?? performance.now());
     const info = sky?.renderer.info;
     const s: Sample = {
       at, t: film.t, phase: phase(),
@@ -111,13 +119,12 @@ export function startPerfHud({ film }: { film: { t: number } }) {
     frames.push(s);
     if (frames.length > KEEP) frames.shift();
     if (at - wrote > WRITE_MS) { wrote = at; write(); }
-    raf = requestAnimationFrame(tick);
   };
-  raf = requestAnimationFrame(tick);
+  gsap.ticker.add(tick);
   Object.assign(window, { __perf: { frames, hitches: meter.hitches, totals: meter.totals } });
 
   return () => {
-    cancelAnimationFrame(raf);
+    gsap.ticker.remove(tick);
     po?.disconnect();
     files?.disconnect();
     after.port1.close();
