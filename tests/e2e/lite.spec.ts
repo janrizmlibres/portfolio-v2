@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 // Lite (lib/film/lite.ts): the stills and the flat Tycho, the [ LITE ] / [ FULL ] switch beside the sound toggle, and
 // the choice kept per browser. The film wants a real GPU (ANGLE on Metal is this machine's). An automated browser
-// skips the wake-up, so the switch shows as soon as the page is up.
+// skips the wake-up, so the switch shows as soon as the page is up; `?wake=on` brings it back.
 test.use({ launchOptions: { args: ["--enable-gpu", "--use-angle=metal"] } });
 
 const html = (page: Page) => page.locator("html");
@@ -61,6 +61,35 @@ test("the choice kept is respected on the next load, either way", async ({ page 
   await page.goto("/");
   await expect(html(page)).toHaveAttribute("data-film", "film");
   await expect(toLite(page)).toBeVisible();
+});
+
+test("a switch skips the wake-up: its loader, then the page at the same section, no button; a plain reload plays it again", async ({ page }) => {
+  // whether his button ever shows on this load
+  await page.addInitScript(() => {
+    const w = window as unknown as { __chip?: boolean };
+    new MutationObserver(() => {
+      if (document.getElementById("wake")?.dataset.chip === "on") w.__chip = true;
+    }).observe(document, { subtree: true, attributes: true, attributeFilter: ["data-chip"] });
+  });
+  const chipShown = () => page.evaluate(() => !!(window as unknown as { __chip?: boolean }).__chip);
+  await page.goto("/?wake=on&film=still#sec-work");
+  await expect(page.locator("#wake")).toHaveAttribute("data-chip", "on", { timeout: 30_000 });
+  await page.getByRole("button", { name: "Wake Tycho (turns on sound)" }).click();
+  await expect(html(page)).not.toHaveClass(/\bwake\b/, { timeout: 10_000 });
+  await expect.poll(() => sectionHere(page), { timeout: 15_000 }).toBe("sec-work");
+
+  await toFull(page).click();
+  await expect(html(page)).toHaveAttribute("data-film", "film");
+  await expect(html(page)).not.toHaveClass(/\bwake\b/, { timeout: 30_000 });
+  expect(await chipShown()).toBe(false);
+  await expect(page).toHaveURL(/\/\?wake=on#sec-work$/);
+  await expect.poll(() => sectionHere(page), { timeout: 15_000 }).toBe("sec-work");
+  await expect(toLite(page)).toBeVisible();
+  await expect(page.locator("#tycho .tycho-body")).toBeVisible();
+
+  await page.reload();
+  await expect(html(page)).toHaveClass(/\bwake-centre\b/);
+  await expect(page.locator("#wake")).toHaveAttribute("data-chip", "on", { timeout: 30_000 });
 });
 
 test("?film=film plays the film over a choice of lite", async ({ page }) => {

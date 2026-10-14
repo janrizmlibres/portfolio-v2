@@ -41,11 +41,14 @@ import "./wake.css";
  * at about 10 s, gives way to the plain page: the button shows on the loader, and the wake opens onto the plain page with the flat
  * Tycho parked in his corner. Under reduced motion the name and count show whole, the charge steps, and every move is
  * a short fade. Without WebGL there's no wake-up (the head script, lib/wake/script, never marks it).
+ * The load a switch between lite and the film made (`wake-switch`, lib/wake/script) runs the loader alone: once the
+ * count is in, the page is the visitor's at once, at the section the switch was made in, Tycho in his corner, with no
+ * charge-up, no button and no greeting. The sound is woken outside a gesture, so the toggle offers its restore.
  */
 
 const NAME = "JANRIZ LIBRES";
 const PHONES = "Turns the sound on · best with headphones";
-const CLASSES = ["wake", "wake-lock", "wake-centre", "wake-still"];
+const CLASSES = ["wake", "wake-lock", "wake-centre", "wake-still", "wake-switch"];
 // his stage canvas is this much bigger than the square he fills (wake.css), so the camera stands this much further
 // back: the same framing, with room above for his antenna
 const ROOM = 1.22;
@@ -188,6 +191,8 @@ function run(html: HTMLElement, el: HTMLDivElement, o: { replay?: boolean } = {}
     read = q<HTMLParagraphElement>(".wk-read"),
     stage = q<HTMLDivElement>(".wk-sky");
   const still = html.classList.contains("wake-still");
+  // a switch's reload: the loader, then the page (lib/wake/script)
+  const switched = html.classList.contains("wake-switch");
   const states = el.querySelectorAll<HTMLElement>(".wk-states .st, .wk-states .ln");
   // the lines between his states: on to dozing, into the button, on to awake
   const lines = el.querySelectorAll<HTMLElement>(".wk-states .ln i");
@@ -303,6 +308,8 @@ function run(html: HTMLElement, el: HTMLDivElement, o: { replay?: boolean } = {}
       count.mark("three");
       r.ready.then(() => {
         if (rig !== r) return;
+        // after a switch he never leaves his corner, as he is once awake
+        if (switched) return void count.mark("tycho");
         // waiting under the loader: eyes shut, the band empty, at rest, lit low key from low and off his right
         r.idle(false);
         r.face("Shut");
@@ -412,6 +419,7 @@ function run(html: HTMLElement, el: HTMLDivElement, o: { replay?: boolean } = {}
 
   // ---------------------------------------------------------------- loaded: the loader gives way to Tycho in 3D
   function loaded() {
+    if (switched) return wake();
     phase = "charging";
     const out = gsap.timeline();
     kills.push(() => out.kill());
@@ -615,9 +623,10 @@ function run(html: HTMLElement, el: HTMLDivElement, o: { replay?: boolean } = {}
     for (const type of POINTER) removeEventListener(type, onPointer, { capture: true });
   });
 
-  // runs inside the click, tap or key: that's what lets the sound start
+  // runs inside the click, tap or key: that's what lets the sound start; after a switch, straight from the loader
   function wake() {
-    const plain = phase === "stalled";
+    const plain = phase === "stalled",
+      direct = plain || switched;
     phase = "waking";
     // replayed, the score comes back up from under the black; it was never stopped
     wakeSound();
@@ -634,7 +643,7 @@ function run(html: HTMLElement, el: HTMLDivElement, o: { replay?: boolean } = {}
       0.08,
     );
     // the trigger fires: the line runs on through the button to awake, and the frame and states go as he flies
-    if (!plain) {
+    if (!direct) {
       t.to(line(1), { scaleX: 1, duration: still ? 0 : 0.16, ease: "power1.in" }, 0)
         .to(line(2), { scaleX: 1, duration: still ? 0 : 0.16, ease: "power1.out" }, still ? 0 : 0.16)
         .call(
@@ -656,11 +665,13 @@ function run(html: HTMLElement, el: HTMLDivElement, o: { replay?: boolean } = {}
     const rise = (at: number) =>
       t.to(rows, { autoAlpha: 1, y: 0, duration: still ? 0.3 : 1.1, ease: "expo.out", stagger: still ? 0 : 0.09, clearProps: "transform" }, at);
 
-    if (plain) {
-      // the loader gives way to the plain page, the flat Tycho parked in his corner
+    if (direct) {
+      // the loader gives way to the page (the plain page, stalled), Tycho parked in his corner; after a switch the sky
+      // comes up with it, and he's landed already: nobody to greet
       t.to(load, { autoAlpha: 0, duration: still ? 0.3 : 0.8, ease: "power1.inOut" }, 0.1);
+      if (switched) stageSky(true, still ? 0.3 : 0.9);
       rise(still ? 0.4 : 0.6);
-      t.call(land, [], still ? 0.7 : 1.4);
+      t.call(switched ? finish : land, [], still ? 0.7 : 1.4);
       return;
     }
 

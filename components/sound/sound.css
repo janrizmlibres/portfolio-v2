@@ -19,8 +19,18 @@
   text-transform: uppercase;
   cursor: pointer;
 }
-.snd[data-on="off"] .snd-chip:first-child {
+/* off, the toggle and the Lite / Full switch beside it are dimmed together, a pair; each comes up under the pointer or
+   the keyboard's focus */
+.snd[data-on="off"] :is(.snd-chip:first-child, .lite-chip) {
   opacity: 0.6;
+}
+.snd[data-on="off"] :is(.snd-chip:first-child, .lite-chip):focus-visible {
+  opacity: 1;
+}
+@media (hover: hover) {
+  .snd[data-on="off"] :is(.snd-chip:first-child, .lite-chip):hover {
+    opacity: 1;
+  }
 }
 .snd-chip:focus-visible {
   outline: 1px solid currentColor;

@@ -83,3 +83,11 @@ way to see the site short of reduced motion or a device without WebGL.
   limit), so it ticked about 50 a second, and the film drew on every tick, as it should under 60.
 - **Not measured on the phone.** The Poco's own numbers (`?perf` gives the display rate, the drawn rate and each late
   frame) are Janriz's to take.
+
+## Amendment (2026-10-14): a switch skips the wake-up
+
+The reload a `[ LITE ]` / `[ FULL ]` click makes is marked once in `sessionStorage` (`jrz-switched`, `markSwitched` in
+`lib/wake/script.ts`), and the head script reads and clears it: the loader still builds the whole voyage (ADR 0018), then
+the page is the visitor's at once, at the section the switch was made in, Tycho in his corner, with no charge-up, no
+button and no greeting. The sound is woken outside a gesture, so where the browser holds it the toggle offers its
+restore. A plain reload or a new visit plays the whole wake-up; where `sessionStorage` is blocked, so does a switch.

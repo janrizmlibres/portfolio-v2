@@ -13,6 +13,7 @@
  *   motion, or a device without WebGL.
  * Nothing switches mid-visit: a visit that bottoms out offers lite once, and the next one starts in it.
  */
+import { markSwitched } from "@/lib/wake/script";
 
 /** where the choice and the verdict are kept */
 export const KEY = "jrz-film-v1";
@@ -92,7 +93,8 @@ export function onOffer(cb: () => void) {
 
 /**
  * Keeps the visitor's choice and loads the page again in it, landing on section `sec` (its deep link). Where nothing
- * can be kept (storage blocked), the address carries it instead.
+ * can be kept (storage blocked), the address carries it instead. The reload skips the wake-up's charge-up: its loader
+ * builds the voyage, then the page is the visitor's at once (`markSwitched`, lib/wake/script.ts).
  */
 export function switchTo(choice: Choice, sec: string) {
   const url = new URL(location.href);
@@ -100,5 +102,6 @@ export function switchTo(choice: Choice, sec: string) {
   if (!keep({ ...kept(), choice })) url.searchParams.set("film", choice === "lite" ? "still" : "film");
   url.hash = sec;
   history.replaceState(history.state, "", url);
+  markSwitched();
   location.reload();
 }
