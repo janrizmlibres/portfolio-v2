@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { profile } from "@/lib/content/profile";
+import { siteUrl } from "@/lib/seo/site";
 
 export const runtime = "edge";
 export const alt = `${profile.name} — ${profile.roleShort}`;
@@ -33,7 +34,7 @@ export default function OgImage() {
             fontFamily: "ui-monospace, SFMono-Regular, monospace",
           }}
         >
-          jrz-dev.vercel.app
+          {new URL(siteUrl).host}
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>

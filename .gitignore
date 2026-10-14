@@ -37,15 +37,20 @@ yarn-error.log*
 # vercel
 .vercel
 
-# superpowers brainstorming artifacts
-.superpowers/
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
 .playwright-mcp/
+# the audio renderer (scripts/audio/render) run from its own folder
+__pycache__/
+
+# the models' generated maps, raw builds and logs (scripts/models/build.sh)
+scripts/models/out/
+scripts/models/tex/
+
 # .scratch: the local issue tracker's markdown is tracked; everything else in it stays local
 .scratch/**
 !.scratch/**/
 !.scratch/**/*.md
+/test-results/

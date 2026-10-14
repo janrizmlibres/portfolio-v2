@@ -11,7 +11,9 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "sky:export": "tsx --env-file-if-exists=.env scripts/export-sky.ts",
+    "audio:export": "tsx scripts/export-audio.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.53",
@@ -28,6 +30,7 @@
     "postgres": "^3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "three": "0.186.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -38,15 +41,18 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "0.186.0",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/ui": "^4.1.5",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "jsdom": "^29.1.0",
+    "ml-pca": "4.1.1",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
+    "umap-js": "1.4.0",
     "vitest": "^4.1.5"
   }
 }

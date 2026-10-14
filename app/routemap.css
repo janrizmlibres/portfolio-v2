@@ -1,0 +1,267 @@
+/*
+ * The route map (components/routemap/RouteMap.tsx): the nav, top right, in the page's small print (DM Mono
+ * capitals, as the film's labels). Its states sit on <nav class="routemap">:
+ * - data-open: hovered or focused (desktop), unfolded (phones); data-grown: the map has grown and its names hang on it;
+ * - data-phone: a phone (portrait, or held sideways), where it folds into a pill;
+ * - data-warp: a trip is under way, and the destination's name shows.
+ * GSAP plays every move; this only lays the states out.
+ */
+.routemap {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 30;
+  font: 400 12px / 1 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-shadow: var(--shadow);
+}
+.routemap a {
+  color: inherit;
+  text-decoration: none;
+}
+/* the names carry a map's halo: a tight dark edge round each letter, so a bright body crossing behind the corner (a
+   longeron, a slab's rim) never cuts through them */
+.routemap .rm-name,
+.routemap .rm-here,
+.routemap .rm-pill-name {
+  text-shadow: 0 0 1px rgba(2, 3, 10, 0.95), 0 0 3px rgba(2, 3, 10, 0.9), 0 0 8px rgba(2, 3, 10, 0.7), var(--shadow);
+}
+.routemap a:focus-visible,
+.routemap button:focus-visible {
+  outline: 1px solid var(--ink-3);
+  outline-offset: 3px;
+}
+.routemap .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.routemap ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rm-svg {
+  display: block;
+  overflow: visible;
+}
+
+/* ---------------------------------------------------------------- desktop: the map, and five ticks beside it */
+.rm-pill {
+  display: none;
+}
+.rm-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 92px;
+  grid-template-rows: 92px;
+  column-gap: 12px;
+}
+.rm-map {
+  grid-area: 1 / 2;
+  position: relative;
+  width: 92px;
+  height: 92px;
+  transform-origin: 100% 0;
+}
+.rm-here,
+.rm-links {
+  grid-area: 1 / 1;
+  align-self: center;
+  justify-self: end;
+  margin: 0;
+}
+.rm-here {
+  visibility: hidden;
+  white-space: nowrap;
+}
+/* the tick comes last on the row, so the ticks stand in one column against the map, each name to its left */
+.rm-links li a {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  height: 18px;
+  white-space: nowrap;
+}
+.rm-tick {
+  display: block;
+  width: 8px;
+  height: 1px;
+  background: rgba(226, 232, 255, 0.5);
+}
+.rm-links li[data-on] .rm-tick {
+  width: 16px;
+  background: var(--ink);
+}
+/* at rest only the section you're in is named */
+.rm-links li:not([data-on]) .rm-name {
+  opacity: 0;
+}
+.rm-leaders {
+  position: absolute;
+  top: 0;
+  right: 0;
+  overflow: visible;
+  pointer-events: none;
+  fill: var(--ink);
+  stroke: rgba(226, 232, 255, 0.55);
+  stroke-width: 1;
+  stroke-dasharray: 1 1;
+}
+
+/* open: the map grows and the names hang beside it in page order, each on a leader line to its mark */
+.routemap[data-grown] .rm-links li {
+  position: absolute;
+  right: calc(236px + 14px);
+}
+/* each grown name sits on the film's faint plate (as its chips and the gates' names do), so a lit body or the road's
+   hairline crossing behind it never cuts through it */
+.routemap[data-grown] .rm-links li .rm-name {
+  opacity: 1;
+  padding: 3px 6px;
+  margin-right: -6px;
+  background: rgba(3, 4, 10, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.routemap[data-grown] .rm-links li:not([data-on]) .rm-name {
+  color: var(--ink-2);
+}
+.routemap[data-grown] .rm-links li:not([data-on]) a:hover .rm-name {
+  color: var(--ink);
+}
+.routemap[data-grown] .rm-tick {
+  display: none;
+}
+/* the pointer keeps it open while it crosses from a name to the map */
+.routemap[data-grown] .rm-body::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 420px;
+  height: 260px;
+}
+
+/* a trip under way: the destination's name, where the ticks were */
+.routemap[data-warp]:not([data-phone]) .rm-here {
+  visibility: visible;
+}
+.routemap[data-warp]:not([data-phone]) .rm-links {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------- phones: the pill, and the sheet it drops */
+.routemap[data-phone] {
+  top: 12px;
+  right: 12px;
+}
+.routemap[data-phone] .rm-pill {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  margin-left: auto;
+  padding: 0 14px 0 5px;
+  border: 1px solid rgba(226, 232, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(6, 8, 18, 0.62);
+  color: var(--ink);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+.routemap[data-phone] .rm-body {
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 0;
+  padding: 16px 16px 8px;
+  border: 1px solid rgba(226, 232, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(6, 8, 18, 0.95);
+}
+.routemap[data-phone][data-open] .rm-body {
+  display: block;
+}
+.routemap[data-phone] .rm-here,
+.routemap[data-phone] .rm-leaders,
+.routemap[data-phone] .rm-tick {
+  display: none;
+}
+.routemap[data-phone] .rm-map {
+  width: auto;
+  height: auto;
+  margin-bottom: 10px;
+  transform: none !important;
+}
+.routemap[data-phone] .rm-links {
+  justify-self: stretch;
+}
+.routemap[data-phone] .rm-links li a {
+  flex-direction: row;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 6px;
+  border-top: 1px solid rgba(226, 232, 255, 0.1);
+}
+.routemap[data-phone] .rm-links li .rm-name {
+  opacity: 1;
+  color: var(--ink-2);
+}
+.routemap[data-phone] .rm-links li[data-on] a::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+}
+.routemap[data-phone] .rm-links li[data-on] .rm-name {
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------- the plain page: a row of links */
+html[data-film="plain"] .routemap {
+  position: static;
+  padding: 18px 24px 0;
+  text-shadow: none;
+}
+html[data-film="plain"] .routemap .rm-pill,
+html[data-film="plain"] .routemap .rm-map,
+html[data-film="plain"] .routemap .rm-here,
+html[data-film="plain"] .routemap .rm-leaders,
+html[data-film="plain"] .routemap .rm-tick {
+  display: none;
+}
+html[data-film="plain"] .routemap .rm-body {
+  display: block;
+  position: static;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+html[data-film="plain"] .routemap .rm-links {
+  justify-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+}
+html[data-film="plain"] .routemap .rm-links li a {
+  flex-direction: row;
+  height: 32px;
+  padding: 0;
+  border: 0;
+}
+html[data-film="plain"] .routemap .rm-name {
+  opacity: 1;
+}

@@ -36,4 +36,10 @@ describe("checkRateLimit", () => {
     expect(r.allowed).toBe(true);
     expect(r.degraded).toBe(true);
   });
+
+  it("marks a pass the limiter gave on its own timeout as degraded", async () => {
+    limitFn.mockResolvedValue({ success: true, limit: 20, remaining: 20, reset: 0, reason: "timeout" });
+    const r = await checkRateLimit("1.2.3.4");
+    expect(r).toEqual({ allowed: true, remaining: 20, retryAfterMs: 0, degraded: true });
+  });
 });

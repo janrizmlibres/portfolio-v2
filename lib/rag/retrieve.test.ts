@@ -1,9 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockExecute = vi.fn();
-vi.mock("@/db/client", () => ({
-  db: { execute: (...args: unknown[]) => mockExecute(...args) },
-}));
+const mockTransaction = vi.fn();
+vi.mock("@/db/client", () => {
+  const tx = { execute: (...args: unknown[]) => mockExecute(...args) };
+  return {
+    getDb: () => ({
+      ...tx,
+      transaction: (fn: (t: typeof tx) => unknown) => {
+        mockTransaction();
+        return fn(tx);
+      },
+    }),
+  };
+});
 
 const mockEmbed = vi.fn();
 vi.mock("@/lib/ai/embed", () => ({
@@ -14,6 +24,7 @@ import { retrieveChunks } from "./retrieve";
 
 beforeEach(() => {
   mockExecute.mockReset();
+  mockTransaction.mockReset();
   mockEmbed.mockReset();
 });
 
@@ -21,9 +32,7 @@ describe("retrieveChunks", () => {
   it("embeds the query and returns top-K rows", async () => {
     mockEmbed.mockResolvedValue(new Array(1536).fill(0.01));
     mockExecute.mockResolvedValue([
-      { id: "projects/athena#0", source_path: "projects/athena.md", title: "Athena", type: "project",
-        tags: ["ai"], text: "Athena is...", metadata: { routes: { portfolio: "projects/athena" } },
-        similarity: 0.91 },
+      { id: "projects/athena#0", title: "Athena", type: "project", text: "Athena is...", similarity: 0.91 },
     ]);
 
     const rows = await retrieveChunks({ query: "athena memory", k: 5 });
@@ -32,18 +41,20 @@ describe("retrieveChunks", () => {
     expect(mockEmbed).toHaveBeenCalledWith("athena memory");
   });
 
+  it("probes every ivfflat list inside the search's own transaction", async () => {
+    mockEmbed.mockResolvedValue(new Array(1536).fill(0.01));
+    mockExecute.mockResolvedValue([]);
+    await retrieveChunks({ query: "athena memory" });
+    expect(mockTransaction).toHaveBeenCalledTimes(1);
+    expect(mockExecute).toHaveBeenCalledTimes(2);
+    expect(String(mockExecute.mock.calls[0]?.[0])).toMatch(/SET LOCAL ivfflat\.probes = 100/);
+    expect(String(mockExecute.mock.calls[1]?.[0])).toContain("ORDER BY embedding");
+  });
+
   it("returns empty array when DB throws", async () => {
     mockEmbed.mockResolvedValue(new Array(1536).fill(0.01));
     mockExecute.mockRejectedValue(new Error("connection refused"));
     const rows = await retrieveChunks({ query: "anything" });
     expect(rows).toEqual([]);
-  });
-
-  it("applies type filter when provided", async () => {
-    mockEmbed.mockResolvedValue(new Array(1536).fill(0));
-    mockExecute.mockResolvedValue([]);
-    await retrieveChunks({ query: "x", type: "project" });
-    const sqlArg = mockExecute.mock.calls[0]?.[0];
-    expect(String(sqlArg)).toContain("type");
   });
 });

@@ -8,6 +8,8 @@ const ratelimiter = new Ratelimit({
   limiter: Ratelimit.slidingWindow(20, "1 h"),
   prefix: "jrz:chat",
   analytics: false,
+  // its own timeout lets the request through (marked `reason: "timeout"`); 1 s keeps a slow Upstash off every reply
+  timeout: 1000,
 });
 
 export interface RateLimitResult {
@@ -24,6 +26,7 @@ export async function checkRateLimit(identifier: string): Promise<RateLimitResul
       allowed: r.success,
       remaining: r.remaining,
       retryAfterMs: Math.max(0, r.reset - Date.now()),
+      degraded: r.reason === "timeout",
     };
   } catch (err) {
     console.error("[rate-limit] upstash failure — failing open:", err);

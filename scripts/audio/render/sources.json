@@ -1,0 +1,41 @@
+{
+  "surge": {
+    "what": "Surge XT 1.3.4 (macOS), the synthesiser the score, the bells and the tonal layers are rendered from",
+    "url": "https://github.com/surge-synthesizer/releases-xt/releases/download/1.3.4/surge-xt-macOS-1.3.4.dmg",
+    "licence": "GPL-3.0; its output is ours (Surge XT FAQ)"
+  },
+  "launch": {
+    "what": "the Artemis II launch, pad microphone CS6 (2026-04-01): 120 s from 7:25, mono",
+    "url": "https://images-assets.nasa.gov/audio/KSC-20260401-AU-LMM01-0001-Artemis_II_Live_Launch_Coverage_Pad_CS6/KSC-20260401-AU-LMM01-0001-Artemis_II_Live_Launch_Coverage_Pad_CS6~orig.wav",
+    "from": 445,
+    "seconds": 120,
+    "licence": "public domain (NASA); credit NASA/Lorne Mathre"
+  },
+  "hall": {
+    "what": "Jack Lyons Concert Hall, University of York (OpenAIR): the B-format response at lp2, folded to stereo",
+    "url": "https://webfiles.york.ac.uk/OPENAIR/IRs/jack-lyons-concert-hall-university-york/jack-lyons-concert-hall-university-york.zip",
+    "file": "b-format/rir_jack_lyons_lp2_96k.wav",
+    "licence": "CC BY 4.0; credit www.openairlib.net Audiolab, University of York, Damian T. Murphy"
+  },
+  "freesound": {
+    "licence": "CC0 1.0 (each sound's page is checked when it's fetched); HQ previews",
+    "fx (who, id, what)": [
+      ["brktkrgll", 856174, "Subterranean Deep Sub-Bass Rumble Drop"],
+      ["Jofae", 408141, "Cinematic Low Pitch Impact"],
+      ["Skullsmasha", 123253, "MechanicalClamp.wav"],
+      ["suspensiondigital", 389705, "Box with Metal Latches Hit 2"],
+      ["derjuli", 824121, "ServoMotor.wav"],
+      ["harrisonlace", 771946, "SHIMMER FX"],
+      ["NahuelMartinez", 844329, "Stone Slab Door Grinding"],
+      ["karlis.stigis", 168712, "Ice Cracks"],
+      ["reathance", 503818, "riser 3.wav"],
+      ["qubodup", 442858, "page flip"],
+      ["Kodack", 256508, "card riffle"]
+    ],
+    "celesta": {
+      "who": "stamperadam",
+      "pack": "Celeste Samples (the soft layer)",
+      "ids": [96039, 96041, 96043, 96045, 96047, 96049, 96051, 96053, 96057, 96059, 96061]
+    }
+  }
+}

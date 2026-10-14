@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Janriz Libres — redesign prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..900;1,62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* =====================================================================
+   DESIGN TOKENS  (redesign, 2026-09-27)
+   ---------------------------------------------------------------------
+   TYPEFACE
+   One family, Archivo, used across its width axis. Condensed (wdth 64)
+   at weight 800 for the name and section heads, normal width for body.
+   A grotesk with a real width axis gives the name poster presence
+   without a second display face. IBM Plex Mono appears only where the
+   content is literally code-ish: dates, durations, tool calls.
+   No italic serif accents anywhere.
+
+   ACCENT
+   --accent #FF5A1F, signal vermilion. It is the only hue on the page
+   and it is always a solid fill (highlight block, open project, link
+   hover, send button), never a glow or gradient. 6.1:1 against --bg,
+   and --accent-ink (near black) on it reads at ~6:1, so filled blocks
+   carry dark text. The portrait is greyscale so nothing competes.
+
+   SURFACES + TEXT
+   Neutral near-black instead of the old warm plum-black. Secondary
+   text is lifted to #BDB9B0 (about 9.7:1) so body copy stops reading
+   as disabled.
+
+   SCALE
+   17px body. Steps roughly x1.25 up to 28px, then jumps. The name is
+   sized in container units (cqi) of the main column, so when the chat
+   drawer pushes the page the name re-fits instead of overflowing.
+   ===================================================================== */
+:root {
+  --bg:         #0E0E0C;
+  --surface:    #181816;
+  --surface-2:  #22221F;
+  --line:       #2E2D29;
+
+  --fg:         #F3F1EC;
+  --fg-2:       #BDB9B0;
+  --fg-3:       #85817A;
+
+  --accent:     #FF5A1F;
+  --accent-ink: #140904;
+
+  --font:       "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --mono:       "IBM Plex Mono", ui-monospace, monospace;
+  --wdth-tight: 64;   /* name, section heads */
+  --wdth-mid:   82;   /* company names, project titles */
+
+  --step--1: 0.8125rem;                        /* 13  mono meta        */
+  --step-0:  1.0625rem;                        /* 17  body             */
+  --step-1:  1.3125rem;                        /* 21  lede             */
+  --step-2:  clamp(1.375rem, 2.2vw, 1.75rem);  /* 28  about paragraph  */
+  --step-3:  clamp(1.75rem, 3.4cqi, 2.75rem);  /* 44  company, titles  */
+  --step-4:  clamp(2.75rem, 7cqi, 6rem);       /* 96  section heads    */
+  --step-name: clamp(4.5rem, min(27cqi, 33vh), 26rem); /* the name: fills its column but never pushes the intro under the chat dock */
+
+  --gutter:  clamp(1rem, 4vw, 3.5rem);
+  --drawer:  440px;
+  --ease:    cubic-bezier(.65,0,.35,1);
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); color-scheme: dark; scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font); font-size: var(--step-0); line-height: 1.55;
+  font-variation-settings: "wdth" 100;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.mono { font-family: var(--mono); font-size: var(--step--1); letter-spacing: 0; }
+.tight { font-variation-settings: "wdth" var(--wdth-tight); font-weight: 800; letter-spacing: -0.012em; line-height: .86; }
+.h2, .s1-center h2 { letter-spacing: 0; line-height: .92; }
+.sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+
+/* Filled link: the accent's main job */
+.fill-link { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: var(--fg-3); padding: 0 .12em; margin: 0 -.12em; transition: background .15s, color .15s; }
+.fill-link:hover { background: var(--accent); color: var(--accent-ink); text-decoration-color: transparent; }
+
+/* =====================================================================
+   STATE SWITCHING (prototype)
+   ===================================================================== */
+body[data-state="s1"] #state-2, body[data-state="s1"] .dock, body[data-state="s1"] .drawer { display: none; }
+body:not([data-state="s1"]) #state-1 { display: none; }
+
+/* =====================================================================
+   STATE 1 — first visit
+   ===================================================================== */
+#state-1 {
+  min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto;
+  padding: 1.25rem var(--gutter) 0; container-type: inline-size; overflow: hidden;
+}
+.s1-top { display: flex; justify-content: space-between; gap: 1rem; font-size: .9375rem; color: var(--fg-2); }
+.s1-top a { color: var(--fg); }
+.s1-center { align-self: center; width: min(100%, 44rem); margin: 3rem auto; }
+.s1-center h2 { font-size: clamp(2.25rem, 5.4cqi, 4rem); margin: 0 0 1rem; }
+.s1-center p { color: var(--fg-2); font-size: var(--step-1); line-height: 1.45; margin: 0 0 2rem; max-width: 36rem; }
+.prompt { display: flex; align-items: stretch; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.prompt:focus-within { border-color: var(--fg-3); }
+.prompt input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--fg); font: inherit; font-size: var(--step-1); padding: 1.1rem 1.25rem; }
+.prompt input::placeholder { color: var(--fg-3); }
+.send { flex: none; width: 3.75rem; border: 0; background: var(--accent); color: var(--accent-ink); cursor: pointer; display: grid; place-items: center; }
+.send svg { width: 22px; height: 22px; }
+.send:hover { background: var(--fg); }
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+.chip { cursor: pointer; background: var(--surface-2); border: 0; border-radius: 999px; padding: .5rem .95rem; font-size: .9375rem; color: var(--fg-2); transition: background .15s, color .15s; }
+.chip:hover { background: var(--accent); color: var(--accent-ink); }
+.s1-name { margin: 0 0 -.06em; white-space: nowrap; font-size: 22.8cqi; }
+
+/* =====================================================================
+   STATE 2 — portfolio
+   ===================================================================== */
+#state-2 { transition: margin-right .45s var(--ease); }
+body[data-state="s2-open"] #state-2 { margin-right: var(--drawer); }
+.page { container-type: inline-size; padding: 0 var(--gutter) 11rem; max-width: 110rem; margin: 0 auto; }
+
+.nav { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1.25rem 0; font-size: .9375rem; }
+.nav .status { color: var(--fg-2); }
+.nav .status b { font-weight: 500; color: var(--fg); }
+.nav ul { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+.nav ul a { text-decoration: none; color: var(--fg-2); }
+.nav ul a:hover { color: var(--fg); }
+
+/* Hero: name left, photo right, stacked on narrow */
+.hero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 clamp(1rem, 3cqi, 3rem); padding-top: clamp(1rem, 4cqi, 4rem); align-items: end; }
+.hero h1 { font-size: var(--step-name); margin: 0; grid-column: 1; }
+.hero h1 span { display: block; }
+.hero .photo { grid-column: 2; grid-row: 1 / span 2; align-self: stretch; min-height: 100%; overflow: hidden; background: #cfcfcf; position: relative; }
+.hero .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; filter: grayscale(1) contrast(1.08) brightness(.96); }
+.hero .intro { grid-column: 1; max-width: 34rem; margin: clamp(1.5rem, 3cqi, 2.5rem) 0 0; font-size: var(--step-1); line-height: 1.45; color: var(--fg-2); }
+.hero .intro strong { color: var(--fg); font-weight: 500; }
+
+section[id^="sec-"] { scroll-margin-top: 1.5rem; }
+
+/* About: facts rail + big paragraph, offset */
+#sec-about { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 2rem; margin-top: clamp(6rem, 24vh, 15rem); }
+#sec-about .about-text { grid-column: 5 / -1; grid-row: 1; font-size: var(--step-2); line-height: 1.38; letter-spacing: -.01em; }
+#sec-about .about-text p { margin: 0 0 1em; color: var(--fg-2); }
+#sec-about .about-text p:first-child { color: var(--fg); }
+#sec-about dl { grid-column: 1 / 4; grid-row: 1; margin: .5rem 0 0; font-size: 1rem; line-height: 1.45; }
+#sec-about dt { color: var(--fg-3); margin-top: 1.1rem; }
+#sec-about dt:first-child { margin-top: 0; }
+#sec-about dd { margin: .15rem 0 0; color: var(--fg); }
+
+/* Experience: sticky heading left, list right */
+#sec-experience { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 2rem; margin-top: clamp(6rem, 12cqi, 11rem); }
+#sec-experience .side { position: sticky; top: 2rem; align-self: start; }
+.h2 { font-size: var(--step-4); margin: 0; }
+#sec-experience .side p { color: var(--fg-2); margin: 1.25rem 0 0; max-width: 18rem; }
+.roles { list-style: none; margin: 0; padding: 0; }
+.role { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .35rem 1.5rem; padding: 1.75rem 0; border-top: 1px solid var(--line); }
+.role:last-child { border-bottom: 1px solid var(--line); }
+.role h3 { font-size: var(--step-3); margin: 0; font-variation-settings: "wdth" var(--wdth-mid); font-weight: 700; letter-spacing: -.02em; line-height: 1.05; }
+.role .when { color: var(--fg-3); text-align: right; white-space: nowrap; padding-top: .55em; }
+.role .title { color: var(--fg-2); grid-column: 1 / -1; font-size: .9375rem; }
+.role .did { grid-column: 1 / -1; margin: .5rem 0 0; max-width: 40rem; font-size: 1.125rem; line-height: 1.5; }
+
+/* Work (NDA): heading top-left, intro offset, accordion rows */
+#sec-work { margin-top: clamp(6rem, 12cqi, 11rem); }
+#sec-work .head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2rem; align-items: end; margin-bottom: 2.5rem; }
+#sec-work .head p { color: var(--fg-2); margin: 0; font-size: var(--step-1); line-height: 1.45; }
+.work-list { list-style: none; margin: 0; padding: 0; }
+.work-item { border-top: 1px solid var(--line); transition: background .2s, color .2s; }
+.work-item:last-child { border-bottom: 1px solid var(--line); }
+.work-item > button { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) 2rem; gap: 1.5rem; align-items: baseline; padding: 1.35rem .75rem; }
+.work-item > button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.work-item .t { font-size: clamp(1.375rem, 2.5cqi, 2rem); font-variation-settings: "wdth" var(--wdth-mid); font-weight: 700; letter-spacing: -.015em; line-height: 1.1; }
+.work-item .t small { display: block; font-size: .9375rem; font-weight: 400; font-variation-settings: "wdth" 100; letter-spacing: 0; color: var(--fg-3); margin-top: .3rem; }
+.work-item .d { color: var(--fg-2); }
+.work-item .pm { justify-self: end; font-size: 1.5rem; line-height: 1; color: var(--fg-3); transition: transform .25s var(--ease); }
+.work-item .body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s var(--ease); }
+.work-item .body > div { overflow: hidden; }
+.work-item .inner { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) 2rem; gap: 1.5rem; padding: 0 .75rem 1.75rem; }
+.work-item .inner ul { grid-column: 2; margin: 0; padding: 0; list-style: none; }
+.work-item .inner li { padding: .5rem 0; border-top: 1px solid var(--line); }
+.work-item .inner li:first-child { border-top: 0; padding-top: 0; }
+.work-item .inner .stack { grid-column: 1; grid-row: 1; color: var(--fg-3); line-height: 1.6; }
+.work-item.open .body { grid-template-rows: 1fr; }
+.work-item.open .pm { transform: rotate(45deg); color: var(--fg); }
+.work-item.open .t { color: var(--fg); }
+/* highlight_project target: solid fill, dark ink */
+.work-item.lit { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.work-item.lit .d, .work-item.lit .t small, .work-item.lit .pm, .work-item.lit .inner .stack { color: var(--accent-ink); }
+.work-item.lit .inner li { border-color: rgba(20,9,4,.25); }
+.nda { margin: 1.25rem 0 0; color: var(--fg-3); }
+
+/* Projects: large alternating featured rows, one small row */
+#sec-projects { margin-top: clamp(6rem, 12cqi, 11rem); }
+#sec-projects > .h2 { margin-bottom: clamp(2rem, 4cqi, 3.5rem); }
+.proj { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(1.5rem, 3cqi, 3rem); align-items: end; margin-bottom: clamp(4rem, 8cqi, 7rem); position: relative; }
+.proj.wide { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; }
+.proj.wide .shot { grid-column: 1 / -1; grid-row: 2; aspect-ratio: 21 / 8; }
+.proj.wide h3 { margin-bottom: 0; }
+.proj.wide .copy { padding-top: .6rem; }
+.proj .shot { display: block; overflow: hidden; background: var(--surface); aspect-ratio: 16 / 9.2; }
+.proj .shot { position: relative; }
+.proj .shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+.proj h3 { font-size: clamp(2.5rem, 6cqi, 5rem); margin: 0 0 1rem; display: inline-block; padding: 0 .06em; margin-left: -.06em; transition: background .2s, color .2s; }
+.proj p { margin: 0 0 1rem; color: var(--fg-2); max-width: 26rem; }
+.proj .built { color: var(--fg-3); font-size: .9375rem; }
+.proj .links { display: flex; gap: 1.5rem; margin-top: 1.5rem; font-weight: 500; }
+.proj.small { grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 3fr); align-items: center; margin-bottom: 0; padding-top: 2rem; border-top: 1px solid var(--line); }
+.proj.small h3 { font-size: clamp(2rem, 3.6cqi, 3rem); margin: 0; }
+.proj.small p { margin: 0; }
+.proj.small .links { margin-top: .75rem; }
+/* highlight_project on a personal project: the title becomes a filled block */
+.proj.lit h3 { background: var(--accent); color: var(--accent-ink); }
+.proj.lit .shot { outline: 4px solid var(--accent); outline-offset: 0; }
+
+/* The one human detail: hovering a screenshot plays a 3-frame hit-stop
+   shake (game-feel "juice"), and the demo link reads "Press start". */
+.proj .demo .alt { display: none; }
+.proj:has(.shot:hover) .demo .std { display: none; }
+.proj:has(.shot:hover) .demo .alt { display: inline; background: var(--accent); color: var(--accent-ink); padding: 0 .2em; }
+.proj .shot:hover img { animation: hitstop .22s steps(1) 1; }
+@keyframes hitstop {
+  0%   { transform: translate(0,0); }
+  20%  { transform: translate(-6px, 3px); }
+  40%  { transform: translate(5px, -4px); }
+  60%  { transform: translate(-3px, -2px); }
+  80%  { transform: translate(2px, 2px); }
+  100% { transform: translate(0,0); }
+}
+
+/* Contact: one line */
+#sec-contact { margin-top: clamp(7rem, 14cqi, 12rem); }
+#sec-contact .h2 { margin-bottom: 1.5rem; }
+.contact-line { display: flex; flex-wrap: wrap; gap: .25em 1.1em; font-size: clamp(1.5rem, 3.6cqi, 3rem); font-weight: 600; font-variation-settings: "wdth" var(--wdth-mid); letter-spacing: -.02em; line-height: 1.2; }
+.contact-line a { text-decoration: none; padding: 0 .1em; margin: 0 -.1em; box-shadow: inset 0 -2px 0 var(--fg-3); transition: background .15s, color .15s, box-shadow .15s; }
+.contact-line a:hover { background: var(--accent); color: var(--accent-ink); box-shadow: none; }
+.contact-line .sep { color: var(--fg-3); font-weight: 400; }
+.foot { display: flex; justify-content: space-between; gap: 1rem; margin-top: 5rem; color: var(--fg-3); font-size: .875rem; }
+
+/* =====================================================================
+   CHAT — dock (collapsed) + drawer (open)
+   ===================================================================== */
+.dock { position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%); width: min(40rem, calc(100% - 2rem)); z-index: 40; transition: opacity .25s, transform .35s var(--ease); }
+body[data-state="s2-open"] .dock { opacity: 0; pointer-events: none; transform: translate(-50%, 1rem); }
+.dock .chips { margin: 0 0 .5rem; justify-content: center; }
+.dock .chip { background: var(--surface-2); box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+.dock .prompt { box-shadow: 0 10px 40px rgba(0,0,0,.55); background: var(--surface-2); }
+.dock .prompt input { font-size: var(--step-0); padding: .95rem 1.1rem; }
+.dock .send { width: 3.25rem; }
+
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: var(--drawer); background: var(--surface); border-left: 1px solid var(--line); display: flex; flex-direction: column; z-index: 50; transform: translateX(100%); visibility: hidden; transition: transform .45s var(--ease), visibility 0s .45s; }
+body[data-state="s2-open"] .drawer { transform: none; visibility: visible; transition: transform .45s var(--ease), visibility 0s; }
+.drawer header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); }
+.drawer header .who { font-weight: 600; }
+.drawer header .who span { display: block; font-weight: 400; font-size: .8125rem; color: var(--fg-3); }
+.drawer header .acts { display: flex; gap: .5rem; align-items: center; }
+.ghost { background: none; border: 0; color: var(--fg-3); cursor: pointer; font-size: .875rem; padding: .35rem .5rem; }
+.ghost:hover { color: var(--fg); }
+.collapse { background: var(--surface-2); border: 0; border-radius: 8px; height: 2.25rem; padding: 0 .75rem; cursor: pointer; display: flex; align-items: center; gap: .4rem; font-size: .875rem; color: var(--fg-2); }
+.collapse:hover { background: var(--fg); color: var(--bg); }
+.thread { flex: 1; overflow-y: auto; padding: 1.5rem 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; }
+.msg-user { align-self: flex-end; max-width: 85%; background: var(--surface-2); padding: .7rem 1rem; border-radius: 14px 14px 4px 14px; font-size: .9875rem; }
+.msg-bot { font-size: 1.0625rem; line-height: 1.55; color: var(--fg); }
+.msg-bot p { margin: 0 0 .7em; }
+.msg-bot p:last-child { margin: 0; }
+.msg-bot a { color: var(--fg); }
+.tools { font-size: .8125rem; color: var(--fg-3); }
+.tools summary { cursor: pointer; list-style: none; display: inline-flex; gap: .4rem; align-items: center; }
+.tools summary::-webkit-details-marker { display: none; }
+.tools summary::before { content: "▸"; font-size: .85rem; transition: transform .2s; }
+.tools[open] summary::before { transform: rotate(90deg); }
+.tools summary:hover { color: var(--fg-2); }
+.tools ol { margin: .5rem 0 0; padding: .6rem .75rem; list-style: none; background: var(--bg); border-radius: 8px; font-family: var(--mono); font-size: .75rem; line-height: 1.7; color: var(--fg-2); }
+.tools ol b { font-weight: 500; color: var(--fg); }
+.drawer footer { padding: .75rem 1.25rem 1.25rem; }
+.drawer footer .chips { margin: 0 0 .6rem; }
+.drawer footer .chip { font-size: .8125rem; padding: .4rem .75rem; }
+.drawer footer .prompt input { font-size: var(--step-0); padding: .85rem 1rem; }
+.drawer footer .send { width: 3rem; }
+.drawer .grab { display: none; }
+
+/* =====================================================================
+   PROTOTYPE CHROME (not part of the design)
+   ===================================================================== */
+.proto { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; gap: 2px; padding: 3px; background: #fff; border: 1px dashed #000; border-radius: 6px; font: 11px/1 -apple-system, system-ui, sans-serif; color: #000; }
+.proto span { padding: 5px 6px; color: #666; }
+.proto button { all: unset; white-space: nowrap; cursor: pointer; padding: 5px 8px; border-radius: 4px; }
+.proto button[aria-pressed="true"] { background: #000; color: #fff; }
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 1100px) {
+  body[data-state="s2-open"] #state-2 { margin-right: 380px; }
+  .drawer { width: 380px; }
+}
+@media (max-width: 860px) {
+  .nav ul { display: none; }
+  .hero { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 33cqi; }
+  .proto { top: auto; bottom: auto; top: 4px; left: auto; right: 4px; transform: none; font-size: 10px; }
+  .proto span { display: none; }
+  .hero .photo { grid-column: 1; grid-row: auto; aspect-ratio: 4 / 3.4; min-height: 0; margin-top: 2rem; }
+  .hero .intro { grid-row: auto; }
+  #sec-about { grid-template-columns: 1fr; }
+  #sec-about .about-text, #sec-about dl { grid-column: 1; grid-row: auto; }
+  #sec-about dl { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; order: 2; }
+  #sec-about dl > div { margin-top: 1rem; }
+  #sec-experience { grid-template-columns: 1fr; }
+  #sec-experience .side { position: static; }
+  #sec-work .head { grid-template-columns: 1fr; }
+  .work-item > button, .work-item .inner { grid-template-columns: minmax(0,1fr) 1.5rem; }
+  .work-item .d { grid-column: 1; grid-row: 2; font-size: .9375rem; }
+  .work-item .pm { grid-column: 2; grid-row: 1; }
+  .work-item .inner ul, .work-item .inner .stack { grid-column: 1; grid-row: auto; }
+  .proj, .proj.wide, .proj.small { grid-template-columns: 1fr; }
+  .proj.wide .shot { grid-row: auto; aspect-ratio: 16 / 9.2; }
+  .foot { flex-direction: column; }
+  /* Mobile chat = bottom sheet, page is not pushed */
+  body[data-state="s2-open"] #state-2 { margin-right: 0; }
+  .drawer { top: auto; left: 0; width: 100%; height: 74dvh; border-left: 0; border-top: 1px solid var(--line); border-radius: 18px 18px 0 0; transform: translateY(100%); box-shadow: 0 -20px 60px rgba(0,0,0,.6); }
+  .drawer .grab { display: block; width: 40px; height: 4px; border-radius: 4px; background: var(--line); margin: .6rem auto 0; }
+  .drawer header { padding-top: .6rem; }
+  .dock { bottom: .75rem; }
+  .dock .chips { display: none; }
+}
+@media (max-width: 480px) {
+  .s1-top .where { display: none; }
+  .role { grid-template-columns: 1fr; }
+  .role .when { text-align: left; padding-top: 0; grid-row: 2; }
+  .contact-line { flex-direction: column; }
+  .contact-line .sep { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+
+<body data-state="s2">
+
+<!-- Prototype-only state toggle -->
+<div class="proto" role="group" aria-label="Prototype state">
+  <span>prototype</span>
+  <button data-go="s1">State 1</button>
+  <button data-go="s2">State 2</button>
+  <button data-go="s2-open">Chat open</button>
+</div>
+
+<!-- ================================================================
+     STATE 1 — first visit, chat first
+     ================================================================ -->
+<section id="state-1" aria-label="Ask me first">
+  <div class="s1-top">
+    <span class="where">Full-stack and AI engineer in Cebu, PH</span>
+    <a href="#" class="fill-link" data-go="s2">Skip to the portfolio</a>
+  </div>
+
+  <div class="s1-center">
+    <h2 class="tight">What do you want to know?</h2>
+    <p>I wrote down everything I've worked on and pointed this chat at it. Ask it something. It's faster than scrolling, and it knows the parts that aren't on the page.</p>
+    <form class="prompt" data-send>
+      <label class="sr" for="s1-in">Ask about my work</label>
+      <input id="s1-in" placeholder="Ask about my work…" autocomplete="off" />
+      <button class="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+    </form>
+    <div class="chips">
+      <button class="chip" data-send>Show me your projects</button>
+      <button class="chip" data-send>What's your stack?</button>
+      <button class="chip" data-send>Tell me about Athena</button>
+      <button class="chip" data-send>Are you available?</button>
+    </div>
+  </div>
+
+  <p class="s1-name tight" aria-hidden="true">Janriz Libres</p>
+</section>
+
+<!-- ================================================================
+     STATE 2 — portfolio
+     ================================================================ -->
+<div id="state-2">
+<main class="page">
+
+  <nav class="nav" aria-label="Sections">
+    <div class="status"><b>Cebu, PH.</b> Open to full-stack and AI roles, remote.</div>
+    <ul>
+      <li><a href="#sec-about">About</a></li>
+      <li><a href="#sec-experience">Experience</a></li>
+      <li><a href="#sec-work">Work</a></li>
+      <li><a href="#sec-projects">Projects</a></li>
+      <li><a href="#sec-contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <h1 class="tight"><span>Janriz</span><span>Libres</span></h1>
+    <div class="photo"><img src="../../public/profile.jpg" alt="Janriz on a lookout deck, fog and trees behind him" /></div>
+    <p class="intro"><strong>Full-stack and AI engineer.</strong> Lately I build the parts of a product that talk back, like an admissions assistant that remembers students between sessions.</p>
+  </header>
+
+  <section id="sec-about" aria-label="About">
+    <div class="about-text">
+      <p>I'm Janriz. I write TypeScript for a living and GDScript when nobody's paying.</p>
+      <p>Most of my work sits where a normal web app meets a language model. At LogoLife I built Athena, an assistant that remembers students across sessions and reads their live data through an MCP server I kept on a short leash. Around it I shipped crawlers, dashboards and load tests.</p>
+      <p>I like shipping the boring parts first. They're usually the parts that break.</p>
+    </div>
+    <dl>
+      <div><dt>Based in</dt><dd>Cebu, Philippines</dd></div>
+      <div><dt>Studied</dt><dd>BS Computer Science, Xavier University. Summa Cum Laude.</dd></div>
+      <div><dt>Reaching for lately</dt><dd>Next.js, Vercel AI SDK, OpenAI,<br/>pgvector, MCP</dd></div>
+      <div><dt>Looking for</dt><dd>Full-stack or AI work, remote</dd></div>
+    </dl>
+  </section>
+
+  <section id="sec-experience">
+    <div class="side">
+      <h2 class="h2 tight">Where I've worked</h2>
+      <p>Four roles, about a year and ten months in total.</p>
+    </div>
+    <ol class="roles">
+      <li class="role">
+        <h3>LogoLife</h3><span class="when mono">2025–26 · 5 mo</span>
+        <span class="title">Data / AI Engineer</span>
+        <p class="did">Built Athena and the crawler that feeds it. Two rounds of vector dedup cut the enrichment bill by 70%.</p>
+      </li>
+      <li class="role">
+        <h3>Tolstoy</h3><span class="when mono">2025 · 3 mo</span>
+        <span class="title">Full-stack / AI Engineer</span>
+        <p class="did">Worked on RAG ingestion and streaming chat for an AI shopping assistant. One client's sitewide conversion went up 11% in its first six days.</p>
+      </li>
+      <li class="role">
+        <h3>Elinnov Technologies</h3><span class="when mono">2024 · 4 mo</span>
+        <span class="title">Software Engineer Intern</span>
+        <p class="did">Wrote ASP.NET Core endpoints for a warehouse system, then built the delivery tracking page on top of them.</p>
+      </li>
+      <li class="role">
+        <h3>The Crusader Yearbook</h3><span class="when mono">2023–24 · 10 mo</span>
+        <span class="title">Software Developer</span>
+        <p class="did">Kept the yearbook's Laravel site running and wrote Python tools for the rest, including an OCR script and a bulk mailer for toga photos.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sec-work">
+    <div class="head">
+      <h2 class="h2 tight">Built at work</h2>
+      <p>These live inside other companies' products, so you get how they work and not what they look like.</p>
+    </div>
+    <ul class="work-list">
+      <li class="work-item open" data-slug="athena">
+        <button aria-expanded="true"><span class="t">Athena<small>AI chat assistant</small></span><span class="d">An assistant inside an admissions platform. It coaches students before they ask and answers when they do.</span><span class="pm" aria-hidden="true">+</span></button>
+        <div class="body"><div><div class="inner">
+          <span class="stack mono">React, Express<br/>Vercel AI SDK<br/>Mem0, MCP</span>
+          <ul><li>Mem0 gives it memory that survives between sessions.</li><li>A scoped MCP server is the only way it touches live student data.</li><li>A "Nudge" system brings students back when they go quiet.</li></ul>
+        </div></div></div>
+      </li>
+      <li class="work-item" data-slug="counselor-dashboard">
+        <button aria-expanded="false"><span class="t">Counselor Dashboard</span><span class="d">One screen a counselor opens before a session, with an AI summary of the last few.</span><span class="pm" aria-hidden="true">+</span></button>
+        <div class="body"><div><div class="inner">
+          <span class="stack mono">React, Node.js, MongoDB<br/>GPT-4o</span>
+          <ul><li>A snapshot of the student's numbers up top.</li><li>LLM summaries of past sessions.</li><li>Athena embedded right in the workflow.</li></ul>
+        </div></div></div>
+      </li>
+      <li class="work-item" data-slug="crawler-dashboard">
+        <button aria-expanded="false"><span class="t">Crawler Dashboard</span><span class="d">Live view of a multi-stage crawl, so you see it failing before Slack tells you.</span><span class="pm" aria-hidden="true">+</span></button>
+        <div class="body"><div><div class="inner">
+          <span class="stack mono">React, TypeScript<br/>MongoDB, Recharts</span>
+          <ul><li>Pipeline KPIs, success rates and error counts in real time.</li><li>Controls to start and steer crawls per data category.</li><li>Saturation monitoring that flags duplicate spikes.</li></ul>
+        </div></div></div>
+      </li>
+      <li class="work-item" data-slug="ai-crawler">
+        <button aria-expanded="false"><span class="t">AI-Assisted Crawler</span><span class="d">Five stages that find opportunity data, clean it and enrich it with LLMs.</span><span class="pm" aria-hidden="true">+</span></button>
+        <div class="body"><div><div class="inner">
+          <span class="stack mono">TypeScript, Firecrawl<br/>OpenAI, Grok<br/>Google Places</span>
+          <ul><li>Each stage fails on its own without taking the rest down.</li><li>Two layers of vector dedup cut costs by 70%.</li><li>Orchestration watches its token budget and pings Slack.</li></ul>
+        </div></div></div>
+      </li>
+      <li class="work-item" data-slug="data-maintenance-pipeline">
+        <button aria-expanded="false"><span class="t">Data Maintenance Pipeline</span><span class="d">A background job that keeps a big dataset honest without anyone babysitting it.</span><span class="pm" aria-hidden="true">+</span></button>
+        <div class="body"><div><div class="inner">
+          <span class="stack mono">Grok, OpenAI<br/>Mapbox, Slack</span>
+          <ul><li>LLM updates written as structured output.</li><li>Link checks and geocoding on autopilot.</li><li>Stale records get retired instead of piling up.</li></ul>
+        </div></div></div>
+      </li>
+      <li class="work-item" data-slug="e2e-testing-suite">
+        <button aria-expanded="false"><span class="t">E2E Testing Suite</span><span class="d">Playwright tests that log in as eight different kinds of user.</span><span class="pm" aria-hidden="true">+</span></button>
+        <div class="body"><div><div class="inner">
+          <span class="stack mono">Playwright, TypeScript<br/>Node.js, Allure</span>
+          <ul><li>Tests grouped by role, one project per persona.</li><li>Saved sessions so tests skip the login screen.</li><li>Stealth mode to get past bot detection.</li></ul>
+        </div></div></div>
+      </li>
+    </ul>
+    <p class="nda mono">⊘ NDA. Patterns only, no screenshots.</p>
+  </section>
+
+  <section id="sec-projects">
+    <h2 class="h2 tight">On my own time</h2>
+
+    <article class="proj" data-slug="mercado" id="project-mercado">
+      <a class="shot" href="https://mercado-front-production.up.railway.app/" target="_blank" rel="noopener"><img src="../../public/projects/mercado/1.png" alt="Mercado storefront with a sneaker hero" /></a>
+      <div>
+        <h3 class="tight">Mercado</h3>
+        <p>An e-commerce store with a type-safe GraphQL frontend. Cart, checkout and an admin dashboard.</p>
+        <p class="built">TypeScript and TanStack up front, NestJS and Postgres behind it, all in Docker.</p>
+        <div class="links"><a class="fill-link demo" href="https://mercado-front-production.up.railway.app/" target="_blank" rel="noopener"><span class="std">Live demo</span><span class="alt">Press start ▸</span></a><a class="fill-link" href="https://github.com/janrizmlibres/mercado-front/" target="_blank" rel="noopener">Code</a></div>
+      </div>
+    </article>
+
+    <article class="proj wide" data-slug="flowstack" id="project-flowstack">
+      <h3 class="tight">FlowStack</h3>
+      <div class="copy">
+        <p>A StackOverflow clone. Post questions, comment, search. NextAuth handles sign-in and there's an analytics page.</p>
+        <p class="built">Next.js and MongoDB, styled with Tailwind.</p>
+        <div class="links"><a class="fill-link demo" href="https://devflow-clone-app.vercel.app/" target="_blank" rel="noopener"><span class="std">Live demo</span><span class="alt">Press start ▸</span></a><a class="fill-link" href="https://github.com/janrizmlibres/devflow-clone-app" target="_blank" rel="noopener">Code</a></div>
+      </div>
+      <a class="shot" href="https://devflow-clone-app.vercel.app/" target="_blank" rel="noopener"><img src="../../public/projects/flowstack/2.png" alt="FlowStack home feed with questions and tags" /></a>
+    </article>
+
+    <article class="proj small" data-slug="pulsevr" id="project-pulsevr">
+      <h3 class="tight">PulseVR</h3>
+      <div>
+        <p>Landing page for a VR startup that doesn't exist. Mobile-first, with a lot of motion. React and Tailwind.</p>
+        <div class="links"><a class="fill-link demo" href="https://pulse-vr.vercel.app/" target="_blank" rel="noopener"><span class="std">Live demo</span><span class="alt">Press start ▸</span></a><a class="fill-link" href="https://github.com/janrizmlibres/pulse-vr" target="_blank" rel="noopener">Code</a></div>
+      </div>
+      <a class="shot" href="https://pulse-vr.vercel.app/" target="_blank" rel="noopener"><img src="../../public/projects/pulsevr/1.png" alt="PulseVR hero with a robot and a blaster" /></a>
+    </article>
+  </section>
+
+  <section id="sec-contact">
+    <h2 class="h2 tight">Say hi</h2>
+    <div class="contact-line">
+      <a href="mailto:libres.janriz@gmail.com">libres.janriz@gmail.com</a><span class="sep" aria-hidden="true">/</span>
+      <a href="https://github.com/janrizmlibres" rel="me">GitHub</a><span class="sep" aria-hidden="true">/</span>
+      <a href="https://linkedin.com/in/janrizlibres" rel="me">LinkedIn</a>
+    </div>
+    <div class="foot"><span>Email gets the fastest reply.</span><span>Janriz Libres, 2026</span></div>
+  </section>
+
+</main>
+</div>
+
+<!-- ================================================================
+     CHAT — collapsed dock
+     ================================================================ -->
+<div class="dock">
+  <div class="chips">
+    <button class="chip" data-send>Tell me about Athena</button>
+    <button class="chip" data-send>Are you available?</button>
+  </div>
+  <form class="prompt" data-send>
+    <label class="sr" for="dock-in">Ask about my work</label>
+    <input id="dock-in" placeholder="Ask about my work…" autocomplete="off" />
+    <button class="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+  </form>
+</div>
+
+<!-- ================================================================
+     CHAT — drawer (desktop pushes page, mobile bottom sheet)
+     ================================================================ -->
+<aside class="drawer" aria-label="Chat">
+  <div class="grab" aria-hidden="true"></div>
+  <header>
+    <div class="who">Ask me<span>Answers from my notes. Can be wrong.</span></div>
+    <div class="acts">
+      <button class="ghost">Clear</button>
+      <button class="collapse" data-go="s2" aria-label="Collapse chat">Hide <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+  </header>
+
+  <div class="thread" aria-live="polite">
+    <div class="msg-user">What's the biggest thing you built on your own?</div>
+    <details class="tools">
+      <summary>searched notes · scrolled to Projects · highlighted Mercado</summary>
+      <ol>
+        <li><b>search_wiki</b> "biggest personal project architecture"</li>
+        <li><b>scroll_to</b> projects</li>
+        <li><b>highlight_project</b> mercado</li>
+      </ol>
+    </details>
+    <div class="msg-bot">
+      <p>Probably Mercado. It's the store I just lit up on the page.</p>
+      <p>What you see is the TanStack frontend. Behind it sit eight NestJS services joined with GraphQL federation, with Prisma and Redis, all running in Docker. Nobody's actually buying sneakers there.</p>
+    </div>
+
+    <div class="msg-user">And at work?</div>
+    <details class="tools" open>
+      <summary>searched notes</summary>
+      <ol><li><b>search_wiki</b> "Athena LogoLife memory MCP"</li></ol>
+    </details>
+    <div class="msg-bot">
+      <p>Athena, at LogoLife. It's an assistant inside a college admissions platform. Mem0 lets it remember a student between sessions, and it reads live data through an MCP server that only exposes what it should.</p>
+      <p>It's under NDA, so the Work section only has the patterns. Happy to go deeper on either one.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="chips">
+      <button class="chip">What's your stack?</button>
+      <button class="chip">Are you available?</button>
+    </div>
+    <form class="prompt" onsubmit="return false">
+      <label class="sr" for="drawer-in">Ask a follow-up</label>
+      <input id="drawer-in" placeholder="Ask a follow-up…" autocomplete="off" />
+      <button class="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+    </form>
+  </footer>
+</aside>
+
+<script>
+/* Prototype behaviour only. The real build does this with GSAP
+   (drawer push = timeline on the page's margin + drawer x, name
+   re-fit rides along via container units). */
+(function () {
+  const body = document.body;
+  const btns = document.querySelectorAll('.proto button');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setState(s) {
+    body.dataset.state = s;
+    btns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.go === s)));
+    document.querySelectorAll('.lit').forEach(el => el.classList.remove('lit'));
+    if (s === 's2-open') {
+      // simulate scroll_to(projects) + highlight_project(mercado)
+      const target = document.getElementById('sec-projects');
+      document.querySelector('[data-slug="mercado"]').classList.add('lit');
+      setTimeout(() => target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }), reduced ? 0 : 450);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+    history.replaceState(null, '', '#' + s);
+  }
+
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); setState(b.dataset.go); }));
+  document.querySelectorAll('form[data-send]').forEach(f => f.addEventListener('submit', e => { e.preventDefault(); setState('s2-open'); }));
+  document.querySelectorAll('button.chip[data-send]').forEach(b => b.addEventListener('click', () => setState('s2-open')));
+
+  document.querySelectorAll('.work-item > button').forEach(b => b.addEventListener('click', () => {
+    const li = b.parentElement;
+    const open = !li.classList.contains('open');
+    li.classList.toggle('open', open);
+    b.setAttribute('aria-expanded', String(open));
+  }));
+
+  const initial = (location.hash || '#s2').slice(1);
+  setState(['s1', 's2', 's2-open'].includes(initial) ? initial : 's2');
+})();
+</script>
+</body>
+</html>

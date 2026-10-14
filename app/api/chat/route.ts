@@ -1,15 +1,17 @@
 import { NextRequest } from "next/server";
 import * as ai from "ai";
-import { stepCountIs, convertToModelMessages } from "ai";
-import type { UIMessage } from "ai";
+import { stepCountIs, convertToModelMessages, createUIMessageStreamResponse } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { Client } from "langsmith";
 import { wrapAISDK, createLangSmithProviderOptions } from "langsmith/experimental/vercel";
 import { SYSTEM_PROMPT } from "@/lib/ai/system-prompt";
 import { PAGE_CONTEXT_BLOCK } from "@/lib/ai/page-context";
 import { tools } from "@/lib/ai/tools";
+import { restoreToolOutputs, withholdRetrievalOutputs } from "@/lib/ai/withheld-retrieval";
+import { MAX_BODY_CHARS, parseChatRequest } from "@/lib/ai/chat-request";
 import { checkRateLimit } from "@/lib/limits/rate-limit";
 import { hasBudget, recordUsage } from "@/lib/limits/cost-cap";
+import { monthlyLimitLine, rateLimitLine } from "@/lib/chat/lines";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,16 +31,24 @@ function getClientIp(req: NextRequest): string {
   return "unknown";
 }
 
-export async function POST(req: NextRequest) {
-  const ip = getClientIp(req);
+const json = (status: number, body: object) =>
+  new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 
+export async function POST(req: NextRequest) {
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_BODY_CHARS) return json(413, { error: "too_large" });
+  const raw = await req.text();
+  if (raw.length > MAX_BODY_CHARS) return json(413, { error: "too_large" });
+  const body = parseChatRequest(raw);
+  if (!body) return json(400, { error: "bad_request" });
+
+  const ip = getClientIp(req);
   const rl = await checkRateLimit(ip);
   if (!rl.allowed) {
     const minutes = Math.ceil(rl.retryAfterMs / 60_000);
     return new Response(
       JSON.stringify({
         error: "rate_limited",
-        message: `You've hit the rate limit. Try again in ~${minutes} min, or email me directly at libres.janriz@gmail.com.`,
+        message: rateLimitLine(minutes),
         retryAfterMs: rl.retryAfterMs,
       }),
       {
@@ -52,31 +62,19 @@ export async function POST(req: NextRequest) {
   }
 
   const budget = await hasBudget();
-  if (!budget.ok) {
-    return new Response(
-      JSON.stringify({
-        error: "budget_exhausted",
-        message:
-          "The agent's on a budget right now — happy to chat directly at libres.janriz@gmail.com.",
-      }),
-      { status: 503, headers: { "content-type": "application/json" } }
-    );
-  }
+  if (!budget.ok) return json(503, { error: "budget_exhausted", message: monthlyLimitLine() });
 
-  const body = (await req.json()) as {
-    messages?: UIMessage[];
-    threadId?: string;
-    viewContext?: { sectionId?: string; domId?: string; label?: string };
-  };
-  const messages = await convertToModelMessages(body.messages ?? []);
-  const threadId = typeof body.threadId === "string" && body.threadId ? body.threadId : undefined;
+  const messages = await convertToModelMessages(await restoreToolOutputs(body.messages));
+  const { threadId, view } = body;
 
-  const vc = body.viewContext;
-  const viewLine =
-    vc && typeof vc.sectionId === "string" && typeof vc.domId === "string" && typeof vc.label === "string"
-      ? `\n\n# Visitor view\nThe visitor is currently viewing the "${vc.label}" section (#${vc.domId}, slug: ${vc.sectionId}). When they say "this", "here", "above", "this section", or ask "what is this", assume they mean that section unless context clearly says otherwise. Reference its content from the display block above; only call \`search_wiki\` for depth beyond what's on the page.`
-      : "";
-  const system = `${SYSTEM_PROMPT}\n\n${PAGE_CONTEXT_BLOCK}${viewLine}`;
+  const viewLine = view
+    ? `\n\n# Visitor view\nThe visitor is reading ${view.label} (section slug: ${view.sectionId}, #${view.domId}). When they say "this", "here", "above", "this section", or ask "what is this", assume they mean that unless context clearly says otherwise. Reference it from the display block above; only call \`search_wiki\` for depth beyond what's on the page. They are already there: don't move the page to it.`
+    : "";
+  // asked from a star: the stars lighting up are the show, so the page stays where it is
+  const stayLine = body.stay
+    ? `\n\n# Asked from a star\nThe visitor asked by clicking a star in the sky. Don't move the page: no \`scroll_to\`, no \`highlight_project\`. The stars lighting up as you read are the answer's show. Just answer, and don't offer to take them anywhere.`
+    : "";
+  const system = `${SYSTEM_PROMPT}\n\n${PAGE_CONTEXT_BLOCK}${viewLine}${stayLine}`;
 
   // session_id is the LangSmith convention for grouping runs into a thread in
   // the Threads tab. thread_id mirrors it for downstream consumers.
@@ -103,5 +101,8 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return result.toUIMessageStreamResponse();
+  // run to the end even if the visitor leaves, so onFinish records what the turn cost
+  void result.consumeStream();
+
+  return createUIMessageStreamResponse({ stream: withholdRetrievalOutputs(result.toUIMessageStream()) });
 }

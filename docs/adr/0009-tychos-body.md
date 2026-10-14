@@ -1,6 +1,6 @@
 # Tycho's body: a helmeted explorer, on one node tree
 
-Status: accepted (2026-10-04)
+Status: accepted (2026-10-04); amended 2026-10-13 (the probe and the paint removed)
 
 *Model the mascot* modelled three body plans for Tycho in Blender, following ADR 0002's route for authored assets, and ran each through every emote and his part of the warp on the real site:
 - **a probe:** a ball in a gimbal ring, after JAXA's Int-Ball;
@@ -11,7 +11,7 @@ I recommended the probe, as the most like real flown hardware. Janriz picked the
 
 ## Decision
 
-**Tycho is the explorer.** A white helmet, with a visor of dark glass set into a recess in a graphite rim. Round sensor pods for ears and an antenna on a collar. A bellows neck and an egg torso with a chest plate. Two chunky arms ending in three-fingered grippers. A foil pack of boosters on his back. The probe stays as a take until he says otherwise.
+**Tycho is the explorer.** A white helmet, with a visor of dark glass set into a recess in a graphite rim. Round sensor pods for ears and an antenna on a collar. A bellows neck and an egg torso with a chest plate. Two chunky arms ending in three-fingered grippers. A foil pack of boosters on his back.
 - **His body language does the work.** The arms are thick enough to read as gesture at 92–128 px: a wave, a point, a hand to the back of his head when he apologises. When his look or his emotes are shaped further, gesture wins over strict realism. His materials stay hardware (painted composite, black-anodised parts, foil, nav lights).
 - **His face is light on glass.** His eyes are glyphs drawn on the visor, one per expression: Open, Wide, Happy, Squeeze, Spiral and Shut. A blink swaps them.
   - They're drawn in the sky's energy colour `#ffa95a`, unlit and not tone mapped, as ADR 0002's colour rule asks.
@@ -38,7 +38,7 @@ I recommended the probe, as the most like real flown hardware. Janriz picked the
 - **The probe.**
   - **For:** the most like real hardware, and the chunkiest silhouette.
   - **Against:** no arms, so he could point only by turning, and the bow hid his face.
-  - Kept as a take.
+  - Kept as a take, then removed (2026-10-13).
 - **The cat.**
   - **For:** a nod to Janriz's cats.
   - **Against:** the tail that carried his mood was hidden from the front, and the plan leaned cartoonish.
@@ -51,3 +51,10 @@ I recommended the probe, as the most like real flown hardware. Janriz picked the
 - **Optimising** needs `--prune false` and `--palette false` on top of ADR 0002's command, which now says so.
 - **The wake-up's flat drawing** must match the explorer's first frame.
 - **The warp's rebuild** uses his launch, plunge and arrival as the rig plays them: hatches, pods, the circle, eyes going from > < to spirals and then to O, and a squash on landing.
+
+## Amendment, 2026-10-13: the explorer in metal, alone
+
+His finish is satin metal (2026-10-10): aluminium shells under a clear coat, dark anodised titanium joints, gold foil
+and a clean visor (`public/voyage/tycho/explorer-metal.glb`), after Janriz said the painted one "looks of a character
+from poly 3D game". The probe and the painted explorer were takes until the site was finalized; both are gone, so the
+rig loads one body.

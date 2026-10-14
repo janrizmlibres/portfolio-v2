@@ -1,0 +1,604 @@
+/*
+ * The voyage's text. Type: the name and the titles in Jost capitals, tracked open, a hairline rule
+ * under the name, small print in DM Mono capitals, the reading lines in Newsreader. The font variables come from
+ * next/font in app/layout.tsx.
+ *
+ * Tiers, on <html data-film> (lib/film/tier.ts):
+ * - film and still: the runway is the scroll. Each article is as tall as its share of the film, and each block's shot
+ *   is fixed in the frame, where the film places it and writes its words in.
+ * - plain: the reading layout. Every block flows as a page.
+ * html.port marks a portrait screen, where every reading spot is composed again: the voice shrinks, the labels
+ * hold their size, and riding labels become lists. html.short marks a phone held sideways, composed on its own too.
+ * A block's lines sit in a box per shape (--l*, --p*, --s*): its left, its top (or its middle, where --*m is 1) and
+ * its width.
+ */
+:root {
+  --screen: 100lvh;
+  --space: #03040a;
+  --ink: #f4f6ff;
+  --ink-2: rgba(230, 235, 255, 0.88);
+  --ink-3: rgba(226, 232, 255, 0.68);
+  --shadow: 0 1px 28px rgba(2, 3, 10, 0.55), 0 0 2px rgba(2, 3, 10, 0.35);
+  --f-display: var(--font-jost), system-ui, sans-serif;
+  --f-text: var(--font-newsreader), Georgia, serif;
+  --f-data: var(--font-dm-mono), ui-monospace, monospace;
+  /* his name on one line is 6.89em wide: this keeps it inside the hero's column (36% of the frame, at most 34rem) */
+  --s-name: clamp(40px, 5.2vw, 78px);
+  --s-title: clamp(26px, 2.7vw, 42px);
+  --s-text: calc(clamp(16px, 1.32vw, 21px) * 1.08);
+  --rule: 1px solid rgba(226, 232, 255, 0.45);
+}
+html.port {
+  --s-name: clamp(32px, 9.4vw, 40px);
+  --s-title: clamp(22px, 6.4vw, 28px);
+  --s-text: calc(16px * 1.08);
+}
+html.short {
+  --s-name: clamp(34px, 6vw, 46px);
+  --s-title: clamp(26px, 4.4vw, 34px);
+  --s-text: 15px;
+}
+
+/* ---------------------------------------------------------------- type, in every tier */
+#runway .title {
+  margin: 0;
+  font: 400 var(--s-title) / 1 var(--f-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+#runway .title .sub {
+  display: block;
+  margin-top: 0.45em;
+  font: italic 400 clamp(17px, 1.35vw, 22px) / 1.25 var(--f-text);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-2);
+}
+#runway .shot.hero .title {
+  font-size: var(--s-name);
+  line-height: 1.02;
+  letter-spacing: 0.05em;
+}
+/* the hero's lockup is one box: the name on one line, the role under a hairline rule, then the line */
+#runway .shot.hero .body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+#runway .shot.hero .body .data {
+  border-top: var(--rule);
+  padding-top: 1.2em;
+  margin-top: 1.5em;
+  min-width: 12em;
+}
+#runway .shot.hero .body .line {
+  margin-top: 0.8em;
+  max-width: 27ch;
+  text-wrap: balance;
+  font-size: calc(clamp(17px, 1.45vw, 23px) * 1.08);
+}
+html.short #runway .shot.hero .body .line {
+  font-size: var(--s-text);
+}
+#runway .shot.stage .title .in {
+  padding-left: 0.45em;
+  border-left: 3px solid var(--hue, #fff);
+}
+#runway .line {
+  margin: 0 0 0.55em;
+  max-width: 31ch;
+  text-wrap: pretty;
+  font: 400 var(--s-text) / 1.42 var(--f-text);
+  color: var(--ink-2);
+}
+#runway .data,
+#runway .cap {
+  margin: 0 0 0.6em;
+  font: 400 12px / 1.5 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+#runway .cap {
+  margin-top: 1.1em;
+  white-space: pre-line;
+  text-wrap: pretty;
+}
+#runway .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2em;
+  margin: 0.4em 0 0;
+}
+#runway a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  font: 400 13px / 1.4 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* a project's links read as the hand's chip does, in brackets (not read out), the arrow saying they leave the page */
+#runway article[id^="project-"] .links a {
+  text-decoration: none;
+}
+#runway article[id^="project-"] .links a::before {
+  content: "[ " / "";
+  color: var(--ink-3);
+}
+#runway article[id^="project-"] .links a::after {
+  content: " ↗ ]" / "";
+  color: var(--ink-3);
+}
+#runway article[id^="project-"] .links a:hover::before,
+#runway article[id^="project-"] .links a:hover::after,
+#runway article[id^="project-"] .links a:focus-visible::before,
+#runway article[id^="project-"] .links a:focus-visible::after {
+  color: var(--ink);
+}
+.lablist {
+  list-style: none;
+  margin: 0.2em 0 0.6em;
+  padding: 0;
+  font: 400 12px / 1.4 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.lablist li {
+  margin: 0 0 0.35em;
+  padding-left: 12px;
+  border-left: 1px solid var(--ink-3);
+}
+.lablist small {
+  display: block;
+  font: italic 400 14px / 1.3 var(--f-text);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-2);
+}
+.label {
+  font: 400 12px / 1.3 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.label small {
+  display: block;
+  font: italic 400 14px / 1.3 var(--f-text);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-2);
+}
+/* the keyboard's way to ask Tycho: a real button, shown when it has focus */
+.askb {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.askb:focus-visible {
+  position: static;
+  width: auto;
+  height: auto;
+  clip: auto;
+  display: inline-block;
+  margin-top: 0.6em;
+  font: 400 13px / 1 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  /* on the chip's plate, faint, so it reads over a lit hull as the chip does */
+  background: rgba(3, 4, 10, 0.62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 0;
+  padding: 8px 6px;
+  text-shadow: var(--shadow);
+  pointer-events: auto;
+}
+/* it reads as the chip does, in brackets */
+.askb:focus-visible::before {
+  content: "[\2002";
+}
+.askb:focus-visible::after {
+  content: "\2002]";
+}
+
+/* ---------------------------------------------------------------- film and still: text fixed in the frame */
+html:not([data-film="plain"]) #runway article {
+  position: relative;
+  height: calc(var(--h) * var(--screen));
+}
+html:not([data-film="plain"]) .shot {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  text-shadow: var(--shadow);
+}
+/* a block in play; every other block stays in the document (and in reach of the keyboard), unseen */
+html:not([data-film="plain"]) .shot.on {
+  opacity: 1;
+}
+/* the crawler's white fairing passes behind its lines as the camera comes upstream, and on a phone its rings drop out
+   behind them as they leave: a dark halo close round the letters, as the hand's labels have, keeps them read */
+html:not([data-film="plain"]) article[data-block="crawler"] .shot {
+  text-shadow: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85), 0 1px 18px rgba(2, 3, 10, 0.6);
+}
+/* on a phone a gate's white collar closes in over its role's lines as they go, and a thrown CubeSat can cross them;
+   About's title and words sit under the station, its white radiators and stem turning behind them: the same halo
+   keeps them read */
+html.port:not([data-film="plain"]) article[data-block^="role-"] .shot,
+html.port:not([data-film="plain"]) article[data-block="about-1"] .shot {
+  text-shadow: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85), 0 1px 18px rgba(2, 3, 10, 0.6);
+}
+html:not([data-film="plain"]) .shot.on a,
+html:not([data-film="plain"]) .shot.on .askb:focus-visible {
+  pointer-events: auto;
+}
+html:not([data-film="plain"]) .shot .w {
+  display: inline-block;
+  opacity: 0;
+}
+/* until the film runs, the block in play shows whole (the hero, at first paint) */
+html:not([data-film="plain"]) .shot.on:not(.driven) .w,
+html:not([data-film="plain"]) .shot.on:not(.driven) [data-extra] {
+  opacity: 1;
+}
+html:not([data-film="plain"]) .shot [data-extra] {
+  opacity: 0;
+}
+/* an extra (a caption, a list, links) fades in as a whole, its words with it */
+html:not([data-film="plain"]) .shot [data-extra] .w {
+  opacity: 1;
+}
+html:not([data-film="plain"]) .shot .body {
+  position: absolute;
+  left: calc(var(--lx) * 100%);
+  top: calc(var(--ly) * 100%);
+  width: calc(var(--lw) * 100%);
+  max-width: 34rem;
+  transform: translateY(calc(var(--lm, 0) * -50%));
+}
+html.port:not([data-film="plain"]) .shot .body {
+  left: calc(var(--px) * 100%);
+  top: calc(var(--py) * 100%);
+  width: calc(var(--pw) * 100%);
+  max-width: none;
+  transform: translateY(calc(var(--pm, 0) * -50%));
+}
+html.short:not([data-film="plain"]) .shot .body {
+  left: calc(var(--sx) * 100%);
+  top: calc(var(--sy) * 100%);
+  width: calc(var(--sw) * 100%);
+  transform: translateY(calc(var(--sm, 0) * -50%));
+}
+html.port:not([data-film="plain"]) #runway .line {
+  max-width: none;
+}
+/* a title heads its lines in the column, 18 px above them, until the film has its subject to ride */
+html:not([data-film="plain"]) .shot .title {
+  position: absolute;
+  left: calc(var(--lx) * 100%);
+  bottom: calc((1 - var(--ly)) * 100% + 18px);
+  white-space: nowrap;
+}
+html.port:not([data-film="plain"]) .shot .title {
+  left: calc(var(--px) * 100%);
+  bottom: calc((1 - var(--py)) * 100% + 18px);
+  white-space: normal;
+  max-width: 88vw;
+}
+html.short:not([data-film="plain"]) .shot .title {
+  left: calc(var(--sx) * 100%);
+  bottom: calc((1 - var(--sy)) * 100% + 18px);
+}
+/* the hero's name heads its lockup, in its flow, on one line */
+html:not([data-film="plain"]) .shot.hero .title {
+  position: static;
+  white-space: nowrap;
+}
+html:not([data-film="plain"]) .shot .title.ride {
+  left: 0;
+  top: 0;
+  bottom: auto;
+}
+/* his portrait as a card on a leader line from the ship; in the list, a small print */
+.label.has-photo {
+  padding: 8px 8px 9px;
+  border: 1px solid rgba(226, 232, 255, 0.26);
+  background: rgba(3, 4, 10, 0.62);
+  backdrop-filter: blur(6px);
+}
+.lablist li.has-photo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lablist li.has-photo img {
+  display: block;
+  flex: none;
+  width: 44px;
+  height: auto;
+  border: 1px solid rgba(226, 232, 255, 0.26);
+}
+/* a little smaller on a frame shorter than about 830 px, so it hangs clear of the frame's foot under the ring */
+.label.has-photo img {
+  display: block;
+  width: min(116px, 14vh);
+  height: auto;
+  margin-bottom: 8px;
+}
+html.short .label.has-photo img {
+  width: 64px;
+}
+/* labels riding their objects; the list says them to screen readers, and shows on phones */
+html:not([data-film="plain"]) .label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+html:not(.port):not([data-film="plain"]) .lablist,
+html.port:not([data-film="plain"]) .phone-ride .lablist {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+html.port:not([data-film="plain"]) .shot:not(.phone-ride) .label {
+  display: none;
+}
+html.port:not([data-film="plain"]) .label {
+  white-space: normal;
+  max-width: 40vw;
+}
+/* a breakthrough's card: pinned in the column while its craft comes by, its leader following the craft (place.ts, pinCard) */
+html:not([data-film="plain"]) .shot.sign .face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: min(320px, calc(100vw - 32px));
+  transform-origin: 0 0;
+  visibility: hidden;
+}
+html:not([data-film="plain"]) .shot.sign .face .title {
+  position: static;
+  white-space: normal;
+  margin: 0.15em 0 0.3em;
+  font-size: 34px;
+  line-height: 1.04;
+}
+html:not([data-film="plain"]) .shot.sign .face .data {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+html:not([data-film="plain"]) .shot.sign .face .line {
+  font-size: 20px;
+  line-height: 1.35;
+  margin: 0;
+}
+html.port:not([data-film="plain"]) .shot.sign .face .title {
+  font-size: 28px;
+}
+html.port:not([data-film="plain"]) .shot.sign .face .line {
+  font-size: 18px;
+}
+/* the pass moves whole rows, so their words are shown, and a passed row grows from its left */
+html:not([data-film="plain"]) .shot.m-pass .w {
+  opacity: 1;
+}
+html:not([data-film="plain"]) .shot.m-pass [data-row] {
+  transform-origin: 0 50%;
+}
+/* word modes that need CSS: the duplicate that slides into its twin, and words that grow from the baseline */
+.shot.m-twin .w {
+  position: relative;
+}
+.shot.m-twin .w::after {
+  content: attr(data-w);
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateX(var(--gx, 0));
+  opacity: var(--go, 0);
+  pointer-events: none;
+}
+.shot.m-bars .w {
+  transform-origin: 50% 100%;
+}
+/* leader lines: a dot on the object and a line out to its label */
+#leaders {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+#leaders line {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+#leaders circle {
+  fill: var(--ink);
+}
+/* reduced motion: a still per reading spot, crossfaded, in place of the live picture */
+#stills canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100lvh;
+  pointer-events: none;
+  opacity: 0;
+}
+html:not([data-film="still"]) #stills {
+  display: none;
+}
+html[data-film="still"] [data-universe] canvas {
+  visibility: hidden;
+}
+
+/* ---------------------------------------------------------------- plain: the reading layout */
+html[data-film="plain"] #runway {
+  max-width: 46rem;
+  padding: 64px 0 120px;
+}
+html[data-film="plain"] #runway article {
+  margin: 0 0 56px;
+}
+html[data-film="plain"] #runway section + section {
+  border-top: 1px solid rgba(226, 232, 255, 0.14);
+  padding-top: 40px;
+}
+html[data-film="plain"] .shot .title {
+  margin-bottom: 14px;
+}
+html[data-film="plain"] .label,
+html[data-film="plain"] #leaders,
+html[data-film="plain"] [data-universe] {
+  display: none;
+}
+html[data-film="plain"] .askb {
+  position: static;
+  width: auto;
+  height: auto;
+  clip: auto;
+  display: inline-block;
+  margin-top: 0.6em;
+  font: 400 13px / 1 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--ink-3);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+/* the black "Replay experience" fades through to the wake-up, or to the very start (lib/film/replay.ts) */
+#veil {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- the hand (lib/voyage/hand.ts) */
+/* a star's label, the chip naming what's under the pointer, and what's pinned while Tycho answers or a block's button
+   has focus; none of it takes the pointer, and none of it is read out (the blocks' buttons are the real way to ask) */
+#hand {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+html[data-film="plain"] #hand {
+  display: none;
+}
+#hand .hand-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+#hand .hand-lines line,
+#hand .hand-lines circle,
+#hand .hand-lines path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+#hand .hand-lines .lead {
+  stroke: rgba(226, 232, 255, 0.7);
+  stroke-dasharray: 1;
+}
+#hand .hand-lines .ring {
+  stroke: rgba(226, 232, 255, 0.8);
+}
+#hand .hand-lines .pin-ring {
+  stroke: var(--ink-3);
+}
+/* a hovered star's twinkle, held still under reduced motion */
+#hand .hand-lines .glint {
+  fill: rgba(236, 241, 255, 0.85);
+  stroke: none;
+}
+#hand .hand-label,
+#hand .hand-chip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  /* a dark halo close round the letters, so they read over a lit hull as well as over space */
+  text-shadow: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85), 0 1px 18px rgba(2, 3, 10, 0.6);
+}
+#hand .hand-label b {
+  display: block;
+  font: 400 12px / 1.3 var(--f-data);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+#hand .hand-label small {
+  display: block;
+  font: italic 400 14px / 1.3 var(--f-text);
+  color: var(--ink-2);
+}
+#hand .hand-label.held b,
+#hand .hand-label.held small {
+  color: var(--ink-3);
+}
+/* the chip carries the portrait card's plate, faint, so its words read over a lit hull too (4.5:1 or better over a
+   lit gate and over a white screenshot) */
+#hand .hand-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 6px 4px;
+  background: rgba(3, 4, 10, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font: 400 12px / 1 var(--f-data);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+#hand .hand-chip b {
+  font-weight: 400;
+}
+#hand .hand-chip .br {
+  display: inline-block;
+}
+#hand .hand-chip.held,
+#hand .hand-pin.answering {
+  color: var(--ink-3);
+}
+html.hand-ask,
+html.hand-ask body {
+  cursor: pointer;
+}
+html.hand-grab,
+html.hand-grab body {
+  cursor: grab;
+}
+html.hand-dragging,
+html.hand-dragging body {
+  cursor: grabbing;
+  user-select: none;
+}
+

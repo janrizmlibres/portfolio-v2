@@ -47,6 +47,8 @@ Built to the letter, that read as "you try to scroll, nothing is happening for a
 
 "Back to the start" no longer plays the film back to its first frame, and doesn't warp. It replays, as Edolus's ending does: the frame fades to black (0.6 s), the page lands on the exact first frame under the black, holds (0.4 s), and fades back in (1 s); reduced motion only crossfades. Contact already shows the whole sky, so there's nowhere to travel, and playing 42 screens back reads as the film rewinding. It is the one nav link that doesn't warp. Back stays honest: the start's address is pushed, and browser Back returns to Contact's exact place.
 
+Since 2026-10-13 it's "Replay experience", and under the black it brings the wake-up back from its loader: the name on black with no count, since everything's loaded, then Tycho's charge-up, the doze and the wake button; waking him starts the film from its first frame, the score coming back up from under the black, where it was held, never stopped (Janriz: "it goes all the way back to the loader with my name but now without the loading indicator since everything's loaded already"). Where the page has no wake-up, the black lifts on the first frame as before, and the route map's Start always does that ("Route map's Start should not go all the way back").
+
 Contact's pull-out keeps the whole trajectory drawn while the bodies fade: the voyage seen once in full, ending at his star, gone before Contact is read.
 
 ## Amendment (2026-10-11, *Work as relays*): keeping the one path smooth
@@ -61,4 +63,14 @@ The path eases each value of a key on its own: the target, the direction, the lo
 - **Measure, don't eyeball.**
   - `scripts/film/turns.mjs` reads the live path (`window.__path`, development only) and lists every stretch turning faster than a limit.
   - `voyage.spec.ts` holds the hero to Work's end under it: 270° a screen on a desktop, 325 on a phone, outside the throws' flashes, whose cuts the flash hides.
-  - Known and not yet bridged: Athena to the crawler (~755° a screen at 28.65) and the record's flight into the ribbon (~980 at 39.5).
+  - Since 2026-10-12 the whole film holds under the limit (the hero to Contact: 260° a screen on a desktop at most, the
+    relay's align; 267 on a phone, the same spot), and `voyage.spec.ts` holds the whole film. Athena to the crawler was
+    ~755: the crawler's shot looked from the far side, so the crawler is now shot from her side (lit 54° round from its
+    star), the camera flies one curve between the two shots, and the eye goes from her to it early, while they're 63°
+    apart, not while the camera passes the stream between them. The record's flight into the ribbon was ~980: the climax
+    now ends behind where the record flies off, and the camera chases it straight out. (Since 2026-10-13 nothing flies
+    off: the ribbon's frames come out of the shaft's own foot and the camera draws back to watch them, ADR 0016.)
+- **Turn the eye while the camera's far from what it looks at.** An eye on a point the camera's passing close to whips
+  round it (a stream's middle, with one end behind and the other ahead). Look past it, at the bodies at its ends.
+- **An orbit and the eye's pan, one after the other.** Their turns add: the farewell orbit round home settles before the
+  eye leaves the ring for Athena.
