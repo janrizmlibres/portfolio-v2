@@ -14,8 +14,8 @@
  * the ship's pose and the ring's turn at that moment (`stationAt`).
  */
 import {
-  AdditiveBlending, BufferAttribute, BufferGeometry, InstancedMesh, LineBasicMaterial, LineSegments, Matrix4, Object3D, Points, PointsMaterial,
-  Quaternion, Vector3, type Material, type Mesh, type MeshStandardMaterial, type Texture, type WebGLRenderer,
+  AdditiveBlending, BufferAttribute, BufferGeometry, DataTexture, InstancedMesh, LinearFilter, LineBasicMaterial, LineSegments, Matrix4, Object3D,
+  Points, PointsMaterial, Quaternion, Vector3, type Material, type Mesh, type MeshStandardMaterial, type Texture, type WebGLRenderer,
 } from "three";
 import { lightBy } from "./dark-lights";
 import { uploadTextures, voyageLoader } from "./loading";
@@ -143,10 +143,13 @@ export function createTraffic(c: {
   trails.setAttribute("color", new BufferAttribute(tCol, 3));
   const lineMat = new LineBasicMaterial({ vertexColors: true, blending: AdditiveBlending, transparent: true, depthWrite: false });
   const lines = new LineSegments(trails, lineMat);
+  // a point without a map draws as a solid square, which read as white tiles behind the workers: each is a soft dot
+  const dot = roundDot();
+  c.owned.push(dot);
   const pts = (n: number, color: number) => {
     const g = new BufferGeometry(), a = new Float32Array(n * 3);
     g.setAttribute("position", new BufferAttribute(a, 3));
-    const m = new PointsMaterial({ color, sizeAttenuation: false, blending: AdditiveBlending, transparent: true, depthWrite: false });
+    const m = new PointsMaterial({ color, map: dot, sizeAttenuation: false, blending: AdditiveBlending, transparent: true, depthWrite: false });
     const p = new Points(g, m);
     p.frustumCulled = false;
     c.owned.push(g, m);
@@ -349,3 +352,18 @@ export function createTraffic(c: {
 }
 
 export type Traffic = ReturnType<typeof createTraffic>;
+
+/** A round dot, white, its alpha falling from the middle to nothing at its rim and beyond (the corners). */
+function roundDot(size = 32): DataTexture {
+  const data = new Uint8Array(size * size * 4).fill(255);
+  for (let y = 0; y < size; y++)
+    for (let x = 0; x < size; x++) {
+      const r = Math.hypot(x + 0.5 - size / 2, y + 0.5 - size / 2) / (size / 2);
+      data[(y * size + x) * 4 + 3] = Math.round(Math.max(0, 1 - r) ** 1.5 * 255);
+    }
+  const tex = new DataTexture(data, size, size);
+  tex.name = "traffic dot";
+  tex.magFilter = tex.minFilter = LinearFilter;
+  tex.needsUpdate = true;
+  return tex;
+}
