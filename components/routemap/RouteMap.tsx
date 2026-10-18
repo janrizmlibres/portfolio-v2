@@ -53,6 +53,8 @@ const MINI = 92, GROW = 236; // the map's size at rest and grown, in px
 const LABEL_GAP = 26; // between the grown map's names, in px
 const INK = "244, 246, 255";
 const ink = (a: number) => `rgba(${INK}, ${a})`;
+/** a polyline's length, in the chart's units */
+const pathLen = (pts: readonly P2[]) => pts.reduce((a, p, i) => (i ? a + Math.hypot(p[0] - pts[i - 1]![0], p[1] - pts[i - 1]![1]) : 0), 0);
 const pathOf = (pts: readonly P2[]) => pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(4)} ${p[1].toFixed(4)}`).join("");
 // the region's light, as it washes the window
 const regionGlow = (r: Region) => `rgb(${oklabToSrgb(oklchToOklab([0.34, REGION_LIGHT[r].tint[1] * 1.6, REGION_LIGHT[r].tint[2]])).map((c) => Math.round(c * 255)).join(", ")})`;
@@ -76,7 +78,7 @@ type Painter = (f: Frame) => void;
 const MapSvg = memo(function MapSvg({ chart, px, painters, tag }: { chart: Chart; px: number; painters: Set<Painter>; tag: string }) {
   const u = (2 * V) / px; // chart units per px, so marks keep their size in px
   const k = Math.max(1, px / 120); // marks grow a little on a large map
-  const here = useRef<SVGGElement | null>(null);
+  const here = useRef<SVGSVGElement | null>(null);
   const trail = useRef<SVGPathElement | null>(null);
   const way = useRef<SVGPathElement | null>(null);
   const hoverG = useRef<SVGGElement | null>(null);
@@ -93,11 +95,17 @@ const MapSvg = memo(function MapSvg({ chart, px, painters, tag }: { chart: Chart
     const circles = [...(starsG.current?.querySelectorAll<SVGCircleElement>("circle.c") ?? [])];
     const halos = [...(starsG.current?.querySelectorAll<SVGCircleElement>("circle.g") ?? [])];
     const last = new Float32Array(circles.length).fill(-1);
-    let lastHere = "", lastTrail = -1, lastWay = "", lastHover: SectionId | null | undefined, lastRegion = "";
+    // a map that's written repaints, and on a phone a frame with a repaint in it misses its turn (its raster waits
+    // behind the frame's WebGL), which held the whole film to 30 fps: "you are here" moves without repainting (its own
+    // layer, moved by a transform, on a touch screen), and the trail and the flare are written once they've changed
+    // enough to see, the trail an eighth of a px, the flare in steps a small map can show
+    const step = 1 / 8, trailStep = (step * u) / pathLen(chart.track), flareSteps = px < 60 ? 12 : 50;
+    let lastHere = "", lastTrail = NaN, lastWay = "", lastHover: SectionId | null | undefined, lastRegion = "";
     const paint: Painter = (f) => {
-      const h = `${f.here[0].toFixed(4)} ${f.here[1].toFixed(4)}`;
-      if (h !== lastHere) { lastHere = h; here.current?.setAttribute("transform", `translate(${h})`); }
-      if (Math.abs(f.trail - lastTrail) > 1e-4) { lastTrail = f.trail; trail.current?.style.setProperty("stroke-dashoffset", (1 - f.trail).toFixed(5)); }
+      const hx = Math.round(f.here[0] / u / step), hy = Math.round(f.here[1] / u / step), h = `${hx} ${hy}`;
+      if (h !== lastHere && here.current) { lastHere = h; here.current.style.transform = `translate(${hx * step}px, ${hy * step}px)`; }
+      const tr = Math.round(f.trail / trailStep);
+      if (tr !== lastTrail) { lastTrail = tr; trail.current?.style.setProperty("stroke-dashoffset", (1 - tr * trailStep).toFixed(6)); }
       // the trip in miniature: the arc drawn in as the light travel runs
       const w = f.way ? pathOf(f.way.pts) : "";
       if (w !== lastWay) { lastWay = w; way.current?.setAttribute("d", w); }
@@ -112,7 +120,7 @@ const MapSvg = memo(function MapSvg({ chart, px, painters, tag }: { chart: Chart
       if (f.lit && f.heat) {
         circles.forEach((c, i) => {
           const lit = f.lit![i]!, heat = f.heat![i]!;
-          const key = Math.round((lit + heat * 2) * 50);
+          const key = Math.round((lit + heat * 2) * flareSteps);
           if (key === last[i]) return;
           last[i] = key;
           const m = base[i]!, a = alpha(m, lit, heat) * fade[i]!;
@@ -142,8 +150,10 @@ const MapSvg = memo(function MapSvg({ chart, px, painters, tag }: { chart: Chart
     );
   };
 
+  const box = `${-V} ${-V} ${2 * V} ${2 * V}`;
   return (
-    <svg className="rm-svg" viewBox={`${-V} ${-V} ${2 * V} ${2 * V}`} width={px} height={px} aria-hidden="true" focusable="false">
+    <span className="rm-chart" style={{ width: px, height: px }}>
+    <svg className="rm-svg" viewBox={box} width={px} height={px} aria-hidden="true" focusable="false">
       <defs>
         <radialGradient id={`rm-sky-${tag}`}>
           <stop ref={stop} offset="0" stopColor={regionGlow("hero")} stopOpacity="0.9" />
@@ -184,12 +194,14 @@ const MapSvg = memo(function MapSvg({ chart, px, painters, tag }: { chart: Chart
       {/* a trip */}
       <path ref={way} fill="none" pathLength={1} stroke={ink(0.95)} strokeDasharray="1 1" style={{ ...sw(1.3), strokeDashoffset: 1 }} />
 
-      {/* you are here */}
-      <g ref={here} transform={`translate(${chart.hereAt(0)[0]} ${chart.hereAt(0)[1]})`}>
-        <circle r={5 * k * u} fill="none" stroke={ink(0.9)} style={sw(1)} />
-        <circle r={1.3 * k * u} fill="#fff" />
-      </g>
     </svg>
+    {/* you are here, over the map, moved by its transform */}
+    <svg ref={here} className="rm-you" viewBox={box} width={px} height={px} aria-hidden="true" focusable="false"
+      style={{ transform: `translate(${chart.hereAt(0)[0] / u}px, ${chart.hereAt(0)[1] / u}px)` }}>
+      <circle r={5 * k * u} fill="none" stroke={ink(0.9)} style={sw(1)} />
+      <circle r={1.3 * k * u} fill="#fff" />
+    </svg>
+    </span>
   );
 });
 

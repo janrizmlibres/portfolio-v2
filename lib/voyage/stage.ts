@@ -46,7 +46,7 @@ import { createCrawler } from "./crawler";
 import { createPipeline } from "./pipeline";
 import { createRibbon, RIBBON_LIFT } from "./ribbon";
 import { keyTimes, spiralTurn } from "./ribbon-turn";
-import { createLightRig } from "./rig";
+import { createLightRig, resizeShadow } from "./rig";
 import { warmInTurn } from "./loading";
 import { markBuilt } from "@/lib/wake/built";
 import type { Milestone } from "@/lib/wake/count";
@@ -117,15 +117,7 @@ export function createVoyageStage({ sky }: { sky: Sky }): Stage {
     const l = o as DirectionalLight;
     if (l.isDirectionalLight && l.castShadow) shadowed.push({ light: l, full: l.shadow.mapSize.x });
   });
-  const fitShadows = (q: Quality) => {
-    for (const { light, full } of shadowed) {
-      const side = shadowSize(full, q);
-      if (light.shadow.mapSize.x === side) continue;
-      light.shadow.mapSize.set(side, side);
-      light.shadow.map?.dispose();
-      light.shadow.map = null;
-    }
-  };
+  const fitShadows = (q: Quality) => { for (const { light, full } of shadowed) resizeShadow(light, shadowSize(full, q)); };
   fitShadows(quality());
   const offQuality = onQuality(fitShadows);
   if (process.env.NODE_ENV !== "production") Object.assign(window, { __rig: rig });

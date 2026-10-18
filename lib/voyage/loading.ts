@@ -80,6 +80,27 @@ export async function warmInTurn(renderer: WebGLRenderer, warm: (r: WebGLRendere
         renderer.render(scene, camera);
       }));
     });
+  await linkInTurns(renderer);
+}
+
+/** the longest a turn of linking runs on, in ms (one program can take longer: it's never split) */
+const LINK_MS = 8;
+
+/**
+ * Has every program the renderer holds linked, a few a turn. Without KHR_parallel_shader_compile three leaves a
+ * compiled program unlinked until the frame that first draws it, which then waits on the driver (50 ms and more on a
+ * phone's GPU); a warm-up compiles what its scene could draw but draws only what's in view then, so a body that comes
+ * into view later would link mid-film. A program already linked costs nothing here.
+ */
+async function linkInTurns(renderer: WebGLRenderer) {
+  const programs = renderer.info?.programs ?? [];
+  let i = 0;
+  while (i < programs.length)
+    await inTurn(() => {
+      const t0 = performance.now();
+      do programs[i++]!.getUniforms();
+      while (i < programs.length && performance.now() - t0 < LINK_MS);
+    });
 }
 
 /**

@@ -523,7 +523,7 @@ export function createFilmRuntime({ root, blocks, total, leaders, stills, timeZo
   let clockTimer = 0;
   const setClock = () => {
     const at = new Date(), now = clockText(timeZone, at);
-    root.querySelectorAll<HTMLElement>(".clock").forEach((c) => { c.textContent = now; c.setAttribute("datetime", at.toISOString()); });
+    root.querySelectorAll<HTMLElement>(".clock").forEach((c) => { c.textContent = c.dataset.t = now; c.setAttribute("datetime", at.toISOString()); });
     clockTimer = window.setTimeout(setClock, 60000 - (at.getTime() % 60000) + 50);
   };
   setClock();

@@ -36,3 +36,17 @@ export function createLightRig(parent: Object3D, bodies: Object3D[]) {
     },
   };
 }
+
+/**
+ * A key's shadow map at a new size: the old map goes, and the new one is drawn on the next frame even if the key is
+ * dark or culled then. A key left without a map isn't harmless: three stands in for it with a depth texture a shadow
+ * sampler refuses, and every lit material samples every key's map, so each draw fails (GL_INVALID_OPERATION) and the
+ * bodies vanish.
+ */
+export function resizeShadow(light: DirectionalLight, side: number) {
+  if (light.shadow.mapSize.x === side) return;
+  light.shadow.mapSize.set(side, side);
+  light.shadow.map?.dispose();
+  light.shadow.map = null;
+  light.shadow.needsUpdate = true;
+}
