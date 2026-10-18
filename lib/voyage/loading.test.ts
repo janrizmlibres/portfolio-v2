@@ -86,6 +86,20 @@ describe("every scene loads under the wake-up's loader, before the wake", () => 
     expect(calls).toEqual(["idle", "compile", "compile", "idle", "render", "idle", "render"]);
   });
 
+  it("links every program before the film, those the warm-up compiled but never drew too (without parallel compile, three links one the frame it's first drawn)", async () => {
+    const linked: number[] = [];
+    const programs = [0, 1, 2].map((i) => ({ getUniforms: () => { linked.push(i); return {}; } }));
+    const renderer = {
+      compileAsync: () => Promise.resolve(),
+      render: () => {},
+      getRenderTarget: () => null,
+      setRenderTarget: () => {},
+      info: { programs },
+    } as unknown as WebGLRenderer;
+    await warmInTurn(renderer, (r) => r.render({} as never, {} as never));
+    expect(linked).toEqual([0, 1, 2]);
+  });
+
   it("draws every shadow map in its warm-up, the dark keys' too (their depth passes compile then, not when a key lights mid-film)", async () => {
     const scene = new Scene(), key = new DirectionalLight();
     key.castShadow = true;

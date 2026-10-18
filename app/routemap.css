@@ -50,6 +50,26 @@
   display: block;
   overflow: visible;
 }
+/* a drawn map, and "you are here" over it (it moves by its transform, so the map under it isn't repainted) */
+.rm-chart {
+  position: relative;
+  display: block;
+  flex: none;
+}
+.rm-you {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+/* on a touch screen it's its own layer, so moving it repaints nothing (a desktop map scales as it grows, and a layer
+   keeps the scale it was drawn at) */
+@media (pointer: coarse) {
+  .rm-you {
+    will-change: transform;
+  }
+}
 
 /* ---------------------------------------------------------------- desktop: the map, and five ticks beside it */
 .rm-pill {

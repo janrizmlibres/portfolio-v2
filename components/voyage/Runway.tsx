@@ -27,18 +27,19 @@ export function Runway({ runway, clock }: { runway: RunwayLayout<Block>; clock: 
 }
 
 // a run of text as word spans, with `{time}` as his live clock; a no-break space keeps the words either side of it in
-// one span, so they never break apart
+// one span, so they never break apart. Each word carries its text (`data-t`) for its halo's layer on a touch screen
+// (voyage.css)
 function Words({ text, clock, twin }: { text: string; clock?: string; twin?: boolean }) {
   return text.split(/([^\S\u00a0]+)/).map((part, i) => {
     if (!part || /^[^\S\u00a0]+$/.test(part)) return part;
     if (clock !== undefined && part.includes("{time}"))
       return (
-        <time key={i} className="w clock" suppressHydrationWarning>
+        <time key={i} className="w clock" data-t={part.replace("{time}", clock)} suppressHydrationWarning>
           {part.replace("{time}", clock)}
         </time>
       );
     return (
-      <span key={i} className="w" {...(twin ? { "data-w": part } : {})}>
+      <span key={i} className="w" data-t={part} {...(twin ? { "data-w": part } : {})}>
         {part}
       </span>
     );

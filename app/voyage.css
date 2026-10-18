@@ -220,7 +220,8 @@ html:not([data-film="plain"]) .shot {
   z-index: 1;
   pointer-events: none;
   opacity: 0;
-  text-shadow: var(--shadow);
+  --halo: var(--shadow);
+  text-shadow: var(--halo);
 }
 /* a block in play; every other block stays in the document (and in reach of the keyboard), unseen */
 html:not([data-film="plain"]) .shot.on {
@@ -229,14 +230,14 @@ html:not([data-film="plain"]) .shot.on {
 /* the crawler's white fairing passes behind its lines as the camera comes upstream, and on a phone its rings drop out
    behind them as they leave: a dark halo close round the letters, as the hand's labels have, keeps them read */
 html:not([data-film="plain"]) article[data-block="crawler"] .shot {
-  text-shadow: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85), 0 1px 18px rgba(2, 3, 10, 0.6);
+  --halo: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85), 0 1px 18px rgba(2, 3, 10, 0.6);
 }
 /* on a phone a gate's white collar closes in over its role's lines as they go, and a thrown CubeSat can cross them;
    About's title and words sit under the station, its white radiators and stem turning behind them: the same halo
    keeps them read */
 html.port:not([data-film="plain"]) article[data-block^="role-"] .shot,
 html.port:not([data-film="plain"]) article[data-block="about-1"] .shot {
-  text-shadow: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85), 0 1px 18px rgba(2, 3, 10, 0.6);
+  --halo: 0 0 2px rgba(2, 3, 10, 0.95), 0 0 6px rgba(2, 3, 10, 0.85), 0 1px 18px rgba(2, 3, 10, 0.6);
 }
 html:not([data-film="plain"]) .shot.on a,
 html:not([data-film="plain"]) .shot.on .askb:focus-visible {
@@ -245,6 +246,35 @@ html:not([data-film="plain"]) .shot.on .askb:focus-visible {
 html:not([data-film="plain"]) .shot .w {
   display: inline-block;
   opacity: 0;
+}
+/* On a touch screen each word in play is its own layer, so its rise and fade move it without repainting the text round
+   it, and its halo is a layer of its own under it (the word's text again, clear, with the block's shadow), so the colour
+   a word settles through repaints only its letters. On a phone the words' shadows, blurred over 28 px at DPR 3, made
+   those repaints the film's longest frames (100 to 250 ms). The halo is drawn as the word's own shadow would be: under
+   its letters, over the words before it. */
+@media (pointer: coarse) {
+  html:not([data-film="plain"]) .shot .w {
+    position: relative;
+    text-shadow: none;
+  }
+  html:not([data-film="plain"]) .shot .w::before {
+    content: attr(data-t) / "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    white-space: pre;
+    color: transparent;
+    text-shadow: var(--halo);
+    pointer-events: none;
+  }
+  html:not([data-film="plain"]) .shot.on .w,
+  html:not([data-film="plain"]) .shot.on .w::before {
+    will-change: transform, opacity;
+  }
+  .shot.m-twin .w::after {
+    text-shadow: var(--halo);
+  }
 }
 /* until the film runs, the block in play shows whole (the hero, at first paint) */
 html:not([data-film="plain"]) .shot.on:not(.driven) .w,

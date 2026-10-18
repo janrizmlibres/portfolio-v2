@@ -82,6 +82,8 @@ const MAXS = 128; // state texture width: room for the sky to grow past its 93 s
 const FOV = 32;
 const SKY_RADIUS = 0.9;
 const DUST_SCALE = 0.5;
+/** ms the scroll must have rested before a resolution step the governor asked for is taken */
+const REST_MS = 300;
 
 // hex read as raw display values: no sRGB → linear conversion, and nothing converts on the way out either
 const col = (hex: string) => {
@@ -499,6 +501,11 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
   };
   const governor = createGovernor({ dpr, lower });
   let lastFrame = 0;
+  // a new resolution reallocates the canvas, and the browser waits on the GPU for it (100 to 400 ms on a phone): it's
+  // taken once the scroll has rested, never mid-scroll, and the governor judges nothing until it is
+  let stepTo: number | null = null, scrolled = 0, heldUntil = 0;
+  const onScroll = () => { scrolled = performance.now(); };
+  addEventListener("scroll", onScroll, { passive: true });
 
   // A lost context takes its queries and extensions with it. three rebuilds its own state when the context is
   // restored; the timer query is fetched again (one fetched before the loss names a target the new context refuses).
@@ -522,12 +529,11 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
   function frame() {
     if (lost) return;
     const t0 = performance.now();
-    if (lastFrame) {
-      const scale = governor.feed({ gpu: tq ? perf.gpu : null, dt: t0 - lastFrame, now: t0 });
-      if (scale !== null) {
-        renderer.setPixelRatio(dpr * scale);
-        resize();
-      }
+    if (lastFrame && stepTo === null) stepTo = governor.feed({ gpu: tq ? perf.gpu : null, dt: t0 - lastFrame, now: t0 });
+    if (stepTo !== null && t0 - scrolled > REST_MS && t0 > heldUntil) {
+      renderer.setPixelRatio(dpr * stepTo);
+      resize();
+      stepTo = null;
     }
     lastFrame = t0;
     const dt = drawnMs() / 1000;
@@ -626,7 +632,7 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
       U.uTint.value.setRGB(tint[0], tint[1], tint[2], LinearSRGBColorSpace);
     },
     /** keeps the resolution as it is for `ms` (a warp drawing from the frame's own pixels) */
-    holdScale(ms: number) { governor.hold(performance.now(), ms); },
+    holdScale(ms: number) { heldUntil = Math.max(heldUntil, performance.now() + ms); governor.hold(performance.now(), ms); },
     get size() { return { w, h }; },
     /**
      * The agent read these passages (one search's hits, best first): each flares where it sits, a beat apart, best
@@ -662,6 +668,7 @@ export function createSky(canvas: HTMLCanvasElement, { layout, tier, reduced }: 
       gen++;
       gsap.ticker.remove(ownFrame);
       removeEventListener("resize", resize);
+      removeEventListener("scroll", onScroll);
       canvas.removeEventListener("webglcontextlost", onLost);
       canvas.removeEventListener("webglcontextrestored", onRestored);
       gsap.killTweensOf([U.uRecede, spin, cam, ...state]);

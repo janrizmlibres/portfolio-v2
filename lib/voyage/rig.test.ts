@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DirectionalLight, Light, Object3D, Scene, Vector3 } from "three";
-import { createLightRig } from "./rig";
+import { createLightRig, resizeShadow } from "./rig";
 
 /** the lights three would light a frame with: the visible ones, as its render list gathers them */
 const litBy = (scene: Scene) => {
@@ -67,5 +67,26 @@ describe("createLightRig", () => {
     rig.dispose();
     expect(a.key.parent).toBe(a.root);
     expect(scene.children.length).toBe(1);
+  });
+});
+
+describe("resizeShadow", () => {
+  // three binds a stand-in for a missing map that a shadow sampler refuses (GL_INVALID_OPERATION), and every lit
+  // material samples every key's map: a dark key left without one stopped Athena drawing after a quality step
+  it("has a resized map drawn again on the next frame, a dark key's too", () => {
+    const key = new DirectionalLight(0xffffff, 0);
+    key.castShadow = true;
+    key.shadow.autoUpdate = false;
+    key.shadow.mapSize.set(2048, 2048);
+    resizeShadow(key, 1024);
+    expect([key.shadow.mapSize.x, key.shadow.map, key.shadow.needsUpdate]).toEqual([1024, null, true]);
+  });
+
+  it("leaves a map already at its size alone", () => {
+    const key = new DirectionalLight(0xffffff, 0);
+    key.shadow.mapSize.set(512, 512);
+    key.shadow.needsUpdate = false;
+    resizeShadow(key, 512);
+    expect(key.shadow.needsUpdate).toBe(false);
   });
 });
