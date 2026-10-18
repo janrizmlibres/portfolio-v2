@@ -2,7 +2,7 @@
 
 A chat-first AI engineer portfolio. The landing page IS a chat with an agent that has read everything I've written.
 
-[Live](https://janrizlibres.vercel.app) · [Redesign prototype](docs/design/2026-09-27-redesign-prototype.html)
+[Live](https://jrz-libres.vercel.app) · [Redesign prototype](docs/design/2026-09-27-redesign-prototype.html)
 
 ## What this is
 
