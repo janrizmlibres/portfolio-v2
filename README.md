@@ -14,7 +14,7 @@ One page: a voyage through a sky of everything I've written, played by the scrol
 
 Under reduced motion the film plays as stills. Without WebGL it's a plain reading page.
 
-The chat is powered by OpenAI GPT-4o via the Vercel AI SDK v6, retrieving from a **Supabase + pgvector** index of the [personal wiki](https://github.com/janrizmlibres/llm-wiki). The index is a snapshot of the wiki's last publish, and nothing refreshes it now.
+The chat is powered by OpenAI GPT-4o via the Vercel AI SDK v6, retrieving from a **Supabase + pgvector** index of the personal wiki. The index is a snapshot of the wiki's last publish, and nothing refreshes it now.
 
 ## Stack
 
@@ -51,7 +51,7 @@ Open <http://localhost:3000>.
 
 ### Database setup
 
-The `wiki_chunks` table is a snapshot of the last publish from the [personal wiki](https://github.com/janrizmlibres/llm-wiki). The wiki's publisher was removed on 2026-08-31, so nothing writes to the table now. This repo's Drizzle schema and migrations describe it.
+The `wiki_chunks` table is a snapshot of the last publish from the personal wiki. The wiki's publisher was removed on 2026-08-31, so nothing writes to the table now. This repo's Drizzle schema and migrations describe it.
 
 ```bash
 # Generate migration (only when schema changes)
@@ -110,7 +110,6 @@ The chat won't return useful answers against an empty table, and neither repo ca
 
 ## Adjacent wiki
 
-- Repo: <https://github.com/janrizmlibres/llm-wiki>
 - The wiki is where the chat's knowledge comes from, but it no longer publishes: its publisher (chunking, embedding and the DB upsert behind `pnpm publish`) was removed on 2026-08-31. `wiki_chunks` keeps the last publish.
 
 ## Deferred / out of scope
@@ -126,4 +125,4 @@ The spec captures these as future v2.x work, deliberately not built:
 
 ## License
 
-MIT, once a LICENSE file is added.
+MIT. See [LICENSE](LICENSE).
