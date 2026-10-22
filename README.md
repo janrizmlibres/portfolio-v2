@@ -12,9 +12,9 @@ One page: a voyage through a sky of everything I've written, played by the scrol
 2. **The voyage.** Hero, About, Work, Projects and Contact are scenes the camera flies through: his ship, the road of his roles, the projects' worlds, the ribbon of personal work, then out to the whole sky. The text is real HTML placed over the picture. Everything past the first scene loads after the wake.
 3. **Tycho's bubble.** Ask Tycho anything: he answers in his bubble, the log keeps the conversation, the stars his answer read from light up, and he can take you to a section or point at a project.
 
-Under reduced motion the film plays as stills; without WebGL it's a plain reading page.
+Under reduced motion the film plays as stills. Without WebGL it's a plain reading page.
 
-The chat is powered by OpenAI GPT-4o via the Vercel AI SDK v6, retrieving from a **Supabase + pgvector** index of the [personal wiki](https://github.com/janrizmlibres/llm-wiki). The index is a snapshot of the wiki's last publish; nothing refreshes it now.
+The chat is powered by OpenAI GPT-4o via the Vercel AI SDK v6, retrieving from a **Supabase + pgvector** index of the [personal wiki](https://github.com/janrizmlibres/llm-wiki). The index is a snapshot of the wiki's last publish, and nothing refreshes it now.
 
 ## Stack
 
@@ -43,13 +43,15 @@ Open <http://localhost:3000>.
 | Var | Purpose |
 |---|---|
 | `OPENAI_API_KEY` | Chat completion + embeddings (`text-embedding-3-small`) |
+| `OPENAI_CHAT_MODEL` | Chat model for `/api/chat`. Default `gpt-4o`. |
 | `SUPABASE_DB_URL` | Postgres connection. Use the **transaction-pooler** endpoint (`port 6543`) with a read-only role. |
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Rate limiting + monthly cost-cap counter |
-| `MONTHLY_COST_CAP_USD` | Soft cap on monthly OpenAI spend. Default `50`. |
+| `MONTHLY_COST_CAP_USD` | Soft cap on monthly OpenAI spend. Default `10`. |
+| `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT` | Optional LangSmith tracing of chat runs. Off unless `LANGSMITH_TRACING` is true. |
 
 ### Database setup
 
-The `wiki_chunks` table is a snapshot of the last publish from the [personal wiki](https://github.com/janrizmlibres/llm-wiki). The wiki's publisher was removed on 2026-08-31, so nothing writes to the table now; this repo's Drizzle schema and migrations describe it.
+The `wiki_chunks` table is a snapshot of the last publish from the [personal wiki](https://github.com/janrizmlibres/llm-wiki). The wiki's publisher was removed on 2026-08-31, so nothing writes to the table now. This repo's Drizzle schema and migrations describe it.
 
 ```bash
 # Generate migration (only when schema changes)
@@ -69,9 +71,10 @@ The chat won't return useful answers against an empty table, and neither repo ca
 | `pnpm test` | Vitest unit/integration tests |
 | `pnpm test:watch` | Vitest in watch mode |
 | `pnpm test:e2e` | Playwright: the wake-up, the voyage, the warp, the bubble |
+| `pnpm sky:export` | Export the sky's star data from `wiki_chunks`, one star per chunk |
 | `pnpm audio:export` | Render the score's stems and write `lib/audio/stems.json` |
-| `pnpm db:generate` | Drizzle Kit — generate a migration from schema |
-| `pnpm db:migrate` | Drizzle Kit — apply migrations |
+| `pnpm db:generate` | Drizzle Kit, generate a migration from schema |
+| `pnpm db:migrate` | Drizzle Kit, apply migrations |
 | `pnpm lint` | ESLint |
 
 ## Architecture in 60 seconds
@@ -102,7 +105,7 @@ The chat won't return useful answers against an empty table, and neither repo ca
 ```
 
 - Display content (Hero / About / Work / Projects / Contact) is hand-authored. The agent doesn't render these.
-- RAG content is sourced separately from the wiki. The agent can answer deeper questions than what's on the page — that's a feature.
+- RAG content is sourced separately from the wiki. The agent can answer deeper questions than what's on the page, and that's a feature.
 - localStorage `jrz-chat-v1` keeps the conversation per browser. No accounts.
 
 ## Adjacent wiki
@@ -123,4 +126,4 @@ The spec captures these as future v2.x work, deliberately not built:
 
 ## License
 
-[MIT](LICENSE) (when added).
+MIT, once a LICENSE file is added.
