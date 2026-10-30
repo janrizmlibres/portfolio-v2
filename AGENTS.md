@@ -156,7 +156,7 @@ The site's discoverability surface (search engines + LLM ingesters like GPTBot, 
 | `lib/content/contact.ts` (new link) | `public/llms.txt`. JSON-LD `sameAs` auto-syncs. New external link? It needs `rel="me"` (already wired in `ContactSection.tsx`). |
 | Site copy in `app/layout.tsx` `metadata.title`/`description` | `app/opengraph-image.tsx` (the rendered headline), `public/llms.txt` lede. |
 | Add a new section to the voyage | Its blocks carry `sec: "sec-{name}"` in `lib/voyage/script.ts` (matches the `scroll_to` tool convention). Consider whether it deserves a `Person.knowsAbout` entry or a JSON-LD type. |
-| Production domain change | Set `NEXT_PUBLIC_SITE_URL` on Vercel (or change `lib/seo/site.ts`'s default). The system prompt, the OG wordmark, robots, sitemap and JSON-LD read it. By hand: the comment in `public/wiki` and the redesign prototype in `docs/design/`. Resubmit sitemap to Search Console. |
+| Production domain change | Set `NEXT_PUBLIC_SITE_URL` on Vercel (or change `lib/seo/site.ts`'s default). The system prompt, the OG wordmark, robots, sitemap and JSON-LD read it. By hand: the redesign prototype in `docs/design/`. Resubmit sitemap to Search Console. |
 
 **Files that should never need manual edits if the above is followed:**
 - `app/robots.ts`, `app/sitemap.ts`, `app/manifest.ts` — derive from `siteUrl`
